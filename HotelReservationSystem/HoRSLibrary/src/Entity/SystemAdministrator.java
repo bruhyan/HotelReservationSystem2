@@ -16,7 +16,7 @@ import javax.persistence.Id;
  * @author Bryan
  */
 @Entity
-public class SystemAdministrator  extends Employee {
+public class SystemAdministrator  extends EmployeeEntity {
 
     public SystemAdministrator() {
     }

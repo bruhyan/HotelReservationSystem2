@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import Entity.Employee;
+import Entity.EmployeeEntity;
 import Entity.SystemAdministrator;
 import javax.ejb.Remote;
 import util.exception.EmployeeNotFoundException;
@@ -19,8 +19,8 @@ public interface EmployeeControllerRemote {
 
     public SystemAdministrator createSystemAdministrator(SystemAdministrator sa);
 
-    public Employee retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException;
+    public EmployeeEntity retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException;
 
-    public Employee retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException;
+    public EmployeeEntity retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException;
     
 }

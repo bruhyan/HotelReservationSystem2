@@ -5,7 +5,7 @@
  */
 package horsmanagementclient;
 
-import Entity.Employee;
+import Entity.EmployeeEntity;
 import ejb.session.stateless.EmployeeControllerRemote;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -18,7 +18,7 @@ import util.exception.EmployeeNotFoundException;
  */
 public class MainApp {
     private EmployeeControllerRemote employeeControllerRemote;
-    private Employee loggedInUser;
+    private EmployeeEntity loggedInUser;
 
     public MainApp() {
     }
@@ -74,7 +74,7 @@ public class MainApp {
         String email = sc.nextLine();
         System.out.println("Enter password");
         String password = sc.nextLine();
-        Employee employee;
+        EmployeeEntity employee;
         try {
             employee = employeeControllerRemote.retrieveEmployeeByEmail(email);
             if(employee.getPassword().equals(password)) {

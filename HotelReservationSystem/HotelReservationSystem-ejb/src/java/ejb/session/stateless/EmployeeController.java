@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import Entity.Employee;
+import Entity.EmployeeEntity;
 import Entity.SystemAdministrator;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,9 +31,9 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
     }
     
     @Override
-     public Employee retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException
+     public EmployeeEntity retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException
     {
-        Employee customerEntity = em.find(Employee.class, employeeId);
+        EmployeeEntity customerEntity = em.find(EmployeeEntity.class, employeeId);
         
         if(customerEntity != null)
         {
@@ -46,10 +46,10 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
     }
      
     @Override
-     public Employee retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException {
+     public EmployeeEntity retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException {
          Query query = em.createQuery("SELECT e FROM Employee e WHERE e.email = :inEmail");
          query.setParameter("inEmail", email);
-         Employee employee = (Employee)query.getSingleResult();
+         EmployeeEntity employee = (EmployeeEntity)query.getSingleResult();
          return employee;
      }
 

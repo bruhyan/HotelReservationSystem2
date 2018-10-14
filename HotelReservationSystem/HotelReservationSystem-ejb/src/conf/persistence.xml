@@ -4,6 +4,14 @@
     <jta-data-source>jdbc/HotelReservationSystem</jta-data-source>
     <class>Entity.Employee</class>
     <class>Entity.SystemAdministrator</class>
+    <class>Entity.BookingEntity</class>
+    <class>Entity.CustomerEntity</class>
+    <class>Entity.EmployeeEntity</class>
+    <class>Entity.ReservationEntity</class>
+    <class>Entity.RoomEntity</class>
+    <class>Entity.RoomRatesEntity</class>
+    <class>Entity.RoomTypeEntity</class>
+    <class>Entity.TransactionEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
