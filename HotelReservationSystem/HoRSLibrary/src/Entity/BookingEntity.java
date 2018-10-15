@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /**
@@ -26,7 +26,7 @@ public class BookingEntity implements Serializable {
     private Long bookingId;
     @OneToOne
     private RoomEntity room;
-    @OneToMany //Owned by reservation
+    @ManyToOne //Owned by reservation
     private ReservationEntity reservation;
 
     public BookingEntity() {

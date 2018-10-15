@@ -31,7 +31,7 @@ public class ReservationEntity implements Serializable {
     private Date checkInDateTime;
     private Date checkOutDateTime;
     private Boolean showedUp;
-    @OneToMany
+    @OneToMany(mappedBy="reservation")
     private List<BookingEntity> bookingList;
     @ManyToOne
     private CustomerEntity customer;
