@@ -99,7 +99,9 @@ public class MainApp {
     
     public void doStreamEmployee() {
         if (loggedInUser instanceof SystemAdministrator) {
-            System.out.println("Hello System Admin");
+            //System.out.println("Hello System Admin");
+            SystemAdministratorModule systemAdministratorModule = new SystemAdministratorModule(loggedInUser, employeeControllerRemote);
+            systemAdministratorModule.runModule();
         }else {
             System.out.println("wtf?");
         }

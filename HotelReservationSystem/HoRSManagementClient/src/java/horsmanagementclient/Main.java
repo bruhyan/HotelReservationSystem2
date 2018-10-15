@@ -24,21 +24,21 @@ public class Main {
     public static void main(String[] args) {
         MainApp mainApp = new MainApp(employeeControllerRemote);
         mainApp.runApp();
-        // testing
-        /*Scanner sc = new Scanner(System.in);
-        System.out.println("Enter name");
-        String name = sc.nextLine();
-        System.out.println("Enter contact number");
-        String contact = sc.nextLine();
-        System.out.println("Enter email");
-        String email = sc.nextLine();
-        System.out.println("Enter password");
-        String password = sc.nextLine();
-        System.out.println("Enter address");
-        String address = sc.nextLine();
-        SystemAdministrator sa = new SystemAdministrator(name, contact, email, password, address);
-        sa = systemAdministratorControllerRemote.createSystemAdministrator(sa);
-        System.out.println("Test success");*/
+        // create employee shortcut
+//        Scanner sc = new Scanner(System.in);
+//        System.out.println("Enter name");
+//        String name = sc.nextLine();
+//        System.out.println("Enter contact number");
+//        String contact = sc.nextLine();
+//        System.out.println("Enter email");
+//        String email = sc.nextLine();
+//        System.out.println("Enter password");
+//        String password = sc.nextLine();
+//        System.out.println("Enter address");
+//        String address = sc.nextLine();
+//        SystemAdministrator sa = new SystemAdministrator(name, contact, email, password, address);
+//        sa = employeeControllerRemote.createSystemAdministrator(sa);
+//        System.out.println("Test success");
         
         
         

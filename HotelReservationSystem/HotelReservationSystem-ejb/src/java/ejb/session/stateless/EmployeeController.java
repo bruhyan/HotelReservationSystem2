@@ -33,11 +33,11 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
     @Override
      public EmployeeEntity retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException
     {
-        EmployeeEntity customerEntity = em.find(EmployeeEntity.class, employeeId);
+        EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
         
-        if(customerEntity != null)
+        if(employee != null)
         {
-            return customerEntity;
+            return employee;
         }
         else
         {
@@ -47,7 +47,7 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
      
     @Override
      public EmployeeEntity retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException {
-         Query query = em.createQuery("SELECT e FROM Employee e WHERE e.email = :inEmail");
+         Query query = em.createQuery("SELECT e FROM EmployeeEntity e WHERE e.email = :inEmail");
          query.setParameter("inEmail", email);
          EmployeeEntity employee = (EmployeeEntity)query.getSingleResult();
          return employee;
