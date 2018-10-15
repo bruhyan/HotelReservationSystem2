@@ -6,10 +6,9 @@
 package horsmanagementclient;
 
 import Entity.EmployeeEntity;
+import Entity.SystemAdministrator;
 import ejb.session.stateless.EmployeeControllerRemote;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.EmployeeNotFoundException;
 
 /**
@@ -35,7 +34,9 @@ public class MainApp {
         while(true) {
             System.out.println("==== Welcome to the HoRS Management Client ====");
             if(loggedInUser == null) {
-            System.out.println("1: Employee Login");
+                System.out.println("1: Employee Login");
+            }else {
+                System.out.println("1: Do your shit");
             }
             System.out.println("2: Exit");
             if(loggedInUser != null) {
@@ -49,7 +50,8 @@ public class MainApp {
                     if(loggedInUser == null) {
                         doLogin(sc);
                     }else {
-                        System.out.println("Employee Already Logged In !");
+                        //System.out.println("Employee Already Logged In !");
+                        doStreamEmployee();
                     }
                 }else if(input == 2) {
                     break;
@@ -93,6 +95,14 @@ public class MainApp {
     public void doLogout(Scanner sc) {
         System.out.println(loggedInUser.getName()+" has been logged out.");
         loggedInUser = null;
+    }
+    
+    public void doStreamEmployee() {
+        if (loggedInUser instanceof SystemAdministrator) {
+            System.out.println("Hello System Admin");
+        }else {
+            System.out.println("wtf?");
+        }
     }
     
     
