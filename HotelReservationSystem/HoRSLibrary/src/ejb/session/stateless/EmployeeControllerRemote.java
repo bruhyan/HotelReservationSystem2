@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import Entity.EmployeeEntity;
+import Entity.GuestRelationOfficer;
+import Entity.OperationManager;
+import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import javax.ejb.Remote;
 import util.exception.EmployeeNotFoundException;
@@ -22,5 +25,11 @@ public interface EmployeeControllerRemote {
     public EmployeeEntity retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException;
 
     public EmployeeEntity retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException;
+
+    public OperationManager createOperationManager(OperationManager om);
+
+    public SalesManager createSalesManager(SalesManager sm);
+
+    public GuestRelationOfficer createGuestRelationOfficer(GuestRelationOfficer gro);
     
 }

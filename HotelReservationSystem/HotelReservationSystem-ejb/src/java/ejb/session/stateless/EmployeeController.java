@@ -6,6 +6,9 @@
 package ejb.session.stateless;
 
 import Entity.EmployeeEntity;
+import Entity.GuestRelationOfficer;
+import Entity.OperationManager;
+import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,6 +34,27 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
     }
     
     @Override
+    public OperationManager createOperationManager(OperationManager om) {
+        em.persist(om);
+        em.flush();
+        return om;
+    }
+    
+    @Override
+    public SalesManager createSalesManager(SalesManager sm) {
+        em.persist(sm);
+        em.flush();
+        return sm;
+    }
+    
+    @Override
+    public GuestRelationOfficer createGuestRelationOfficer(GuestRelationOfficer gro) {
+        em.persist(gro);
+        em.flush();
+        return gro;
+    }
+    
+    @Override
      public EmployeeEntity retrieveEmployeeByEmployeeId(long employeeId) throws EmployeeNotFoundException
     {
         EmployeeEntity employee = em.find(EmployeeEntity.class, employeeId);
@@ -52,6 +76,8 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
          EmployeeEntity employee = (EmployeeEntity)query.getSingleResult();
          return employee;
      }
+     
+     
 
     
 }

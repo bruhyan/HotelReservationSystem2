@@ -12,6 +12,9 @@
     <class>Entity.RoomRatesEntity</class>
     <class>Entity.RoomTypeEntity</class>
     <class>Entity.TransactionEntity</class>
+    <class>Entity.GuestRelationOfficer</class>
+    <class>Entity.OperationManager</class>
+    <class>Entity.SalesManager</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
