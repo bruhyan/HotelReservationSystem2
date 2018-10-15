@@ -35,18 +35,19 @@ public class SystemAdministratorModule {
             System.out.println("2: View All Employees");
             System.out.println("3: Create New Partner");
             System.out.println("4: View All Partners");
+            System.out.println("5: Exit");
             input = 0;
-            while(input < 1 || input > 4) {
+            while(input < 1 || input > 5) {
                 System.out.println(">");
                 input = sc.nextInt();
                 if(input == 1) {
                     doCreateEmployee(sc);
-                }else if(input == 4) {
+                }else if(input == 5) {
                     break;
                 }
                 
             }
-            if(input == 4) {
+            if(input == 5) {
                 break;
             }
         }
