@@ -27,7 +27,7 @@ public class RoomTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
-    @OneToMany
+    @OneToMany(mappedBy="roomType")
     private List<RoomEntity> roomList;
     @ManyToMany
     private List<RoomRatesEntity> roomRateList;
@@ -37,6 +37,7 @@ public class RoomTypeEntity implements Serializable {
     private String bed;
     private String amenities; //amenities using String for now, could think about enums or smt next time
     private Integer capacity;
+    public boolean isDisabled;
 
     public RoomTypeEntity() {
         this.roomList = new ArrayList<>();
@@ -53,7 +54,18 @@ public class RoomTypeEntity implements Serializable {
         this.bed = bed;
         this.amenities = amenities;
         this.capacity = capacity;
+        this.isDisabled = false;
     }
+
+    public boolean isIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+    
+    
 
     public List<RoomEntity> getRoomList() {
         return roomList;

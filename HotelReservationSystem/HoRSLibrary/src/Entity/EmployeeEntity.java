@@ -6,10 +6,13 @@
 package Entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -27,8 +30,11 @@ public class EmployeeEntity implements Serializable {
     private String email;
     private String password;
     private String address;
+    @OneToMany(mappedBy="employee")
+    private List<TransactionEntity> transactionList;
 
     public EmployeeEntity() {
+        transactionList = new ArrayList<>();
     }
 
     public EmployeeEntity(String name, String contactNumber, String email, String password, String address) {
@@ -39,8 +45,18 @@ public class EmployeeEntity implements Serializable {
         this.password = password;
         this.address = address;
     }
+
+    public List<TransactionEntity> getTransactionList() {
+        return transactionList;
+    }
+
+    public void setTransactionList(List<TransactionEntity> transactionList) {
+        this.transactionList = transactionList;
+    }
     
-    
+    public void addTransaction(TransactionEntity transaction){
+        this.transactionList.add(transaction);
+    }
 
     public Long getEmployeeId() {
         return employeeId;

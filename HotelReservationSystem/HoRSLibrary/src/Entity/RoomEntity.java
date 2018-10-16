@@ -36,10 +36,10 @@ public class RoomEntity implements Serializable {
     public RoomEntity() {
     }
 
-    public RoomEntity(Integer roomNumber, Boolean isDisabled, RoomStatus roomStatus, RoomTypeEntity roomType) {
+    public RoomEntity(Integer roomNumber, RoomStatus roomStatus, RoomTypeEntity roomType) {
         this();
         this.roomNumber = roomNumber;
-        this.isDisabled = isDisabled;
+        this.isDisabled = false;
         this.roomStatus = roomStatus;
         this.roomType = roomType;
     }

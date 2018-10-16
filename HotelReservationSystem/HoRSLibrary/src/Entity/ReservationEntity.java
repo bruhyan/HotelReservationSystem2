@@ -54,6 +54,10 @@ public class ReservationEntity implements Serializable {
         this.transaction = transaction;
         this.numOfGuests = numOfGuests;
     }
+    
+    public void addBooking(BookingEntity booking){
+        this.bookingList.add(booking);
+    }
 
     public Date getDateOfReservation() {
         return dateOfReservation;
