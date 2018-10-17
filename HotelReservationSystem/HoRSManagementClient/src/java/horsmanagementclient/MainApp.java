@@ -6,8 +6,12 @@
 package horsmanagementclient;
 
 import Entity.EmployeeEntity;
+import Entity.RoomEntity;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.EmployeeControllerRemote;
+import ejb.session.stateless.RoomControllerRemote;
+import ejb.session.stateless.RoomTypeControllerRemote;
+import java.util.List;
 import java.util.Scanner;
 import util.exception.EmployeeNotFoundException;
 
@@ -17,14 +21,24 @@ import util.exception.EmployeeNotFoundException;
  */
 public class MainApp {
     private EmployeeControllerRemote employeeControllerRemote;
+    private RoomTypeControllerRemote roomTypeControllerRemote;
+    private RoomControllerRemote roomControllerRemote;
     private EmployeeEntity loggedInUser;
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
+    }
+    
+    public void test(){
+        
+        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(1l);
+        for(RoomEntity room : roomList){
+            System.out.println(room.getRoomNumber());
+        }
     }
     
     public void runApp() {

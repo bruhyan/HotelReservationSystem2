@@ -59,6 +59,14 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         return query.getResultList();
         
     }
+    public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId){
+        
+        Query query = em.createQuery("SELECT r FROM room WHERE ROOMTYPE_ROOMTYPEID = :roomTypeId"); //find out if this is correct
+        query.setParameter("roomTypeId", roomTypeId);
+        
+        return query.getResultList();
+        
+    }
     
 
 }
