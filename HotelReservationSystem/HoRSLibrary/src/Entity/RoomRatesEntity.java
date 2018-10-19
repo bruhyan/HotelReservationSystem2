@@ -28,6 +28,7 @@ public class RoomRatesEntity implements Serializable {
     private BigDecimal ratePerNight;
     private Date validityStart;
     private Date validityEnd;
+    private Boolean isDisabled;
 
     public RoomRatesEntity() {
     }
@@ -38,8 +39,18 @@ public class RoomRatesEntity implements Serializable {
         this.ratePerNight = ratePerNight;
         this.validityStart = validityStart;
         this.validityEnd = validityEnd;
+        this.isDisabled = false;
     }
 
+    public Boolean getIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
+    
     public String getName() {
         return name;
     }

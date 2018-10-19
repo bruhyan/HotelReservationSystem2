@@ -6,17 +6,14 @@
 package ejb.session.stateless;
 
 import Entity.RoomRatesEntity;
-import Entity.RoomTypeEntity;
 import java.util.List;
-import javax.ejb.Local;
+import javax.ejb.Remote;
 
 /**
  *
  * @author mdk12
  */
-@Local
-public interface RoomTypeControllerLocal {
-
-    public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
-    
+@Remote
+public interface RoomRateControllerRemote {
+        public List<RoomRatesEntity> retrieveRoomRatesList();
 }

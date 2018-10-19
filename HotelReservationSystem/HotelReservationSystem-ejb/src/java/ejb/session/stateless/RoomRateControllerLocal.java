@@ -6,7 +6,6 @@
 package ejb.session.stateless;
 
 import Entity.RoomRatesEntity;
-import Entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -15,8 +14,8 @@ import javax.ejb.Local;
  * @author mdk12
  */
 @Local
-public interface RoomTypeControllerLocal {
+public interface RoomRateControllerLocal {
 
-    public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
+    public List<RoomRatesEntity> retrieveRoomRatesList();
     
 }

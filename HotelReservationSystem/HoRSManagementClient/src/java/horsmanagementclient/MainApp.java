@@ -6,6 +6,7 @@
 package horsmanagementclient;
 
 import Entity.EmployeeEntity;
+import Entity.GuestRelationOfficer;
 import Entity.RoomEntity;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.EmployeeControllerRemote;
@@ -31,6 +32,8 @@ public class MainApp {
     public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
+        this.roomTypeControllerRemote = roomTypeControllerRemote;
+        this.roomControllerRemote = roomControllerRemote;
     }
     
     public void test(){
@@ -118,6 +121,10 @@ public class MainApp {
             //System.out.println("Hello System Admin");
             SystemAdministratorModule systemAdministratorModule = new SystemAdministratorModule(loggedInUser, employeeControllerRemote);
             systemAdministratorModule.runModule();
+        }else if(loggedInUser instanceof GuestRelationOfficer){
+            OperationManagerModule guestRelationOfficerModule = new OperationManagerModule(loggedInUser, employeeControllerRemote);
+            guestRelationOfficerModule.runModule();
+        
         }else {
             System.out.println("wtf?");
         }

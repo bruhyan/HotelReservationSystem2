@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
+import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -50,10 +51,14 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             for(RoomEntity room : roomList){
                 room.setIsDisabled(true);
             }
+            //set roomType to be disabled as well.
+            roomType.setIsDisabled(true);
+            updateRoomType(roomType);
         
         }else{
             em.remove(roomType);
         }
+        
         
     }
     
@@ -63,6 +68,17 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return query.getResultList();
     }
     
+    @Override
+    public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates){
+        Long roomRateId = roomRates.getRoomRatesId();
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r JOIN r.roomRateList rl WHERE rl.id = :roomRateId");
+        query.setParameter("roomRateId", roomRateId);
+        
+        return query.getResultList();
+        
+        
+                
+    }
     
 
 }

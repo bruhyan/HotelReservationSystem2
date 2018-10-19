@@ -36,8 +36,10 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     public void deleteRoomById(Long id){
         RoomEntity room = findRoomById(id);
         //Double check here
+        //Delete previous rooms that was set to disabled, or mass deletion by checking if smt is disabled when system starts.
         if(room.getRoomStatus() == RoomStatus.OCCUPIED ){
             room.setIsDisabled(true);
+            //actually after is disabled for room, still must delete if a room is disabled.
             em.merge(room);
         }else{
             em.remove(room);
@@ -52,17 +54,18 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     //get list of room by room type.
     
     public List<RoomEntity> retrieveRoomListByType(RoomTypeEntity roomType){
-        Long id = roomType.getRoomTypeId();
-        Query query = em.createQuery("SELECT r FROM room WHERE ROOMTYPE_ROOMTYPEID = :roomTypeId"); //find out if this is correct
-        query.setParameter("roomTypeId", id);
+
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType"); //find out if this is correct
+        query.setParameter("roomType", roomType);
         
         return query.getResultList();
         
     }
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId){
         
-        Query query = em.createQuery("SELECT r FROM room WHERE ROOMTYPE_ROOMTYPEID = :roomTypeId"); //find out if this is correct
-        query.setParameter("roomTypeId", roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType  = :roomType"); //find out if this is correct
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        query.setParameter("roomType", roomType);
         
         return query.getResultList();
         
