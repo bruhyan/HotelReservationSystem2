@@ -58,7 +58,7 @@ public class OperationManagerModule {
                 }else if(input == 3){
                     doCreateNewRoomType(sc);
                 }else if(input == 4){
-                 //   doViewAllRoomTypes();
+                    doViewAllRoomTypes(sc);
                 }else if(input == 5) {
                     break;
                 }else{
@@ -82,6 +82,34 @@ public class OperationManagerModule {
 //        this.amenities = amenities;
 //        this.capacity = capacity;
 //        this.isDisabled = false;    
+    
+    public void doViewAllRoomTypes(Scanner sc){
+        System.out.println("Select the room type you'd wish to view in more detail, update or delete :");
+        List<RoomTypeEntity> roomTypeList = roomTypeControllerRemote.retrieveRoomTypeList();
+        
+        for(RoomTypeEntity roomType : roomTypeList){
+            
+            System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomName() + " .");
+            
+        }
+        Long roomTypeId = sc.nextLong();
+        sc.nextLine();
+        viewSingleRoomType(roomTypeId);
+    }
+    
+    public void viewSingleRoomType(Long roomTypeId){
+        RoomTypeEntity roomType = roomTypeControllerRemote.retrieveRoomTypeById(roomTypeId);
+        
+        System.out.println("============= Selected Room Type Information:  ===========");
+        System.out.println("Room Type Name: " + roomType.getRoomName());
+        System.out.println("Room Type description: " + roomType.getDescription());
+        System.out.println("Room Type amenities: " + roomType.getAmenities());
+        System.out.println("Room Type bed: " + roomType.getBed());
+        System.out.println("Room Type capacity: " + roomType.getCapacity());
+        System.out.println("Room Type Size: " + roomType.getSize() + " metres square.");
+        System.out.println("Room Type disabled: " + roomType.isIsDisabled());
+    }
+    
     public void doCreateNewRoomType(Scanner sc) {
         sc.nextLine();
         System.out.println("Enter Room Type Name: \n");
@@ -116,6 +144,7 @@ public class OperationManagerModule {
         roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId() ,roomRateId);
         int response = 0;
         //add another roomrate here if needed
+        while(true){
         while(response < 1 || response > 2){
         System.out.println("Add another room rate?");
         System.out.println("1. Yes");
@@ -129,8 +158,12 @@ public class OperationManagerModule {
             break;
         }
         }
+        break;
+        }
        
     }
+    
+    
     
     public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc){
         Long roomRateId = chooseRoomRate(sc);
