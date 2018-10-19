@@ -8,6 +8,7 @@ package horsmanagementclient;
 import javax.ejb.EJB;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
+import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 
 /**
@@ -21,12 +22,14 @@ public class Main {
     public static RoomControllerRemote roomControllerRemote;
     @EJB
     public static RoomTypeControllerRemote roomTypeControllerRemote;
+    @EJB
+    public static RoomRateControllerRemote roomRateControllerRemote;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote);
+        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote);
         mainApp.runApp();
         // create employee shortcut
 //        Scanner sc = new Scanner(System.in);

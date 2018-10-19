@@ -7,10 +7,12 @@ package horsmanagementclient;
 
 import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
+import Entity.OperationManager;
 import Entity.RoomEntity;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
+import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 import java.util.List;
 import java.util.Scanner;
@@ -25,15 +27,17 @@ public class MainApp {
     private RoomTypeControllerRemote roomTypeControllerRemote;
     private RoomControllerRemote roomControllerRemote;
     private EmployeeEntity loggedInUser;
+    private RoomRateControllerRemote roomRateControllerRemote;
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
+        this.roomRateControllerRemote = roomRateControllerRemote;
     }
     
     public void test(){
@@ -122,9 +126,12 @@ public class MainApp {
             SystemAdministratorModule systemAdministratorModule = new SystemAdministratorModule(loggedInUser, employeeControllerRemote);
             systemAdministratorModule.runModule();
         }else if(loggedInUser instanceof GuestRelationOfficer){
-            OperationManagerModule guestRelationOfficerModule = new OperationManagerModule(loggedInUser, employeeControllerRemote);
+            GuestRelationOfficerModule guestRelationOfficerModule = new GuestRelationOfficerModule(loggedInUser, employeeControllerRemote);
             guestRelationOfficerModule.runModule();
         
+        }else if(loggedInUser instanceof OperationManager){
+            OperationManagerModule operationManagerModule = new OperationManagerModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote);
+            operationManagerModule.runModule();
         }else {
             System.out.println("wtf?");
         }

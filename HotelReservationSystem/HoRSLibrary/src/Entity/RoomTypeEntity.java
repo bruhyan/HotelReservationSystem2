@@ -37,17 +37,15 @@ public class RoomTypeEntity implements Serializable {
     private String bed;
     private String amenities; //amenities using String for now, could think about enums or smt next time
     private Integer capacity;
-    public boolean isDisabled;
+    private boolean isDisabled;
 
     public RoomTypeEntity() {
         this.roomList = new ArrayList<>();
         this.roomRateList = new ArrayList<>();
     }
 
-    public RoomTypeEntity(List<RoomEntity> roomList, List<RoomRatesEntity> roomRateList, String roomName, String description, Integer size, String bed, String amenities, Integer capacity) {
+    public RoomTypeEntity(String roomName, String description, Integer size, String bed, String amenities, Integer capacity) {
         this();
-        this.roomList = roomList;
-        this.roomRateList = roomRateList;
         this.roomName = roomName;
         this.description = description;
         this.size = size;
@@ -57,6 +55,9 @@ public class RoomTypeEntity implements Serializable {
         this.isDisabled = false;
     }
 
+    public void addRoomRate(RoomRatesEntity roomRate){
+            this.roomRateList.add(roomRate);
+    }
     public boolean isIsDisabled() {
         return isDisabled;
     }

@@ -7,8 +7,11 @@ package horsmanagementclient;
 
 import Entity.EmployeeEntity;
 import Entity.RoomRatesEntity;
+import Entity.RoomTypeEntity;
 import ejb.session.stateless.EmployeeControllerRemote;
+import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
+import ejb.session.stateless.RoomTypeControllerRemote;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,12 +23,16 @@ public class OperationManagerModule {
     private EmployeeEntity loggedInUser;
     private EmployeeControllerRemote employeeControllerRemote;
     private RoomRateControllerRemote roomRateControllerRemote;
+    private RoomControllerRemote roomControllerRemote;
+    private RoomTypeControllerRemote roomTypeControllerRemote;
     
     
-    public OperationManagerModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote) {
+    public OperationManagerModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
+        this.roomControllerRemote = roomControllerRemote;
+        this.roomTypeControllerRemote = roomTypeControllerRemote;
     }
     
     public void runModule() {
@@ -86,6 +93,10 @@ public class OperationManagerModule {
         System.out.println("Enter size of room type (whole square meters): \n");
                 System.out.print(">");
         Integer size = sc.nextInt();
+        sc.nextLine();
+                System.out.println("Enter Bed provided: \n");
+                System.out.print(">");
+        String bed = sc.nextLine();
         System.out.println("Enter Amenities provided: \n");
                 System.out.print(">");
         String amenities = sc.nextLine();
@@ -93,21 +104,51 @@ public class OperationManagerModule {
                 System.out.print(">");
         Integer capacity = sc.nextInt();
 
-        int roomRateId = chooseRoomRate(sc);
+        Long roomRateId = chooseRoomRate(sc);
+        sc.nextLine();
         
+        RoomTypeEntity newRoomType = new RoomTypeEntity(name, description, size, bed, amenities, capacity);
+        newRoomType = roomTypeControllerRemote.createNewRoomType(newRoomType); 
+        
+        
+        
+        System.out.println(" Room Type and room rate id here " + newRoomType.getRoomTypeId() + " " +  roomRateId);
+        roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId() ,roomRateId);
+        int response = 0;
+        //add another roomrate here if needed
+        while(response < 1 || response > 2){
+        System.out.println("Add another room rate?");
+        System.out.println("1. Yes");
+        System.out.println("2. No, System will create the room type and return you to the operation manager page.");
+        System.out.print(">");
+        response = sc.nextInt();
+        sc.nextLine();
+        if(response == 1){
+        addAnotherRoomRate(newRoomType, sc);
+        }else if(response == 2){
+            break;
+        }
+        }
        
     }
     
-    public int chooseRoomRate(Scanner sc){
+    public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc){
+        Long roomRateId = chooseRoomRate(sc);
+        roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId() ,roomRateId);
+    }
+    
+    public Long chooseRoomRate(Scanner sc){
         List<RoomRatesEntity> roomRatesList = roomRateControllerRemote.retrieveRoomRatesList();
         int i = 1;
         
         System.out.println("Choose room rate for this room type : ");
-                System.out.print(">");
-        for(RoomRatesEntity roomRateEntity : roomRatesList){
-            System.out.println(i + ". " + roomRateEntity.getName() + ", Room Rate Per Night : " + roomRateEntity.getRatePerNight());
+                
+        for(RoomRatesEntity roomRateEntity : roomRatesList){ //come back check for date validity next time.
+            System.out.println(i + ". " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
+            i++;
         }
-        return sc.nextInt();
+        System.out.print(">");
+        return sc.nextLong();
     }
     
    

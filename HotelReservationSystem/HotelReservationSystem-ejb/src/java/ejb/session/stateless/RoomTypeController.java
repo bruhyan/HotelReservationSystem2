@@ -27,14 +27,26 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
-    public void createNewRoomType(RoomTypeEntity roomType){
+    @Override
+    public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType){
         em.persist(roomType);
         em.flush();
+        
+        return roomType;
     }
     
     public void updateRoomType(RoomTypeEntity roomType){ //not sure if this will work because of the lists and many things to change. Come back to check
         em.merge(roomType);
         
+    }
+    
+    public void addRoomRateById(Long roomTypeId, Long roomRateId){
+        RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        
+        roomType.addRoomRate(roomRate);
+        
+        em.merge(roomType);
     }
     
     public RoomTypeEntity retrieveRoomTypeById(long id){
@@ -62,6 +74,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         
     }
     
+
     public List<RoomTypeEntity> retrieveRoomTypeList(RoomTypeEntity roomType){
         Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");
        
