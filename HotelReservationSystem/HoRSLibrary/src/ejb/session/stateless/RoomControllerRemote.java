@@ -17,5 +17,7 @@ import javax.ejb.Remote;
 public interface RoomControllerRemote {
 
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId);
+
+    public void createNewRoom(RoomEntity room);
     
 }

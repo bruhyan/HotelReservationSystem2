@@ -6,6 +6,7 @@
 package horsmanagementclient;
 
 import Entity.EmployeeEntity;
+import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import ejb.session.stateless.EmployeeControllerRemote;
@@ -45,21 +46,25 @@ public class OperationManagerModule {
             System.out.println("2: View all rooms");
             System.out.println("3: Create New Room Type");
             System.out.println("4: View All Room Types"); //here can view room type details first then  delete or update also
-            System.out.println("4: View Room Allocation Exception Report");
-            System.out.println("5: Exit");
+            System.out.println("5: View Room Allocation Exception Report");
+            System.out.println("6: Exit");
             input = 0;
             while (input < 1 || input > 5) {
                 System.out.print(">");
                 input = sc.nextInt();
+                 sc.nextLine();
                 if (input == 1) {
-                    // doCreateNewRoom(sc);
+                     doCreateNewRoom(sc);
                 } else if (input == 2) {
                     //   doViewAllRooms();
                 } else if (input == 3) {
                     doCreateNewRoomType(sc);
                 } else if (input == 4) {
                     doViewAllRoomTypes(sc);
-                } else if (input == 5) {
+                }else if(input == 5){
+                    doViewRoomAllocationExceptionReport();
+                }
+                else if (input == 6) {
                     break;
                 } else {
                     System.out.println("Invalid input! Please try again!");
@@ -71,18 +76,53 @@ public class OperationManagerModule {
             }
         }
     }
-//    
-//        this();
-//        this.roomList = roomList;
-//        this.roomRateList = roomRateList;
-//        this.roomName = roomName;
-//        this.description = description;
-//        this.size = size;
-//        this.bed = bed;
-//        this.amenities = amenities;
-//        this.capacity = capacity;
-//        this.isDisabled = false;    
+//  public RoomEntity(Integer roomNumber, RoomStatus roomStatus, RoomTypeEntity roomType) {
 
+    public void doCreateNewRoom(Scanner sc){
+         
+        System.out.println("Enter Room Number: \n");
+        System.out.print(">");
+        int roomNumber = sc.nextInt();
+        sc.nextLine();
+        Long roomTypeId = selectRoomType(sc);
+        RoomTypeEntity roomType = roomTypeControllerRemote.retrieveRoomTypeById(roomTypeId);
+        RoomEntity newRoom = new RoomEntity(roomNumber, roomType);
+        roomControllerRemote.createNewRoom(newRoom);
+        System.out.println("New room with room number : " + newRoom.getRoomNumber() + " has been created!");
+    }
+    public void doViewRoomAllocationExceptionReport(){
+        System.out.println("Placeholder for something going wrong with room allocation, ie not enough rooms. come back and solve this");
+    }
+    
+    public Long selectRoomType(Scanner sc){
+        List<RoomTypeEntity> roomTypeList = roomTypeControllerRemote.retrieveRoomTypeList();
+        
+    
+        if(roomTypeList.isEmpty()){
+            System.out.println("You currently have no room types available! Please create a new one first.");
+            doCreateNewRoomType(sc);
+            //Assign this new roomType to this room.
+            RoomTypeEntity roomType = roomTypeControllerRemote.retrieveSingleRoomType();
+            return roomType.getRoomTypeId();
+        }else{
+        System.out.println("Select room type to assign to the room: ");
+
+         for (RoomTypeEntity roomType : roomTypeList) {
+
+            System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomName() + " .");
+              System.out.print(">");
+        Long roomTypeId = sc.nextLong();
+        sc.nextLine();
+        return roomTypeId;
+
+        }
+        
+      
+        }
+        return null; //throw exception next time, come back
+        
+    }
+    
     public void doViewAllRoomTypes(Scanner sc) {
         
         List<RoomTypeEntity> roomTypeList = roomTypeControllerRemote.retrieveRoomTypeList();
@@ -191,7 +231,7 @@ public class OperationManagerModule {
         RoomTypeEntity newRoomType = new RoomTypeEntity(name, description, size, bed, amenities, capacity);
         newRoomType = roomTypeControllerRemote.createNewRoomType(newRoomType);
 
-        System.out.println(" Room Type and room rate id here " + newRoomType.getRoomTypeId() + " " + roomRateId);
+   
         roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId(), roomRateId);
         int response = 0;
         //add another roomrate here if needed

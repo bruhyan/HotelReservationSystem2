@@ -91,6 +91,10 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         
     }
     
+    public RoomTypeEntity retrieveSingleRoomType(){
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        return (RoomTypeEntity) query.getSingleResult();
+    }
 
     public List<RoomTypeEntity> retrieveRoomTypeList(){
         Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");

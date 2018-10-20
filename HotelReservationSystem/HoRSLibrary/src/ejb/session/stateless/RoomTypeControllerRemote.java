@@ -27,5 +27,7 @@ public interface RoomTypeControllerRemote {
     public void deleteRoomTypeById(long id);
 
     public RoomTypeEntity heavyUpdateRoom(long id, String name, String description, int size, String bed, String amenities, int capacity);
+
+    public RoomTypeEntity retrieveSingleRoomType();
     
 }
