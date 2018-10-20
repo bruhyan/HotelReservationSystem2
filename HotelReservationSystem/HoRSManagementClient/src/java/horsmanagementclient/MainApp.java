@@ -10,6 +10,7 @@ import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
 import Entity.RoomEntity;
 import Entity.SystemAdministrator;
+import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
@@ -28,16 +29,18 @@ public class MainApp {
     private RoomControllerRemote roomControllerRemote;
     private EmployeeEntity loggedInUser;
     private RoomRateControllerRemote roomRateControllerRemote;
+    private BookingControllerRemote bookingControllerRemote;
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
+        this.bookingControllerRemote = bookingControllerRemote;
     }
     
     public void test(){
@@ -130,7 +133,7 @@ public class MainApp {
             guestRelationOfficerModule.runModule();
         
         }else if(loggedInUser instanceof OperationManager){
-            OperationManagerModule operationManagerModule = new OperationManagerModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote);
+            OperationManagerModule operationManagerModule = new OperationManagerModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
             operationManagerModule.runModule();
         }else {
             System.out.println("wtf?");

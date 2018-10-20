@@ -5,16 +5,19 @@
  */
 package horsmanagementclient;
 
+import Entity.BookingEntity;
 import Entity.EmployeeEntity;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 import java.util.List;
 import java.util.Scanner;
+import util.enumeration.RoomStatus;
 
 /**
  *
@@ -27,13 +30,15 @@ public class OperationManagerModule {
     private RoomRateControllerRemote roomRateControllerRemote;
     private RoomControllerRemote roomControllerRemote;
     private RoomTypeControllerRemote roomTypeControllerRemote;
+    private BookingControllerRemote bookingControllerRemote;
 
-    public OperationManagerModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote) {
+    public OperationManagerModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
+        this.bookingControllerRemote = bookingControllerRemote;
     }
 
     public void runModule() {
@@ -56,7 +61,7 @@ public class OperationManagerModule {
                 if (input == 1) {
                      doCreateNewRoom(sc);
                 } else if (input == 2) {
-                    //   doViewAllRooms();
+                     doViewAllRooms(sc);
                 } else if (input == 3) {
                     doCreateNewRoomType(sc);
                 } else if (input == 4) {
@@ -78,6 +83,106 @@ public class OperationManagerModule {
     }
 //  public RoomEntity(Integer roomNumber, RoomStatus roomStatus, RoomTypeEntity roomType) {
 
+    public void doViewAllRooms(Scanner sc){
+        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomList();
+        if(roomList.isEmpty()){
+            System.out.println("You currently have no room available! Please create a new one first.");
+
+        }else{
+            System.out.println("Select the room you'd wish to view in more detail, update or delete :");
+        for (RoomEntity room : roomList) {
+
+            System.out.println(room.getRoomId() + ". Room number : " + room.getRoomNumber() + " .");
+
+        }
+        System.out.print(">");
+        Long roomId = sc.nextLong();
+        sc.nextLine();
+        viewSingleRoom(roomId, sc);
+        }
+    }
+    
+    public void viewSingleRoom(Long roomId, Scanner sc){
+        RoomEntity room = roomControllerRemote.retrieveRoomById(roomId);
+      
+        int response = 0;
+        System.out.println("============= Selected Room Type Information:  ===========");
+        System.out.println("Room Number: " + room.getRoomNumber());
+        System.out.println("Room Status: " + String.valueOf(room.getRoomStatus()));
+        System.out.println("Room Type: " + room.getRoomType());
+        System.out.println("Room Booking: " + room.getBooking());
+        System.out.println("Room disabled: " + room.getIsDisabled());
+
+
+        System.out.println("==============================================================");
+        while (response < 1 || response > 3) {
+            System.out.println("Would you like to 1. Update 2. Delete 3. Exit ?");
+            response = sc.nextInt();
+            sc.nextLine();
+            if (response == 1) {
+                doUpdateRoom(room, sc); 
+            } else if (response == 2) {
+                doDeleteRoom(roomId);
+            } else if (response == 3) {
+                break;
+            } else {
+                System.out.println("Invalid response! Please try again.");
+            }
+        }
+    }
+    
+    public void doUpdateRoom(RoomEntity room, Scanner sc){
+    System.out.println("Enter new room number: ( previous: " + room.getRoomNumber() + " ) \n");
+        System.out.print(">");
+        int roomNumber = sc.nextInt();
+        System.out.println("Set room status :  1. Available 2. Occupied 3. Reserved ( previous: " + String.valueOf(room.getRoomStatus()) + " ) \n");
+        System.out.print(">");
+        
+        int roomStatus = 0;
+        while(roomStatus < 1 || roomStatus > 3){
+            roomStatus = sc.nextInt();
+            if(roomStatus > 3 || roomStatus < 1){
+                System.out.println("Invalid input! Please try again.");
+            }
+        }
+        RoomStatus newRoomStatus = RoomStatus.values()[roomStatus-1];
+        
+        Long bookingId = selectBookingId(sc);
+        
+        Long roomTypeId = selectRoomType(sc);
+        
+        if(bookingId == null){
+        RoomEntity newRoom = roomControllerRemote.heavyUpdateRoom(room.getRoomId(), roomNumber, newRoomStatus, roomTypeId);
+        }else{
+        RoomEntity newRoom = roomControllerRemote.heavyUpdateRoom(room.getRoomId(), roomNumber, newRoomStatus, bookingId, roomTypeId);
+        }
+        System.out.println("Room has been updated!");
+    }
+    
+    public Long selectBookingId(Scanner sc){
+        List<BookingEntity> bookingList = bookingControllerRemote.retrieveBookingList();
+        if(bookingList.isEmpty()){
+            System.out.println("You currently have no booking available! Please create a new one first.");
+            System.out.println("No booking will be assigned for now.");
+
+        }else{
+            System.out.println("Select the booking you'd wish to assign to your room:");
+        for (BookingEntity booking : bookingList) {
+
+            System.out.println("Booking Id : " + booking.getBookingId() +" .");
+
+        }
+        System.out.print(">");
+        Long bookingId = sc.nextLong();
+        sc.nextLine();
+        return bookingId;
+        }
+        return null; //throw exception later come back
+    }
+    
+    public void doDeleteRoom(Long roomId){
+    
+    }
     public void doCreateNewRoom(Scanner sc){
          
         System.out.println("Enter Room Number: \n");

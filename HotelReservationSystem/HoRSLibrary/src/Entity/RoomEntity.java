@@ -44,6 +44,14 @@ public class RoomEntity implements Serializable {
         this.roomType = roomType;
     }
 
+    public BookingEntity getBooking() {
+        return booking;
+    }
+
+    public void setBooking(BookingEntity booking) {
+        this.booking = booking;
+    }
+
     public RoomTypeEntity getRoomType() {
         return roomType;
     }

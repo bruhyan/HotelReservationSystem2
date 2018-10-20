@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import Entity.RoomEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.RoomStatus;
 
 /**
  *
@@ -19,5 +20,13 @@ public interface RoomControllerRemote {
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId);
 
     public void createNewRoom(RoomEntity room);
+
+    public List<RoomEntity> retrieveRoomList();
+
+    public RoomEntity retrieveRoomById(Long id);
+
+    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId);
+
+    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId);
     
 }

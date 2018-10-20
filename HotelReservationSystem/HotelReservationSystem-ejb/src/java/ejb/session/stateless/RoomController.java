@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import Entity.BookingEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
@@ -29,12 +30,16 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         em.flush();
     }
     
+    public List<RoomEntity> retrieveRoomList(){
+        Query query = em.createQuery("SELECT r FROM RoomEntity r");
+        return query.getResultList();
+    }
     public void updateRoom(RoomEntity room){
         em.merge(room);
     }
     
     public void deleteRoomById(Long id){
-        RoomEntity room = findRoomById(id);
+        RoomEntity room = retrieveRoomById(id);
         //Double check here
         //Delete previous rooms that was set to disabled, or mass deletion by checking if smt is disabled when system starts.
         if(room.getRoomStatus() == RoomStatus.OCCUPIED ){
@@ -46,11 +51,38 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         }
     }
     
-    public RoomEntity findRoomById(Long id){
+    public RoomEntity retrieveRoomById(Long id){
         return em.find(RoomEntity.class, id);
         
     }
-    
+        //Overloaded method
+        public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId){
+        RoomEntity room = em.find(RoomEntity.class, id);
+        room.setRoomNumber(roomNumber);
+        room.setRoomStatus(newRoomStatus);
+
+        
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        room.setRoomType(roomType);
+        em.merge(room);
+        
+        return room;
+    }
+    @Override
+    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId){
+        RoomEntity room = em.find(RoomEntity.class, id);
+        room.setRoomNumber(roomNumber);
+        room.setRoomStatus(newRoomStatus);
+        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+        
+        room.setBooking(booking);
+        
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        room.setRoomType(roomType);
+        em.merge(room);
+        
+        return room;
+    }
     //get list of room by room type.
     
     @Override
