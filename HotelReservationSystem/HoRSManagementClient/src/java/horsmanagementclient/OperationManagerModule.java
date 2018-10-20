@@ -181,7 +181,8 @@ public class OperationManagerModule {
     }
     
     public void doDeleteRoom(Long roomId){
-    
+        roomControllerRemote.deleteRoomById(roomId);
+        System.out.println("Room has been deleted.");
     }
     public void doCreateNewRoom(Scanner sc){
          

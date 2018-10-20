@@ -28,5 +28,7 @@ public interface RoomControllerRemote {
     public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId);
 
     public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId);
+
+    public void deleteRoomById(Long id);
     
 }
