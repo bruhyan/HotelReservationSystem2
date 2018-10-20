@@ -19,4 +19,6 @@ public interface RoomControllerLocal {
 
     public List<RoomEntity> retrieveRoomListByType(RoomTypeEntity roomType);
     
+    public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId);
+    
 }

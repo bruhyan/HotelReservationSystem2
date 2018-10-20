@@ -42,7 +42,7 @@ public class MainApp {
     
     public void test(){
         
-        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(1l);
+        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
         for(RoomEntity room : roomList){
             System.out.println(room.getRoomNumber());
         }

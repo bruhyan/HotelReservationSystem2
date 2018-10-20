@@ -9,6 +9,7 @@ import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +24,10 @@ import javax.persistence.Query;
 @Stateless
 public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeControllerLocal {
 
+    @EJB
     private RoomControllerLocal roomControllerLocal;
+    @EJB
+    private RoomControllerRemote roomControllerRemote;
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
@@ -65,15 +69,16 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         updateRoomType(roomType);
         return roomType;
     }
-    
+
     public void deleteRoomTypeById(long id){
         RoomTypeEntity roomType = retrieveRoomTypeById(id);
         //call room controller local to find list by Type
-        List<RoomEntity> roomList = roomControllerLocal.retrieveRoomListByType(roomType);
+        List<RoomEntity> roomList = roomControllerLocal.retrieveRoomListByTypeId(id); //this is returning null. Maybe EJB cannot call other ejb this way?
         if(!roomList.isEmpty()){
             //set all to be disabled
             for(RoomEntity room : roomList){
                 room.setIsDisabled(true);
+                //roomControllerLocal.updateRoom(room);
             }
             //set roomType to be disabled as well.
             roomType.setIsDisabled(true);

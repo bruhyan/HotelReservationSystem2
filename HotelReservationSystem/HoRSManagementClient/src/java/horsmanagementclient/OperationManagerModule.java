@@ -84,17 +84,23 @@ public class OperationManagerModule {
 //        this.isDisabled = false;    
 
     public void doViewAllRoomTypes(Scanner sc) {
-        System.out.println("Select the room type you'd wish to view in more detail, update or delete :");
+        
         List<RoomTypeEntity> roomTypeList = roomTypeControllerRemote.retrieveRoomTypeList();
+        if(roomTypeList.isEmpty()){
+            System.out.println("You currently have no room types available! Please create a new one first.");
 
+        }else{
+            System.out.println("Select the room type you'd wish to view in more detail, update or delete :");
         for (RoomTypeEntity roomType : roomTypeList) {
 
             System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomName() + " .");
 
         }
+        System.out.print(">");
         Long roomTypeId = sc.nextLong();
         sc.nextLine();
         viewSingleRoomType(roomTypeId, sc);
+        }
     }
 
     public void viewSingleRoomType(Long roomTypeId, Scanner sc) {
@@ -154,6 +160,7 @@ public class OperationManagerModule {
     
     public void doDeleteRoomType(Long roomTypeId){
         roomTypeControllerRemote.deleteRoomTypeById(roomTypeId);
+        System.out.println("Room type has been deleted.");
     }
 
     public void doCreateNewRoomType(Scanner sc) {

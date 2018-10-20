@@ -56,7 +56,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     @Override
     public List<RoomEntity> retrieveRoomListByType(RoomTypeEntity roomType){
 
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType"); //find out if this is correct
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType"); 
         query.setParameter("roomType", roomType);
         
         return query.getResultList();
@@ -65,7 +65,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     @Override
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId){
         
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType  = :roomType"); //find out if this is correct
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType  = :roomType"); 
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
         query.setParameter("roomType", roomType);
         
