@@ -27,6 +27,7 @@ public class CustomerEntity implements Serializable {
     private String contactNumber;
     private String firstName;
     private String lastName;
+    private PartnerEntity partner;
 
     public CustomerEntity() {
     }
@@ -113,6 +114,14 @@ public class CustomerEntity implements Serializable {
     @Override
     public String toString() {
         return "Entity.CustomerEntity[ id=" + customerId + " ]";
+    }
+
+    public PartnerEntity getPartner() {
+        return partner;
+    }
+
+    public void setPartner(PartnerEntity partner) {
+        this.partner = partner;
     }
     
 }

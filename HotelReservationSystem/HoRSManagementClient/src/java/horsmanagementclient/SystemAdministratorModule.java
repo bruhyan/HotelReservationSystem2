@@ -8,9 +8,13 @@ package horsmanagementclient;
 import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
+import Entity.PartnerEntity;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.EmployeeControllerRemote;
+import ejb.session.stateless.PartnerControllerRemote;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -20,10 +24,12 @@ import java.util.Scanner;
 public class SystemAdministratorModule {
     private EmployeeEntity loggedInUser;
     private EmployeeControllerRemote employeeControllerRemote;
+    private PartnerControllerRemote partnerControllerRemote;
 
-    public SystemAdministratorModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote) {
+    public SystemAdministratorModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, PartnerControllerRemote partnerControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
+        this.partnerControllerRemote = partnerControllerRemote;
     }
     
     public void runModule() {
@@ -38,10 +44,16 @@ public class SystemAdministratorModule {
             System.out.println("5: Exit");
             input = 0;
             while(input < 1 || input > 5) {
-                System.out.println(">");
+                System.out.print(">");
                 input = sc.nextInt();
                 if(input == 1) {
                     doCreateEmployee(sc);
+                }else if(input == 2) {
+                    doViewAllEmployees();
+                }else if(input == 3) {
+                    doCreatePartner(sc);
+                }else if(input == 4) {
+                    doViewAllPartners();
                 }else if(input == 5) {
                     break;
                 }
@@ -55,6 +67,7 @@ public class SystemAdministratorModule {
     
     public void doCreateEmployee(Scanner sc) {
         sc.nextLine();
+        System.out.println("==== Create Employee Page ====");
         System.out.println("Enter name");
         String name = sc.nextLine();
         System.out.println("Enter contact number");
@@ -101,6 +114,48 @@ public class SystemAdministratorModule {
         sc.nextLine();
         
         return reply;
+        
+    }
+    
+    public void doCreatePartner(Scanner sc) {
+        sc.nextLine();
+        System.out.println("==== Create Partner Page =====");
+        System.out.println("Enter partner email: ");
+        String email = sc.nextLine();
+        System.out.println("Enter password: ");
+        String password = sc.nextLine();
+        System.out.println("Enter partner name: ");
+        String partnerName = sc.nextLine();
+        System.out.println("Enter contact number: ");
+        String contactNum = sc.nextLine();
+        Date createdAt = new Date();
+        PartnerEntity newPartner = new PartnerEntity(email, password, partnerName, contactNum, createdAt);
+        newPartner = partnerControllerRemote.createPartnerEntity(newPartner);
+        System.out.println("New partner "+newPartner.getEmail()+" created successfully");
+        
+    }
+    
+    public void doViewAllEmployees() {
+        System.out.println("=====================================================================================================================");
+        List<EmployeeEntity> employees = employeeControllerRemote.retrieveAllEmployees();
+        int index = 1;
+        for(EmployeeEntity em : employees) {
+            System.out.println("Index: "+index+" Name: "+em.getName()+" Email: "+em.getEmail()+" ContactNumber: "+em.getContactNumber()+" Address: "+em.getAddress());
+            index++;
+        }
+        System.out.println("=====================================================================================================================");
+    }
+    
+    
+    public void doViewAllPartners() {
+        System.out.println("=====================================================================================================================");
+        List<PartnerEntity> partners = partnerControllerRemote.retrieveAllPartner();
+        int index = 1;
+        for(PartnerEntity pt : partners) {
+            System.out.println("Index: "+index+" Name: "+pt.getName()+" Email: "+pt.getEmail()+" ContactNumber: "+pt.getContactNumber()+" Created At: "+pt.getCreatedAt());
+            index++;
+        }
+        System.out.println("=====================================================================================================================");
         
     }
     

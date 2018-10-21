@@ -12,6 +12,7 @@ import Entity.RoomEntity;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
+import ejb.session.stateless.PartnerControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
@@ -30,17 +31,19 @@ public class MainApp {
     private EmployeeEntity loggedInUser;
     private RoomRateControllerRemote roomRateControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
+    private PartnerControllerRemote partnerControllerRemote;
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
+        this.partnerControllerRemote = partnerControllerRemote;
     }
     
     public void test(){
@@ -126,7 +129,7 @@ public class MainApp {
     public void doStreamEmployee() {
         if (loggedInUser instanceof SystemAdministrator) {
             //System.out.println("Hello System Admin");
-            SystemAdministratorModule systemAdministratorModule = new SystemAdministratorModule(loggedInUser, employeeControllerRemote);
+            SystemAdministratorModule systemAdministratorModule = new SystemAdministratorModule(loggedInUser, employeeControllerRemote, partnerControllerRemote);
             systemAdministratorModule.runModule();
         }else if(loggedInUser instanceof GuestRelationOfficer){
             GuestRelationOfficerModule guestRelationOfficerModule = new GuestRelationOfficerModule(loggedInUser, employeeControllerRemote);

@@ -10,6 +10,7 @@ import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
+import java.util.List;
 import javax.ejb.Remote;
 import util.exception.EmployeeNotFoundException;
 
@@ -31,5 +32,7 @@ public interface EmployeeControllerRemote {
     public SalesManager createSalesManager(SalesManager sm);
 
     public GuestRelationOfficer createGuestRelationOfficer(GuestRelationOfficer gro);
+
+    public List<EmployeeEntity> retrieveAllEmployees();
     
 }

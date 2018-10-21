@@ -10,6 +10,7 @@ import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -75,6 +76,12 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
          query.setParameter("inEmail", email);
          EmployeeEntity employee = (EmployeeEntity)query.getSingleResult();
          return employee;
+     }
+     
+    @Override
+     public List<EmployeeEntity> retrieveAllEmployees() {
+         Query query = em.createQuery("SELECT e FROM EmployeeEntity e");
+         return query.getResultList();
      }
      
      
