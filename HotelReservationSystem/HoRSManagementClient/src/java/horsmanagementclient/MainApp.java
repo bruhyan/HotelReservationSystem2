@@ -129,15 +129,15 @@ public class MainApp {
     public void doStreamEmployee() {
         if (loggedInUser instanceof SystemAdministrator) {
             //System.out.println("Hello System Admin");
-            SystemAdministratorModule systemAdministratorModule = new SystemAdministratorModule(loggedInUser, employeeControllerRemote, partnerControllerRemote);
+            SystemAdministrationModule systemAdministratorModule = new SystemAdministrationModule(loggedInUser, employeeControllerRemote, partnerControllerRemote);
             systemAdministratorModule.runModule();
         }else if(loggedInUser instanceof GuestRelationOfficer){
-            GuestRelationOfficerModule guestRelationOfficerModule = new GuestRelationOfficerModule(loggedInUser, employeeControllerRemote);
-            guestRelationOfficerModule.runModule();
+            FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote);
+            frontOfficeModule.runModule();
         
         }else if(loggedInUser instanceof OperationManager){
-            OperationManagerModule operationManagerModule = new OperationManagerModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
-            operationManagerModule.runModule();
+            HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
+            hotelOperationModule.runModule();
         }else {
             System.out.println("wtf?");
         }

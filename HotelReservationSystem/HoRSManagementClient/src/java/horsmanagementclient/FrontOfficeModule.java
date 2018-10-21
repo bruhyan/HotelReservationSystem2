@@ -13,16 +13,16 @@ import ejb.session.stateless.RoomRateControllerRemote;
  *
  * @author mdk12
  */
-public class GuestRelationOfficerModule {
+public class FrontOfficeModule {
         private EmployeeEntity loggedInUser;
     private EmployeeControllerRemote employeeControllerRemote;
 
     
-    public GuestRelationOfficerModule(){
+    public FrontOfficeModule(){
     
     }
     
-    public GuestRelationOfficerModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote){
+    public FrontOfficeModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote){
         this();
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;

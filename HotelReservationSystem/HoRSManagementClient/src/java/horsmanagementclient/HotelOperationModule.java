@@ -23,7 +23,7 @@ import util.enumeration.RoomStatus;
  *
  * @author mdk12
  */
-public class OperationManagerModule {
+public class HotelOperationModule {
 
     private EmployeeEntity loggedInUser;
     private EmployeeControllerRemote employeeControllerRemote;
@@ -32,7 +32,7 @@ public class OperationManagerModule {
     private RoomTypeControllerRemote roomTypeControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
 
-    public OperationManagerModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote) {
+    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;

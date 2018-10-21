@@ -21,12 +21,12 @@ import java.util.Scanner;
  *
  * @author Bryan
  */
-public class SystemAdministratorModule {
+public class SystemAdministrationModule {
     private EmployeeEntity loggedInUser;
     private EmployeeControllerRemote employeeControllerRemote;
     private PartnerControllerRemote partnerControllerRemote;
 
-    public SystemAdministratorModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, PartnerControllerRemote partnerControllerRemote) {
+    public SystemAdministrationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, PartnerControllerRemote partnerControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.partnerControllerRemote = partnerControllerRemote;
