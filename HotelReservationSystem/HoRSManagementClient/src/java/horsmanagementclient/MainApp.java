@@ -132,7 +132,7 @@ public class MainApp {
             SystemAdministrationModule systemAdministratorModule = new SystemAdministrationModule(loggedInUser, employeeControllerRemote, partnerControllerRemote);
             systemAdministratorModule.runModule();
         }else if(loggedInUser instanceof GuestRelationOfficer){
-            FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote);
+            FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomTypeControllerRemote);
             frontOfficeModule.runModule();
         
         }else if(loggedInUser instanceof OperationManager){

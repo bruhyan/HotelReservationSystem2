@@ -114,5 +114,12 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
                 
     }
     
+    @Override
+    public List<RoomEntity> retrieveRoomEntityByRoomType(RoomTypeEntity roomType) {
+        List<RoomEntity> roomsByType = roomType.getRoomList();
+        return roomsByType;
+        
+    }
+    
 
 }

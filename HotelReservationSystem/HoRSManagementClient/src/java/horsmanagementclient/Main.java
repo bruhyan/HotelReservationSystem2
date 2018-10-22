@@ -12,6 +12,7 @@ import ejb.session.stateless.PartnerControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import java.util.Calendar;
 
 /**
  *
@@ -35,6 +36,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        System.out.println(year);
         MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote);
         mainApp.runApp();
         // create employee shortcut

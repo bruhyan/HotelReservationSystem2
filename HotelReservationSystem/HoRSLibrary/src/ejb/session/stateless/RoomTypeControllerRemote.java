@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Remote;
@@ -29,5 +30,7 @@ public interface RoomTypeControllerRemote {
     public RoomTypeEntity heavyUpdateRoom(long id, String name, String description, int size, String bed, String amenities, int capacity);
 
     public RoomTypeEntity retrieveSingleRoomType();
+
+    public List<RoomEntity> retrieveRoomEntityByRoomType(RoomTypeEntity roomType);
     
 }
