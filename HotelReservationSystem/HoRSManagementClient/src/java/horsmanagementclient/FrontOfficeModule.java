@@ -8,6 +8,7 @@ package horsmanagementclient;
 import Entity.EmployeeEntity;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
+import java.util.Scanner;
 
 /**
  *
@@ -28,7 +29,44 @@ public class FrontOfficeModule {
         this.employeeControllerRemote = employeeControllerRemote;
     }
     
-    public void runModule(){
-    
+    public void runModule() {
+        Scanner sc = new Scanner(System.in);
+        int input = 0;
+        while(true) {
+            System.out.println("==== Welcome to the Front Office Module ====");
+            System.out.println("1: Walk-in Search Room");
+            System.out.println("2: Walk-in Reserve Room");
+            System.out.println("3: Check-in Guest");
+            System.out.println("4: Check-out Guest");
+            System.out.println("5: Exit");
+            input = 0;
+            while(input < 1 || input > 5) {
+                System.out.print(">");
+                input = sc.nextInt();
+                if(input == 1) {
+                    
+                }else if(input == 2) {
+                   
+                }else if(input == 3) {
+                    
+                }else if(input == 4) {
+                    
+                }else if(input == 5) {
+                    break;
+                }
+                
+            }
+            if(input == 5) {
+                break;
+            }
+        }
     }
+    
+    public void doWalkInSearchRoom(Scanner sc) {
+        System.out.println();
+    }
+    
+    
+    
+    
 }
