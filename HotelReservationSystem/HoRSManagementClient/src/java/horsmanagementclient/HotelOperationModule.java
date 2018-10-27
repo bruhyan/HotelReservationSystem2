@@ -76,7 +76,7 @@ public class HotelOperationModule {
                 }
 
             }
-            if (input == 5) {
+            if (input == 6) {
                 break;
             }
         }
@@ -216,17 +216,17 @@ public class HotelOperationModule {
          for (RoomTypeEntity roomType : roomTypeList) {
 
             System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomName() + " .");
+         }
               System.out.print(">");
         Long roomTypeId = sc.nextLong();
         sc.nextLine();
         return roomTypeId;
 
-        }
         
       
-        }
-        return null; //throw exception next time, come back
         
+        
+    }
     }
     
     public void doViewAllRoomTypes(Scanner sc) {
@@ -310,7 +310,7 @@ public class HotelOperationModule {
     }
 
     public void doCreateNewRoomType(Scanner sc) {
-        sc.nextLine();
+        
         System.out.println("Enter Room Type Name: \n");
         System.out.print(">");
         String name = sc.nextLine();
