@@ -104,7 +104,7 @@ public class FrontOfficeModule {
         }
         
         for(RoomEntity availRoom : availRooms) {
-            System.out.println("Room Type: "+availRoom.getRoomType()+" Room Number: "+availRoom.getRoomNumber());
+            System.out.println("Room Type: "+availRoom.getRoomType().getRoomName()+" Room Number: "+availRoom.getRoomNumber());
         }
         
         
