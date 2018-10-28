@@ -145,10 +145,10 @@ public class MainApp {
         
         }else if(loggedInUser instanceof OperationManager){
             HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
-            hotelOperationModule.runModule();
-        }else if(loggedInUser instanceof SalesManager) {
-            HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
-            hotelOperationModule.runModule();
+            hotelOperationModule.runOperationManagerModuleModule();
+        }else if(loggedInUser instanceof SalesManager){
+                        HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
+            hotelOperationModule.runSalesManagerModule();
         }else {
             System.out.println("wtf?");
         }

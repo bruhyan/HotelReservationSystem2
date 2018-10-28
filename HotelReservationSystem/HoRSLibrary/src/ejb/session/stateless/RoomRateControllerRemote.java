@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import Entity.RoomRatesEntity;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -16,4 +18,14 @@ import javax.ejb.Remote;
 @Remote
 public interface RoomRateControllerRemote {
         public List<RoomRatesEntity> retrieveRoomRatesList();
+
+    public void createNewRoomRate(RoomRatesEntity roomRates);
+
+    public void updateRoomRates(RoomRatesEntity roomRates);
+
+    public void deleteRoomRatesById(Long id);
+
+    public RoomRatesEntity retrieveRoomRatesById(Long id);
+
+    public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd);
 }
