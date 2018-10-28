@@ -5,6 +5,7 @@
  */
 package horsmanagementclient;
 
+import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
 import javax.ejb.EJB;
 import ejb.session.stateless.EmployeeControllerRemote;
@@ -13,6 +14,7 @@ import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 import java.util.Calendar;
+import java.util.Scanner;
 
 /**
  *
@@ -36,27 +38,27 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        System.out.println(year);
+        //int year = Calendar.getInstance().get(Calendar.YEAR);
+        //System.out.println(year);
+        
+//         create employee shortcut
+        /*Scanner sc = new Scanner(System.in);
+        System.out.println("Enter name");
+        String name = sc.nextLine();
+        System.out.println("Enter contact number");
+        String contact = sc.nextLine();
+        System.out.println("Enter email");
+        String email = sc.nextLine();
+        System.out.println("Enter password");
+        String password = sc.nextLine();
+        System.out.println("Enter address");
+        String address = sc.nextLine();
+        SystemAdministrator sa = new SystemAdministrator(name, contact, email, password, address);
+        sa = employeeControllerRemote.createSystemAdministrator(sa);
+        System.out.println("Test success");*/
+        
         MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote);
         mainApp.runApp();
-        // create employee shortcut
-//        Scanner sc = new Scanner(System.in);
-//        System.out.println("Enter name");
-//        String name = sc.nextLine();
-//        System.out.println("Enter contact number");
-//        String contact = sc.nextLine();
-//        System.out.println("Enter email");
-//        String email = sc.nextLine();
-//        System.out.println("Enter password");
-//        String password = sc.nextLine();
-//        System.out.println("Enter address");
-//        String address = sc.nextLine();
-//        SystemAdministrator sa = new SystemAdministrator(name, contact, email, password, address);
-//        sa = employeeControllerRemote.createSystemAdministrator(sa);
-//        System.out.println("Test success");
-        
-        
         
 
     }
