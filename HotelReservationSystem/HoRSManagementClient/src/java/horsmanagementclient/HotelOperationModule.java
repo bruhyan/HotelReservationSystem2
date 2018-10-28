@@ -15,6 +15,10 @@ import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.RoomStatus;
@@ -41,7 +45,7 @@ public class HotelOperationModule {
         this.bookingControllerRemote = bookingControllerRemote;
     }
 
-    public void runModule() {
+    public void runOperationManagerModuleModule() {
         Scanner sc = new Scanner(System.in);
         int input = 0;
         while (true) {
@@ -54,7 +58,7 @@ public class HotelOperationModule {
             System.out.println("5: View Room Allocation Exception Report");
             System.out.println("6: Exit");
             input = 0;
-            while (input < 1 || input > 5) {
+            while (input < 1 || input > 6) {
                 System.out.print(">");
                 input = sc.nextInt();
                  sc.nextLine();
@@ -81,8 +85,161 @@ public class HotelOperationModule {
             }
         }
     }
-//  public RoomEntity(Integer roomNumber, RoomStatus roomStatus, RoomTypeEntity roomType) {
+    
+    public void runSalesManagerModule(){
+                Scanner sc = new Scanner(System.in);
+        int input = 0;
+        while (true) {
+            System.out.println("==== Welcome to the Sales Manager Module ====");
 
+            System.out.println("1: Create new room rate");
+            System.out.println("2: View all room rates");
+            System.out.println("3: Exit");
+            input = 0;
+            while (input < 1 || input > 3) {
+                System.out.print(">");
+                input = sc.nextInt();
+                 sc.nextLine();
+                if (input == 1) {
+                     doCreateNewRoomRate(sc);
+                } else if (input == 2) {
+                     doViewAllRoomRate(sc);
+                } else if (input == 3) {
+                    break;
+                } else {
+                    System.out.println("Invalid input! Please try again!");
+                }
+
+            }
+            if (input == 3) {
+                break;
+            }
+        }
+    }
+// public RoomRatesEntity(String name, BigDecimal ratePerNight, Date validityStart, Date validityEnd) {
+    
+    public void doCreateNewRoomRate(Scanner sc){
+            
+        System.out.println("Enter Room Rate Name: \n");
+        System.out.print(">");
+        String roomRateName = sc.nextLine();
+        
+                System.out.println("Enter Room Rate per night: \n");
+        System.out.print(">");
+        BigDecimal ratePerNight = sc.nextBigDecimal();
+        sc.nextLine();
+        
+                System.out.println("Enter validity start date (eg. 25-11-1995): \n");
+        System.out.print(">");
+        String startDate = sc.next();
+        sc.nextLine();
+        System.out.println("Enter validity end date (eg. 25-11-2000): \n");
+        System.out.print(">");
+        String endDate = sc.next();
+        sc.nextLine();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
+        Date date2 = null;
+        Date date3 = null;
+        try{
+            date2 = dateFormat.parse(startDate);
+                        date3 = dateFormat.parse(endDate);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        
+        RoomRatesEntity roomRate = new RoomRatesEntity(roomRateName, ratePerNight, date2, date3);
+        roomRateControllerRemote.createNewRoomRate(roomRate);
+       System.out.println("New Room rate of name : " + roomRate.getName() + " has been created!");
+    }
+    
+    public void doViewAllRoomRate(Scanner sc){
+        List<RoomRatesEntity> roomRateList = roomRateControllerRemote.retrieveRoomRatesList();
+         if(roomRateList.isEmpty()){
+            System.out.println("You currently have no room rate available! Please create a new one first.");
+
+        }else{
+            System.out.println("Select the room rate you'd wish to view in more detail, update or delete :");
+        for (RoomRatesEntity roomRate : roomRateList) {
+
+            System.out.println(roomRate.getRoomRatesId() + ". Room Rate name : " + roomRate.getName() + " .");
+
+        }
+        System.out.print(">");
+        Long roomRateId = sc.nextLong();
+        sc.nextLine();
+        viewRoomRate(roomRateId, sc);
+    }
+    }
+    public void viewRoomRate(Long roomRateId, Scanner sc){
+         RoomRatesEntity roomRate = roomRateControllerRemote.retrieveRoomRatesById(roomRateId);
+      
+        int response = 0;
+        System.out.println("============= Selected Room Type Information:  ===========");
+        System.out.println("Room Rate Name: " + roomRate.getName());
+        System.out.println("Room Rate per night : $" + roomRate.getRatePerNight());
+        System.out.println("Room Rate validity start: " + roomRate.getValidityStart());
+        System.out.println("Room Rate validity end: " + roomRate.getValidityEnd());
+        System.out.println("Room Rate disabled: " + roomRate.getIsDisabled());
+
+
+        System.out.println("==============================================================");
+        while (response < 1 || response > 3) {
+            System.out.println("Would you like to 1. Update 2. Delete 3. Exit ?");
+            response = sc.nextInt();
+            sc.nextLine();
+            if (response == 1) {
+                doUpdateRoomRate(roomRate, sc); 
+            } else if (response == 2) {
+                doDeleteRoomRate(roomRateId);
+            } else if (response == 3) {
+                break;
+            } else {
+                System.out.println("Invalid response! Please try again.");
+            }
+        }
+    }
+
+    public void doUpdateRoomRate(RoomRatesEntity roomRate, Scanner sc){
+    System.out.println("Enter new room rate name: ( previous: " + roomRate.getName() + " ) \n");
+        System.out.print(">");
+        String roomRateName = sc.nextLine();
+     
+        
+  
+                System.out.println("Enter new Room Rate per night:  ( previous: " + roomRate.getRatePerNight() + " ) \n");
+        System.out.print(">");
+        BigDecimal ratePerNight = sc.nextBigDecimal();
+        sc.nextLine();
+        
+                System.out.println("Enter validity start date (eg. 25-11-1995): ( previous: " + roomRate.getValidityStart() + " )\n");
+        System.out.print(">");
+        String startDate = sc.next();
+        sc.nextLine();
+        System.out.println("Enter validity end date (eg. 25-11-2000): ( previous: " + roomRate.getValidityEnd() + " ) \n");
+        System.out.print(">");
+        String endDate = sc.next();
+        sc.nextLine();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
+        Date date2 = null;
+        Date date3 = null;
+        try{
+            date2 = dateFormat.parse(startDate);
+                        date3 = dateFormat.parse(endDate);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+      
+       
+        RoomRatesEntity newRoomRate = roomRateControllerRemote.heavyUpdateRoomRate(roomRate.getRoomRatesId(), roomRateName, ratePerNight, date2, date3);
+        
+        System.out.println("Room Rate has been updated!");
+    }
+    
+    public void doDeleteRoomRate(Long roomRateId){
+                roomRateControllerRemote.deleteRoomRatesById(roomRateId);
+        System.out.println("Room rate has been deleted.");
+    }
+    
     public void doViewAllRooms(Scanner sc){
         List<RoomEntity> roomList = roomControllerRemote.retrieveRoomList();
         if(roomList.isEmpty()){

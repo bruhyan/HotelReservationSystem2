@@ -5,10 +5,12 @@
  */
 package ejb.session.stateless;
 
-import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,6 +25,7 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
+    @EJB
     private RoomTypeControllerLocal roomTypeControllerLocal;
     
     public void createNewRoomRate(RoomRatesEntity roomRates){
@@ -63,7 +66,22 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r");
         return query.getResultList();
     }
+    //heavyUpdateRoomRate(roomRate.getRoomRatesId(), roomRateName, ratePerNight, date2, date3);
+    public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd){
+            RoomRatesEntity roomRates = retrieveRoomRatesById(roomRateId);
+        roomRates.setName(roomRateName);
+        roomRates.setRatePerNight(ratePerNight);
+        roomRates.setValidityStart(dateStart);
+        roomRates.setValidityEnd(dateEnd);
+        updateRoomRate(roomRates);
+        return roomRates;
     
+    }
+    
+        public void updateRoomRate(RoomRatesEntity roomRates){ //not sure if this will work because of the lists and many things to change. Come back to check
+        em.merge(roomRates);
+        
+    }
     //get list of room by room type.
     
 //    public List<RoomRatesEntity> retrieveRoomRatesListByType(RoomTypeEntity roomType){

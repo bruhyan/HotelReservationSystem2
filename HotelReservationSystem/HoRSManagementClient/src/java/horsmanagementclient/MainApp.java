@@ -9,6 +9,7 @@ import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
 import Entity.RoomEntity;
+import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
@@ -137,7 +138,10 @@ public class MainApp {
         
         }else if(loggedInUser instanceof OperationManager){
             HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
-            hotelOperationModule.runModule();
+            hotelOperationModule.runOperationManagerModuleModule();
+        }else if(loggedInUser instanceof SalesManager){
+                        HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote);
+            hotelOperationModule.runSalesManagerModule();
         }else {
             System.out.println("wtf?");
         }
