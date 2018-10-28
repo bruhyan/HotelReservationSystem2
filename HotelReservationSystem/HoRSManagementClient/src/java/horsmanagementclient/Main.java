@@ -5,16 +5,15 @@
  */
 package horsmanagementclient;
 
-import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
+import ejb.session.stateless.CustomerControllerRemote;
 import javax.ejb.EJB;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.PartnerControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
-import java.util.Calendar;
-import java.util.Scanner;
 
 /**
  *
@@ -33,6 +32,10 @@ public class Main {
     public static BookingControllerRemote bookingControllerRemote;
     @EJB
     public static PartnerControllerRemote partnerControllerRemote;
+    @EJB
+    public static CustomerControllerRemote customerControllerRemote;
+    @EJB
+    public static ReservationControllerRemote reservationControllerRemote;
 
     /**
      * @param args the command line arguments
@@ -57,7 +60,7 @@ public class Main {
         sa = employeeControllerRemote.createSystemAdministrator(sa);
         System.out.println("Test success");*/
         
-        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote);
+        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote);
         mainApp.runApp();
         
 

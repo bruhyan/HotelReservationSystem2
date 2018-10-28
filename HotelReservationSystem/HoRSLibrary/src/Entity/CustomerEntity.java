@@ -27,19 +27,32 @@ public class CustomerEntity implements Serializable {
     private String contactNumber;
     private String firstName;
     private String lastName;
+    private String password;
     private PartnerEntity partner;
 
     public CustomerEntity() {
     }
-
-    public CustomerEntity(ReservationEntity reservation, String email, String contactNumber, String firstName, String lastName) {
+    
+    //use this if customer is walk in
+    public CustomerEntity(String email, String contactNumber, String firstName, String lastName) {
         this();
-        this.reservation = reservation;
+        //this.reservation = reservation;
         this.email = email;
         this.contactNumber = contactNumber;
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    
+    //use this if customer is registering
+    public CustomerEntity(String email, String contactNumber, String firstName, String lastName, String password) {
+        this.email = email;
+        this.contactNumber = contactNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+    }
+    
+    
 
     public ReservationEntity getReservation() {
         return reservation;

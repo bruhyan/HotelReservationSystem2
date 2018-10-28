@@ -43,7 +43,7 @@ public class ReservationEntity implements Serializable {
     }
 
     
-    public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, CustomerEntity customer, TransactionEntity transaction, Integer numOfGuests) {
+    public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, CustomerEntity customer) {
         this();
         this.dateOfReservation = dateOfReservation;
         this.checkInDateTime = checkInDateTime;
@@ -51,8 +51,8 @@ public class ReservationEntity implements Serializable {
         this.showedUp = showedUp;
         this.bookingList = bookingList;
         this.customer = customer;
-        this.transaction = transaction;
-        this.numOfGuests = numOfGuests;
+        //this.transaction = transaction;
+        //this.numOfGuests = numOfGuests;
     }
     
     public void addBooking(BookingEntity booking){

@@ -5,10 +5,16 @@
  */
 package horsmanagementclient;
 
+import Entity.BookingEntity;
+import Entity.CustomerEntity;
 import Entity.EmployeeEntity;
+import Entity.ReservationEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
+import ejb.session.stateless.BookingControllerRemote;
+import ejb.session.stateless.CustomerControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 import java.util.ArrayList;
@@ -26,18 +32,24 @@ public class FrontOfficeModule {
         private EmployeeControllerRemote employeeControllerRemote;
         private RoomControllerRemote roomControllerRemote;
         private RoomTypeControllerRemote roomTypeControllerRemote;
+        private CustomerControllerRemote customerControllerRemote;
+        private ReservationControllerRemote reservationControllerRemote;
+        private BookingControllerRemote bookingControllerRemote;
 
     
     public FrontOfficeModule(){
     
     }
     
-    public FrontOfficeModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote){
+    public FrontOfficeModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, BookingControllerRemote bookingControllerRemote){
         this();
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
+        this.customerControllerRemote = customerControllerRemote;
+        this.reservationControllerRemote = reservationControllerRemote;
+        this.bookingControllerRemote = bookingControllerRemote;
     }
     
     public void runModule() {
@@ -56,6 +68,12 @@ public class FrontOfficeModule {
                 input = sc.nextInt();
                 if(input == 1) {
                     doWalkInSearchRoom(sc);
+                    /*List<RoomEntity> availRooms = doWalkInSearchRoom(sc);
+                    int index = 1;
+                    System.out.println("==== Available Rooms By Room Types =====");
+                    for(RoomEntity availRoom : availRooms) {
+                        System.out.println("Index: "+index+" Room Type: "+availRoom.getRoomType().getRoomName()+" Room Number: "+availRoom.getRoomNumber());
+                    }*/
                 }else if(input == 2) {
                    
                 }else if(input == 3) {
@@ -88,29 +106,85 @@ public class FrontOfficeModule {
         cal.add(Calendar.DATE, nights);
         cal.set(Calendar.HOUR_OF_DAY, 12);
         Date checkOutDate = cal.getTime();
+        List<RoomEntity> availRooms = getAvailableRooms(checkInDate, checkOutDate);
+        int index = 1;
+        System.out.println("==== Available Rooms By Room Types =====");
+        for(RoomEntity availRoom : availRooms) {
+            System.out.println("Index: "+index+" Room Type: "+availRoom.getRoomType().getRoomName()+" Room Number: "+availRoom.getRoomNumber());
+        }
         
+        //initiate reserve room
+        System.out.println("Do you want to reserve rooms?");
+        System.out.println("Enter 1 to reserve, Enter 2 to exit");
+        int reply = sc.nextInt();
+        if(reply == 1) {
+            doWalkInReserveRoom(checkInDate, checkOutDate, availRooms, sc);
+        }
+        
+    }
+    
+    public List<RoomEntity> getAvailableRooms(Date checkInDate, Date checkOutDate) {
         List<RoomEntity> availRooms = new ArrayList<>();
-        
         //retrieve all room types
         List<RoomTypeEntity> allRoomTypes = roomTypeControllerRemote.retrieveRoomTypeList();
         for(RoomTypeEntity roomType : allRoomTypes) {
             List<RoomEntity> roomsByType = roomTypeControllerRemote.retrieveRoomEntityByRoomType(roomType);
             for(RoomEntity room : roomsByType) {
-                if(room.getBooking() == null || checkInDate.after(room.getBooking().getReservation().getCheckOutDateTime())) {
+                if(room.getBooking() == null || checkInDate.after(room.getBooking().getReservation().getCheckOutDateTime()) || checkOutDate.before(room.getBooking().getReservation().getCheckInDateTime())) {
                     availRooms.add(room);
                     break;
                 }
             }
         }
-        
-        for(RoomEntity availRoom : availRooms) {
-            System.out.println("Room Type: "+availRoom.getRoomType().getRoomName()+" Room Number: "+availRoom.getRoomNumber());
-        }
-        
-        
+        return availRooms;   
     }
     
-    
-    
+    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomEntity> availRooms, Scanner sc) {
+        sc.nextLine();
+        System.out.println("Enter customer contact number");
+        String contactNum = sc.nextLine();
+        CustomerEntity cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
+        if(cus == null) {
+            System.out.println("Customer is not a registered guest");
+            System.out.println("Enter customer email");
+            String email = sc.nextLine();
+            System.out.println("Enter customer first name");
+            String firstName = sc.nextLine();
+            System.out.println("Enter customer last name");
+            String lastName = sc.nextLine();
+            cus = new CustomerEntity(email, contactNum, firstName, lastName);
+            cus = customerControllerRemote.createCustomerEntity(cus);
+        }
+        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, cus);
+        reservation = reservationControllerRemote.createNewReservation(reservation);
+        while(true) {
+            int index = 1;
+            System.out.println("Select room to book by index");
+            for(RoomEntity availRoom : availRooms) {
+                System.out.println("Index: "+index+" Room Type: "+availRoom.getRoomType().getRoomName()+" Room Number: "+availRoom.getRoomNumber());
+                index++;
+            }
+            int selection = sc.nextInt();
+            RoomEntity room = availRooms.get(selection-=1);
+            BookingEntity booking = new BookingEntity(room, reservation);
+            booking = bookingControllerRemote.createBooking(booking);
+            reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+            System.out.println("Booking "+booking.getBookingId()+" created successfully");
+            System.out.println("Enter 1 to make more bookings, Enter 2 to confirm reservation");
+            int reply = sc.nextInt();
+            if(reply == 1) {
+                availRooms = getAvailableRooms(checkInDate, checkOutDate);
+            }else {
+                System.out.println("Reservation "+reservation.getReservationId()+" created successfully");
+                List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
+                for(BookingEntity bookingz : finalBookings) {
+                    System.out.println("BookingID: "+bookingz.getBookingId() +" Room number: "+bookingz.getRoom().getRoomNumber());
+                }
+                break;
+            }
+        }
+           
+        
+    }
     
 }

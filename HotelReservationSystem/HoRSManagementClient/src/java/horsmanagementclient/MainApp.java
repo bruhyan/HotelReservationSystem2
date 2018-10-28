@@ -12,8 +12,10 @@ import Entity.RoomEntity;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
+import ejb.session.stateless.CustomerControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.PartnerControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
@@ -33,11 +35,14 @@ public class MainApp {
     private RoomRateControllerRemote roomRateControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
     private PartnerControllerRemote partnerControllerRemote;
+    private CustomerControllerRemote customerControllerRemote;
+    private ReservationControllerRemote reservationControllerRemote;
+    
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
@@ -45,6 +50,8 @@ public class MainApp {
         this.roomRateControllerRemote = roomRateControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
         this.partnerControllerRemote = partnerControllerRemote;
+        this.customerControllerRemote = customerControllerRemote;
+        this.reservationControllerRemote = reservationControllerRemote;
     }
     
     public void test(){
@@ -133,7 +140,7 @@ public class MainApp {
             SystemAdministrationModule systemAdministratorModule = new SystemAdministrationModule(loggedInUser, employeeControllerRemote, partnerControllerRemote);
             systemAdministratorModule.runModule();
         }else if(loggedInUser instanceof GuestRelationOfficer){
-            FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomTypeControllerRemote);
+            FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomTypeControllerRemote, customerControllerRemote, reservationControllerRemote, bookingControllerRemote);
             frontOfficeModule.runModule();
         
         }else if(loggedInUser instanceof OperationManager){
