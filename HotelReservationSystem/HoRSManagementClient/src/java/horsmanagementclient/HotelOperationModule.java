@@ -21,8 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.enumeration.RateType;
 import util.enumeration.RoomStatus;
-import util.exception.BookingNotFoundException;
 
 /**
  *
@@ -129,15 +129,19 @@ public class HotelOperationModule {
         System.out.print(">");
         BigDecimal ratePerNight = sc.nextBigDecimal();
         sc.nextLine();
-        
-                System.out.println("Enter validity start date (eg. 25-11-1995): \n");
+        System.out.println("Enter validity start date (eg. 25-11-1995), leave empty if no validation period is needed: \n");
         System.out.print(">");
         String startDate = sc.next();
+        String endDate = null;
         sc.nextLine();
+        if(startDate == ""){
+        
+        }else{
         System.out.println("Enter validity end date (eg. 25-11-2000): \n");
         System.out.print(">");
-        String endDate = sc.next();
+        endDate = sc.next();
         sc.nextLine();
+        }
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
         Date date2 = null;
         Date date3 = null;
@@ -148,7 +152,17 @@ public class HotelOperationModule {
             e.printStackTrace();
         }
         
-        RoomRatesEntity roomRate = new RoomRatesEntity(roomRateName, ratePerNight, date2, date3);
+        System.out.println("Select rate type for this room rate : 1. Published 2. Normal 3. Peak 4. Promotional");
+                int rateTypeInput = 0;
+        while(rateTypeInput < 1 || rateTypeInput > 4){
+            rateTypeInput = sc.nextInt();
+            if(rateTypeInput > 4 || rateTypeInput < 1){
+                System.out.println("Invalid input! Please try again.");
+            }
+        }
+        RateType rateType = RateType.values()[rateTypeInput-1];
+        
+        RoomRatesEntity roomRate = new RoomRatesEntity(roomRateName, ratePerNight, date2, date3, rateType);
         roomRateControllerRemote.createNewRoomRate(roomRate);
        System.out.println("New Room rate of name : " + roomRate.getName() + " has been created!");
     }

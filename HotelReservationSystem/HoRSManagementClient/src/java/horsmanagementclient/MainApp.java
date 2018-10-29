@@ -58,9 +58,8 @@ public class MainApp {
     }
     
     public void test(){
-        systemTimerSessionBeanRemote.CreateTimers();
-        Scanner sc = new Scanner(System.in);
-        sc.nextLine();
+        systemTimerSessionBeanRemote.init();
+
 //        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
 //        for(RoomEntity room : roomList){
 //            System.out.println(room.getRoomNumber());
@@ -68,7 +67,7 @@ public class MainApp {
     }
     
     public void runApp() {
-        
+        systemTimerSessionBeanRemote.init();
         Scanner sc = new Scanner(System.in);
         int input = 0;
         while(true) {
@@ -81,9 +80,12 @@ public class MainApp {
             System.out.println("2: Exit");
             if(loggedInUser != null) {
                 System.out.println("3: Employee Logout");
+                System.out.println("4: Simulate 2AM Room Allocation");
+            }else{
+                System.out.println("3: Simulate 2AM Room Allocation");
             }
             input = 0;
-            while(input < 1 || input > 3) {
+            while(input < 1 || input > 4) {
                 System.out.println(">");
                 input = sc.nextInt();
                 if(input == 1) {
@@ -95,12 +97,16 @@ public class MainApp {
                     }
                 }else if(input == 2) {
                     break;
-                }else if(input == 3) {
+                }else if(input == 3 && loggedInUser != null) {
                     if(loggedInUser != null) {
                         doLogout(sc);
                     }else {
                         System.out.println("No Employee Currently Logged In !");
                     }
+                }else if(input == 4 && loggedInUser != null){
+                    systemTimerSessionBeanRemote.roomAllocation();
+                }else if(input == 3 && loggedInUser == null){
+                    
                 }
             }
             if(input == 2) {

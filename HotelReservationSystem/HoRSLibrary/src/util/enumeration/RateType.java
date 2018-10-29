@@ -3,20 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ejb.session.stateless;
-
-import javax.ejb.Remote;
-import javax.ejb.Timer;
+package util.enumeration;
 
 /**
  *
  * @author mdk12
  */
-@Remote
-public interface SystemTimerSessionBeanRemote {
-
-    public void init();
-
-    public void roomAllocation();
-    
+public enum RateType {
+    PUBLISHED,
+    NORMAL,
+    PEAK,
+    PROMOTIONAL
 }

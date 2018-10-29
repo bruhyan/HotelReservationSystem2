@@ -3,20 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ejb.session.stateless;
-
-import javax.ejb.Remote;
-import javax.ejb.Timer;
+package horsreservationclient;
 
 /**
  *
  * @author mdk12
  */
-@Remote
-public interface SystemTimerSessionBeanRemote {
+public class Main {
 
-    public void init();
-
-    public void roomAllocation();
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+    }
     
 }

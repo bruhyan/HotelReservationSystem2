@@ -7,11 +7,14 @@ package Entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import util.enumeration.RateType;
 
 /**
  *
@@ -29,17 +32,29 @@ public class RoomRatesEntity implements Serializable {
     private Date validityStart;
     private Date validityEnd;
     private Boolean isDisabled;
+    private List<RoomTypeEntity> roomTypeList;
+    private RateType rateType;
 
     public RoomRatesEntity() {
+        this.roomTypeList = new ArrayList<>();
     }
 
-    public RoomRatesEntity(String name, BigDecimal ratePerNight, Date validityStart, Date validityEnd) {
+    public RoomRatesEntity(String name, BigDecimal ratePerNight, Date validityStart, Date validityEnd, RateType rateType) {
         this();
         this.name = name;
         this.ratePerNight = ratePerNight;
         this.validityStart = validityStart;
         this.validityEnd = validityEnd;
         this.isDisabled = false;
+        this.rateType = rateType;
+    }
+
+    public RateType getRateType() {
+        return rateType;
+    }
+
+    public void setRateType(RateType rateType) {
+        this.rateType = rateType;
     }
 
     public Boolean getIsDisabled() {
@@ -48,6 +63,18 @@ public class RoomRatesEntity implements Serializable {
 
     public void setIsDisabled(Boolean isDisabled) {
         this.isDisabled = isDisabled;
+    }
+
+    public void addRoomType(RoomTypeEntity roomType){
+        this.roomTypeList.add(roomType);
+    }
+    
+    public List<RoomTypeEntity> getRoomTypeList() {
+        return roomTypeList;
+    }
+
+    public void setRoomTypeList(List<RoomTypeEntity> roomTypeList) {
+        this.roomTypeList = roomTypeList;
     }
 
     
