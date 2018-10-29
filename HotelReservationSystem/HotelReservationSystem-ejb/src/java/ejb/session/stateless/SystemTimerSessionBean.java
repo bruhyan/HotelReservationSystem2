@@ -33,7 +33,7 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     
     }
     
-    @PostConstruct
+   
     public void init(){
         TimerService timerService = sessionContext.getTimerService();
         TimerConfig timerConfig = new TimerConfig();
