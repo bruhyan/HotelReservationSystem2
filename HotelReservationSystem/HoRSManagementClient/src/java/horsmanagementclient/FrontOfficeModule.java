@@ -22,6 +22,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.exception.CustomerNotFoundException;
 
 /**
  *
@@ -143,18 +146,21 @@ public class FrontOfficeModule {
         sc.nextLine();
         System.out.println("Enter customer contact number");
         String contactNum = sc.nextLine();
-        CustomerEntity cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
-        if(cus == null) {
-            System.out.println("Customer is not a registered guest");
-            System.out.println("Enter customer email");
-            String email = sc.nextLine();
-            System.out.println("Enter customer first name");
-            String firstName = sc.nextLine();
-            System.out.println("Enter customer last name");
-            String lastName = sc.nextLine();
-            cus = new CustomerEntity(email, contactNum, firstName, lastName);
-            cus = customerControllerRemote.createCustomerEntity(cus);
-        }
+        CustomerEntity cus;
+            try {
+                cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
+            } catch (CustomerNotFoundException ex) {
+                System.out.println("Customer is not a registered guest");
+                System.out.println("Enter customer email");
+                String email = sc.nextLine();
+                System.out.println("Enter customer first name");
+                String firstName = sc.nextLine();
+                System.out.println("Enter customer last name");
+                String lastName = sc.nextLine();
+                cus = new CustomerEntity(email, contactNum, firstName, lastName);
+                cus = customerControllerRemote.createCustomerEntity(cus);
+            }
+        
         ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, cus);
         reservation = reservationControllerRemote.createNewReservation(reservation);
         while(true) {
