@@ -449,10 +449,15 @@ public class HotelOperationModule {
         System.out.println("Room Type disabled: " + roomType.isIsDisabled());
         List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomTypeId);
         System.out.println("Room rates attached to room type : ");
+        
+        if(roomRateList.isEmpty()){
+            System.out.println("There are currently no room rates attached to room type! Please attach one or this room type cannot be used.");
+        }else{
         for(RoomRatesEntity roomRate : roomRateList){
            System.out.println(roomRate.getRoomRatesId() + ". Rate Type: " + roomRate.getRateType() + ". Name: " + roomRate.getName() + ", Room Rate : $" + roomRate.getRatePerNight() + " Per Night");
 
         }
+    }
 
         
         System.out.println("==============================================================");

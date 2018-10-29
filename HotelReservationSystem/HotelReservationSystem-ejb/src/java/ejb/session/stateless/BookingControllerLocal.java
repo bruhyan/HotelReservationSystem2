@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import Entity.BookingEntity;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface BookingControllerLocal {
-    
+        public List<BookingEntity> retrieveBookingList();
 }

@@ -29,4 +29,6 @@ public interface RoomRateControllerRemote {
 
     public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd);
     public void addRoomTypeById(Long roomRateId,Long roomTypeId);
+
+    public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId);
 }

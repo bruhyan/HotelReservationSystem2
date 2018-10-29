@@ -31,4 +31,6 @@ public interface RoomControllerRemote {
 
     public void deleteRoomById(Long id);
     
+        public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId);
+    
 }

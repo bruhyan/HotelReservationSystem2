@@ -105,5 +105,34 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
     }
     
+    @Override
+    public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId){
+        
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+        
+        if(query.getResultList().isEmpty()){
+            return false;
+        }
+        return true;
+        
+    }
+    
+    public RoomEntity allocateRoom(Long roomTypeId){
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+        
+        List<RoomEntity> roomList = query.getResultList();
+        RoomEntity room = roomList.get(1);
+        room.setRoomStatus(RoomStatus.OCCUPIED);
+        em.merge(room);
+        return  room;
+        
+    }
+
 
 }

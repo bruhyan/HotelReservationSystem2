@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -35,5 +36,7 @@ public interface RoomTypeControllerRemote {
     public List<RoomEntity> retrieveRoomEntityByRoomType(RoomTypeEntity roomType);
 
     public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
+
+    public RoomTypeEntity findPricierAvailableRoomType(Long roomTypeId);
     
 }

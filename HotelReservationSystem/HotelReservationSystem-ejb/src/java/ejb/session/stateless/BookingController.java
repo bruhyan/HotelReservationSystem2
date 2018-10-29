@@ -22,6 +22,7 @@ public class BookingController implements BookingControllerRemote, BookingContro
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
+    @Override
     public List<BookingEntity> retrieveBookingList(){
         Query query = em.createQuery("SELECT b FROM BookingEntity b");
         return query.getResultList();
@@ -33,6 +34,8 @@ public class BookingController implements BookingControllerRemote, BookingContro
         em.flush();
         return booking;
     }
+    
+    
 
   
 }

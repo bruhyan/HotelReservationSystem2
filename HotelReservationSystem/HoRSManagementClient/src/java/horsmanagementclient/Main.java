@@ -64,7 +64,7 @@ public class Main {
         System.out.println("Test success");*/
         
         MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote);
-        mainApp.runApp();
+        mainApp.test();
         
 
     }

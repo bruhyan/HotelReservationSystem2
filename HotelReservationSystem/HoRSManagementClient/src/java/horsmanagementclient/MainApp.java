@@ -8,7 +8,7 @@ package horsmanagementclient;
 import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
-import Entity.RoomEntity;
+import Entity.RoomRatesEntity;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
@@ -58,8 +58,20 @@ public class MainApp {
     }
     
     public void test(){
-        systemTimerSessionBeanRemote.init();
+       // System.out.println(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(1l));
+//       List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.findPricierRoomType(2l);
+//       for(RoomRatesEntity roomRate : roomRateList){
+//           System.out.println(roomRate.getName());
+//       }
+    System.out.println(roomTypeControllerRemote.findPricierAvailableRoomType(1l).getRoomName());
+//        BigDecimal rate = roomTypeControllerRemote.findPricierRoomType(1l);
+//        System.out.println(rate);
 
+//        List<RoomRatesEntity> roomRateList = roomRateControllerRemote.retrieveRoomRateListExcludeRoomType(1l);
+//        for(RoomRatesEntity roomRate : roomRateList){
+//           System.out.println(roomRate.getName());
+//       }
+       System.out.println("It works");
 //        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
 //        for(RoomEntity room : roomList){
 //            System.out.println(room.getRoomNumber());

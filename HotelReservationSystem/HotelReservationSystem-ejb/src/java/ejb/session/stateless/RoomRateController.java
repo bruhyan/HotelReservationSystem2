@@ -89,6 +89,15 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         em.merge(roomRates);
         
     }
+        //get a list of room rates exclude a roomType
+    @Override
+        public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId){
+                Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId <> :roomTypeId");
+                query.setParameter("roomTypeId", roomTypeId);
+                return query.getResultList();
+        }
+        
+        
     //get list of room by room type.
     
 //    public List<RoomRatesEntity> retrieveRoomRatesListByType(RoomTypeEntity roomType){

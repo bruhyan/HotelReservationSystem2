@@ -5,8 +5,13 @@
  */
 package ejb.session.stateless;
 
-import javax.annotation.PostConstruct;
+import Entity.BookingEntity;
+import Entity.RoomEntity;
+import Entity.RoomTypeEntity;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.ScheduleExpression;
@@ -15,6 +20,8 @@ import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -28,6 +35,14 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
 
     @Resource 
     private SessionContext sessionContext;
+    @EJB
+    private BookingControllerLocal bookingControllerLocal;
+    @EJB
+    private RoomControllerLocal roomControllerLocal;
+    @EJB
+    private RoomTypeControllerLocal roomTypeControllerLocal;
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager em;
     
     public SystemTimerSessionBean(){
     
@@ -52,7 +67,54 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
         // more expensive, higher capacity)
         //If no more, then just dont allocate.
         
-        System.out.println("Test");
+        List<BookingEntity> bookingList = bookingControllerLocal.retrieveBookingList();
+        
+        for(BookingEntity booking : bookingList){
+            RoomTypeEntity roomTypeNeeded = booking.getRoomType();
+            //check if roomtype is available.
+            Long roomTypeId = roomTypeNeeded.getRoomTypeId();
+            
+            if(roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomTypeId)){
+                doRegularAllocation(booking.getBookingId(), roomTypeId);
+            }else{
+                doUpgradeAllocation(booking.getBookingId(), roomTypeId);
+            }
+           
+  
+        }
+    }
+    
+
+    
+    public void doRegularAllocation(Long bookingId, Long roomTypeId){
+        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        
+        RoomEntity room = roomControllerLocal.allocateRoom(roomTypeId);
+        
+        booking.setRoom(room);
+        em.merge(booking);
+        
         
     }
+    
+    public void doUpgradeAllocation(Long bookingId, Long roomTypeId){
+        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+        RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
+        RoomTypeEntity roomType = roomTypeControllerLocal.findPricierAvailableRoomType(roomTypeId);
+        if(roomType == null){
+        //cannot allocate, report exception use case 16
+        System.out.println("Booking id : " + booking.getBookingId() + "'s room cannot be allocated! All upgraded room type are unavailable!");
+        return;
+        }
+        Long upgradedId = roomType.getRoomTypeId();
+        roomType = em.find(RoomTypeEntity.class, upgradedId);
+        RoomEntity room = roomControllerLocal.allocateRoom(upgradedId);
+        
+        booking.setRoom(room);
+        em.merge(booking);
+        System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomName() + " to " + roomType.getRoomName() + "."); //Use case 16
+    }
+
+
 }

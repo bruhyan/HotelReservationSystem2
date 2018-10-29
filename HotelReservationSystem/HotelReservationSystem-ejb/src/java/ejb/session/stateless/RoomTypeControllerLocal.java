@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -18,5 +19,5 @@ import javax.ejb.Local;
 public interface RoomTypeControllerLocal {
 
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
-    
+      public RoomTypeEntity findPricierAvailableRoomType(Long roomTypeId);
 }

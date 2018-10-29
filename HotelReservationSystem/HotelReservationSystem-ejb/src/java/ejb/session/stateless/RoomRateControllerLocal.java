@@ -18,4 +18,5 @@ public interface RoomRateControllerLocal {
 
     public List<RoomRatesEntity> retrieveRoomRatesList();
     
+    public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId);
 }
