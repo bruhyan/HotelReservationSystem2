@@ -18,7 +18,7 @@ public interface CustomerControllerRemote {
 
     public CustomerEntity createCustomerEntity(CustomerEntity cus);
 
-    public CustomerEntity retrieveCustomerEntityById(long customerId);
+    public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException;
 
     public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) throws CustomerNotFoundException;
     

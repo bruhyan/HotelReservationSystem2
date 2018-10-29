@@ -144,11 +144,13 @@ public class FrontOfficeModule {
     
     public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomEntity> availRooms, Scanner sc) {
         sc.nextLine();
+        //check if customer exists, retrieve if exists
         System.out.println("Enter customer contact number");
         String contactNum = sc.nextLine();
         CustomerEntity cus;
             try {
                 cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
+                System.out.println("Customer is a registered guest");
             } catch (CustomerNotFoundException ex) {
                 System.out.println("Customer is not a registered guest");
                 System.out.println("Enter customer email");
@@ -160,7 +162,7 @@ public class FrontOfficeModule {
                 cus = new CustomerEntity(email, contactNum, firstName, lastName);
                 cus = customerControllerRemote.createCustomerEntity(cus);
             }
-        
+        //create new Reservation
         ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, cus);
         reservation = reservationControllerRemote.createNewReservation(reservation);
         while(true) {

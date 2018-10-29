@@ -136,5 +136,13 @@ public class CustomerEntity implements Serializable {
     public void setPartner(PartnerEntity partner) {
         this.partner = partner;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
 }
