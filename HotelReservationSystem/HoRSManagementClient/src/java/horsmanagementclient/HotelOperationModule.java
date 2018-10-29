@@ -132,10 +132,9 @@ public class HotelOperationModule {
         sc.nextLine();
         System.out.println("Enter validity start date (eg. 25-11-1995), leave empty if no validation period is needed: \n");
         System.out.print(">");
-        String startDate = sc.next();
+        String startDate = sc.nextLine();
         String endDate = null;
-        sc.nextLine();
-        if(startDate == ""){
+        if(startDate.equals("")){
         
         }else{
         System.out.println("Enter validity end date (eg. 25-11-2000): \n");
@@ -176,7 +175,7 @@ public class HotelOperationModule {
             System.out.println("Select the room rate you'd wish to view in more detail, update or delete :");
         for (RoomRatesEntity roomRate : roomRateList) {
 
-            System.out.println(roomRate.getRoomRatesId() + ". Room Rate name : " + roomRate.getName() + " .");
+            System.out.println(roomRate.getRoomRatesId() + ". Rate Type : " + roomRate.getRateType() + ". Room Rate name : " + roomRate.getName() + " .");
 
         }
         System.out.print(">");
@@ -233,7 +232,7 @@ public class HotelOperationModule {
         System.out.print(">");
         String startDate = sc.next();
         sc.nextLine();
-        if(startDate == ""){
+        if(startDate.equals("")){
         }
         else{
         System.out.println("Enter validity end date (eg. 25-11-2000): ( previous: " + roomRate.getValidityEnd() + " ) \n");
@@ -436,6 +435,7 @@ public class HotelOperationModule {
         }
     }
 
+    
     public void viewSingleRoomType(Long roomTypeId, Scanner sc) {
         RoomTypeEntity roomType = roomTypeControllerRemote.retrieveRoomTypeById(roomTypeId);
         int response = 0;
@@ -447,7 +447,14 @@ public class HotelOperationModule {
         System.out.println("Room Type capacity: " + roomType.getCapacity());
         System.out.println("Room Type Size: " + roomType.getSize() + " metres square.");
         System.out.println("Room Type disabled: " + roomType.isIsDisabled());
+        List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomTypeId);
+        System.out.println("Room rates attached to room type : ");
+        for(RoomRatesEntity roomRate : roomRateList){
+           System.out.println(roomRate.getRoomRatesId() + ". Rate Type: " + roomRate.getRateType() + ". Name: " + roomRate.getName() + ", Room Rate : $" + roomRate.getRatePerNight() + " Per Night");
 
+        }
+
+        
         System.out.println("==============================================================");
         while (response < 1 || response > 3) {
             System.out.println("Would you like to 1. Update 2. Delete 3. Exit ?");
@@ -556,7 +563,7 @@ public class HotelOperationModule {
 
     public Long chooseRoomRate(Scanner sc) {
         List<RoomRatesEntity> roomRatesList = roomRateControllerRemote.retrieveRoomRatesList();
-        int i = 1;
+
 
         System.out.println("Choose room rate for this room type : ");
 //	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -567,8 +574,8 @@ public class HotelOperationModule {
 //            }else if(date.compareTo(roomRateEntity.getValidityStart()) > 0){ //validity haven't start
 //            
 //            }else{
-            System.out.println(i + ". " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
-            i++;
+            System.out.println(roomRateEntity.getRoomRatesId() + ". Rate Type: " + roomRateEntity.getRateType() + ". Name: " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
+
 //            }
         }
         System.out.print(">");

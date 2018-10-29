@@ -102,6 +102,14 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return query.getResultList();
     }
     
+    public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId){
+        Query query = em.createQuery("SELECT r.roomRateList FROM RoomTypeEntity r WHERE r.roomTypeId = :roomTypeId");
+        query.setParameter("roomTypeId", roomTypeId);
+        
+        return query.getResultList();
+        
+    }
+    
     @Override
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates){
         Long roomRateId = roomRates.getRoomRatesId();
