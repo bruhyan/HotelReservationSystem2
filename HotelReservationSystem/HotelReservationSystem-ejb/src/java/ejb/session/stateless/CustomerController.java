@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CustomerNotFoundException;
 
 /**
  *
@@ -27,11 +28,12 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         return cus;
     }
     
-    public CustomerEntity retrieveCustomerEntityById(long customerId) {
+    public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException {
         return em.find(CustomerEntity.class, customerId);  
     }
     
-    public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) {
+    @Override
+    public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) throws CustomerNotFoundException {
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.contactNumber = :contactNum");
         query.setParameter("contactNum", contactNum);
         return (CustomerEntity)query.getSingleResult();

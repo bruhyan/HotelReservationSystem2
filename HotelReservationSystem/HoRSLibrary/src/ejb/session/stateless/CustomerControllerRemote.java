@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import Entity.CustomerEntity;
 import javax.ejb.Remote;
+import util.exception.CustomerNotFoundException;
 
 /**
  *
@@ -17,8 +18,8 @@ public interface CustomerControllerRemote {
 
     public CustomerEntity createCustomerEntity(CustomerEntity cus);
 
-    public CustomerEntity retrieveCustomerEntityById(long customerId);
+    public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException;
 
-    public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum);
+    public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) throws CustomerNotFoundException;
     
 }
