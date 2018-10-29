@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.RoomStatus;
+import util.exception.BookingNotFoundException;
 
 /**
  *
@@ -321,20 +322,20 @@ public class HotelOperationModule {
         if(bookingList.isEmpty()){
             System.out.println("You currently have no booking available! Please create a new one first.");
             System.out.println("No booking will be assigned for now.");
-
-        }else{
+            return null;
+        }
             System.out.println("Select the booking you'd wish to assign to your room:");
         for (BookingEntity booking : bookingList) {
 
             System.out.println("Booking Id : " + booking.getBookingId() +" .");
 
         }
+        
         System.out.print(">");
         Long bookingId = sc.nextLong();
         sc.nextLine();
         return bookingId;
-        }
-        return null; //throw exception later come back
+     
     }
     
     public void doDeleteRoom(Long roomId){
@@ -527,13 +528,22 @@ public class HotelOperationModule {
         int i = 1;
 
         System.out.println("Choose room rate for this room type : ");
-
-        for (RoomRatesEntity roomRateEntity : roomRatesList) { //come back check for date validity next time.
+//	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//	Date date = new Date();
+        for (RoomRatesEntity roomRateEntity : roomRatesList) { //validity check, use it at booking
+//            if(date.compareTo(roomRateEntity.getValidityEnd()) > 0){ //validity ended
+//            
+//            }else if(date.compareTo(roomRateEntity.getValidityStart()) > 0){ //validity haven't start
+//            
+//            }else{
             System.out.println(i + ". " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
             i++;
+//            }
         }
         System.out.print(">");
         return sc.nextLong();
     }
+    
+
 
 }

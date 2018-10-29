@@ -19,6 +19,7 @@ import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import ejb.session.stateless.SystemTimerSessionBeanRemote;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.EmployeeNotFoundException;
@@ -37,12 +38,13 @@ public class MainApp {
     private PartnerControllerRemote partnerControllerRemote;
     private CustomerControllerRemote customerControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
+    private SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
     
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, SystemTimerSessionBeanRemote systemTimerSessionBeanRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
@@ -52,14 +54,17 @@ public class MainApp {
         this.partnerControllerRemote = partnerControllerRemote;
         this.customerControllerRemote = customerControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
+        this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
     }
     
     public void test(){
-        
-        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
-        for(RoomEntity room : roomList){
-            System.out.println(room.getRoomNumber());
-        }
+        systemTimerSessionBeanRemote.CreateTimers();
+        Scanner sc = new Scanner(System.in);
+        sc.nextLine();
+//        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
+//        for(RoomEntity room : roomList){
+//            System.out.println(room.getRoomNumber());
+//        }
     }
     
     public void runApp() {

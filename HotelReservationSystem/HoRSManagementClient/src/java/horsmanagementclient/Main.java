@@ -14,6 +14,7 @@ import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import ejb.session.stateless.SystemTimerSessionBeanRemote;
 
 /**
  *
@@ -36,6 +37,8 @@ public class Main {
     public static CustomerControllerRemote customerControllerRemote;
     @EJB
     public static ReservationControllerRemote reservationControllerRemote;
+    @EJB
+    public static SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
 
     /**
      * @param args the command line arguments
@@ -60,7 +63,7 @@ public class Main {
         sa = employeeControllerRemote.createSystemAdministrator(sa);
         System.out.println("Test success");*/
         
-        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote);
+        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote);
         mainApp.runApp();
         
 
