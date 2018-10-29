@@ -26,16 +26,35 @@ public class BookingEntity implements Serializable {
     private Long bookingId;
     @OneToOne
     private RoomEntity room;
+    @OneToOne
+    private RoomTypeEntity roomType;
     @ManyToOne //Owned by reservation
     private ReservationEntity reservation;
 
     public BookingEntity() {
     }
 
+    //for reservations, to allocate room at 2am on current day.
+    public BookingEntity(RoomTypeEntity roomType, ReservationEntity reservation){
+        this();
+        this.roomType = roomType;
+        this.reservation = reservation;
+    }
+    
+    //probably for walk in entity.
     public BookingEntity(RoomEntity room, ReservationEntity reservation) {
         this();
         this.room = room;
+        this.roomType = room.getRoomType();
         this.reservation = reservation;
+    }
+
+    public RoomTypeEntity getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomTypeEntity roomType) {
+        this.roomType = roomType;
     }
 
     
