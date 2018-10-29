@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import util.enumeration.RateType;
 
 /**
@@ -32,6 +33,7 @@ public class RoomRatesEntity implements Serializable {
     private Date validityStart;
     private Date validityEnd;
     private Boolean isDisabled;
+    @ManyToMany
     private List<RoomTypeEntity> roomTypeList;
     private RateType rateType;
 

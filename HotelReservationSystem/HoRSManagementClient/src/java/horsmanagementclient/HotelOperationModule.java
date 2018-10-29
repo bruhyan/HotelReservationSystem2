@@ -120,7 +120,8 @@ public class HotelOperationModule {
 // public RoomRatesEntity(String name, BigDecimal ratePerNight, Date validityStart, Date validityEnd) {
     
     public void doCreateNewRoomRate(Scanner sc){
-            
+                    Date date2 = null;
+        Date date3 = null;
         System.out.println("Enter Room Rate Name: \n");
         System.out.print(">");
         String roomRateName = sc.nextLine();
@@ -141,17 +142,16 @@ public class HotelOperationModule {
         System.out.print(">");
         endDate = sc.next();
         sc.nextLine();
-        }
+        
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
-        Date date2 = null;
-        Date date3 = null;
+
         try{
             date2 = dateFormat.parse(startDate);
                         date3 = dateFormat.parse(endDate);
         }catch (ParseException e){
             e.printStackTrace();
         }
-        
+        }
         System.out.println("Select rate type for this room rate : 1. Published 2. Normal 3. Peak 4. Promotional");
                 int rateTypeInput = 0;
         while(rateTypeInput < 1 || rateTypeInput > 4){
@@ -215,6 +215,8 @@ public class HotelOperationModule {
     }
 
     public void doUpdateRoomRate(RoomRatesEntity roomRate, Scanner sc){
+                Date date2 = null;
+        Date date3 = null;
     System.out.println("Enter new room rate name: ( previous: " + roomRate.getName() + " ) \n");
         System.out.print(">");
         String roomRateName = sc.nextLine();
@@ -227,23 +229,36 @@ public class HotelOperationModule {
         sc.nextLine();
         
                 System.out.println("Enter validity start date (eg. 25-11-1995): ( previous: " + roomRate.getValidityStart() + " )\n");
+                                System.out.println("Leave empty if not needed \n");
         System.out.print(">");
         String startDate = sc.next();
         sc.nextLine();
+        if(startDate == ""){
+        }
+        else{
         System.out.println("Enter validity end date (eg. 25-11-2000): ( previous: " + roomRate.getValidityEnd() + " ) \n");
         System.out.print(">");
         String endDate = sc.next();
         sc.nextLine();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
-        Date date2 = null;
-        Date date3 = null;
+
         try{
             date2 = dateFormat.parse(startDate);
                         date3 = dateFormat.parse(endDate);
         }catch (ParseException e){
             e.printStackTrace();
         }
-      
+        }
+       System.out.println("Select rate type for this room rate : 1. Published 2. Normal 3. Peak 4. Promotional");
+              System.out.println("Previous rate type : " + String.valueOf(roomRate.getRateType()));
+                int rateTypeInput = 0;
+        while(rateTypeInput < 1 || rateTypeInput > 4){
+            rateTypeInput = sc.nextInt();
+            if(rateTypeInput > 4 || rateTypeInput < 1){
+                System.out.println("Invalid input! Please try again.");
+            }
+        }
+        RateType rateType = RateType.values()[rateTypeInput-1];
        
         RoomRatesEntity newRoomRate = roomRateControllerRemote.heavyUpdateRoomRate(roomRate.getRoomRatesId(), roomRateName, ratePerNight, date2, date3);
         
@@ -511,6 +526,7 @@ public class HotelOperationModule {
 
    
         roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId(), roomRateId);
+        roomRateControllerRemote.addRoomTypeById(roomRateId, newRoomType.getRoomTypeId());
         int response = 0;
         //add another roomrate here if needed
         while (true) {
@@ -534,7 +550,8 @@ public class HotelOperationModule {
 
     public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc) {
         Long roomRateId = chooseRoomRate(sc);
-        roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), roomRateId);
+        roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), roomRateId);        
+        roomRateControllerRemote.addRoomTypeById(roomRateId, roomType.getRoomTypeId());
     }
 
     public Long chooseRoomRate(Scanner sc) {

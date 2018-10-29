@@ -54,7 +54,14 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
             em.remove(roomRates);
         }
     }
-    
+        public void addRoomTypeById(Long roomRateId,Long roomTypeId){
+        RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        
+        roomRate.addRoomType(roomType);
+        
+        em.merge(roomRate);
+    }
 
     public RoomRatesEntity retrieveRoomRatesById(Long id){
         return em.find(RoomRatesEntity.class, id);
