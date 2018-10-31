@@ -144,11 +144,11 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
         //find priciest of published
         //check if null later, come back
-        BigDecimal highestRate = roomRateList.get(0).getRatePerNight();
+        BigDecimal lowestRate = roomRateList.get(0).getRatePerNight();
 
         for (RoomRatesEntity roomRate : roomRateList) {
             if (roomRate.getRateType() == RateType.PUBLISHED) {
-                highestRate = highestRate.max(roomRate.getRatePerNight());
+                lowestRate = lowestRate.min(roomRate.getRatePerNight());
             }
         }
 
@@ -165,8 +165,8 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         //sorted, now compare if == or >, get first one.
         RoomRatesEntity pricierRoomRate = null;
         for (RoomRatesEntity roomRate : roomRateListExclude) {
-            System.out.println(highestRate + " " + roomRate.getRatePerNight());
-            if (highestRate.compareTo(roomRate.getRatePerNight()) == 0 || highestRate.compareTo(roomRate.getRatePerNight()) < 0) {
+            System.out.println(lowestRate + " " + roomRate.getRatePerNight());
+            if (lowestRate.compareTo(roomRate.getRatePerNight()) == 0 || lowestRate.compareTo(roomRate.getRatePerNight()) < 0) {
                 pricierRoomRate = em.find(RoomRatesEntity.class,roomRate.getRoomRatesId());
                 
                 
