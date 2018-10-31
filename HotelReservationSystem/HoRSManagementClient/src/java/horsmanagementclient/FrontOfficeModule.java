@@ -10,6 +10,7 @@ import Entity.CustomerEntity;
 import Entity.EmployeeEntity;
 import Entity.ReservationEntity;
 import Entity.RoomEntity;
+import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.CustomerControllerRemote;
@@ -17,13 +18,13 @@ import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import util.enumeration.RateType;
 import util.exception.CustomerNotFoundException;
 
 /**
@@ -71,12 +72,7 @@ public class FrontOfficeModule {
                 input = sc.nextInt();
                 if(input == 1) {
                     doWalkInSearchRoom(sc);
-                    /*List<RoomEntity> availRooms = doWalkInSearchRoom(sc);
-                    int index = 1;
-                    System.out.println("==== Available Rooms By Room Types =====");
-                    for(RoomEntity availRoom : availRooms) {
-                        System.out.println("Index: "+index+" Room Type: "+availRoom.getRoomType().getRoomName()+" Room Number: "+availRoom.getRoomNumber());
-                    }*/
+                    
                 }else if(input == 2) {
                    
                 }else if(input == 3) {
@@ -193,6 +189,22 @@ public class FrontOfficeModule {
         }
            
         
+    }
+    
+    
+    public BigDecimal calculatePrevailingRate(List<RoomTypeEntity> roomTypes, int nights) {
+        BigDecimal totalAmount = new BigDecimal(0.00);
+        for(int i = 0; i < nights; i++) {
+            for(RoomTypeEntity roomType : roomTypes) {
+                List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomType.getRoomTypeId());
+                for(RoomRatesEntity roomRate : roomRateList) {
+                    if(roomRate.getRateType() == RateType.PUBLISHED) {
+                        totalAmount.add(roomRate.getRatePerNight());
+                    }
+                }
+            }
+        }
+        return totalAmount;
     }
     
 }
