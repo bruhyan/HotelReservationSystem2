@@ -32,16 +32,18 @@ public class TransactionEntity implements Serializable {
     @OneToOne
     private ReservationEntity reservation;
     private Date datePaid;
+    private boolean isPaid;
 
     public TransactionEntity() {
+        isPaid = false;
     }
 
-    public TransactionEntity(BigDecimal totalCost, EmployeeEntity employee, ReservationEntity reservation, Date datePaid) {
+    public TransactionEntity(BigDecimal totalCost, EmployeeEntity employee, ReservationEntity reservation) {
         this();
         this.totalCost = totalCost;
         this.employee = employee;
         this.reservation = reservation;
-        this.datePaid = datePaid;
+        
     }
 
     public BigDecimal getTotalCost() {
@@ -109,6 +111,14 @@ public class TransactionEntity implements Serializable {
     @Override
     public String toString() {
         return "Entity.TransactionEntity[ id=" + transactionId + " ]";
+    }
+
+    public boolean isIsPaid() {
+        return isPaid;
+    }
+
+    public void setIsPaid(boolean isPaid) {
+        this.isPaid = isPaid;
     }
     
 }

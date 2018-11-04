@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import Entity.BookingEntity;
+import Entity.RoomEntity;
+import Entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -35,7 +37,15 @@ public class BookingController implements BookingControllerRemote, BookingContro
         return booking;
     }
     
+    public RoomTypeEntity retriveRoomTypeEntityByBookingId(Long bookingId) {
+        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+        return booking.getRoomType();
+    }
     
+    public RoomEntity retrieveRoomEntityByBookingId(Long bookingId) {
+        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+        return booking.getRoom();
+    }
 
   
 }

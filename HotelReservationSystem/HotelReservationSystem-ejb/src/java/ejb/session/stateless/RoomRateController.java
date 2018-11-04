@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.RateType;
 
 /**
  *
@@ -96,6 +97,12 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
                 query.setParameter("roomTypeId", roomTypeId);
                 return query.getResultList();
         }
+        
+    public RoomRatesEntity retriveRoomRateByRateType(RateType rateType) {
+        Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.rateType = :rateType");
+        query.setParameter("rateType", rateType);
+        return (RoomRatesEntity)query.getSingleResult();
+    }
         
         
     //get list of room by room type.

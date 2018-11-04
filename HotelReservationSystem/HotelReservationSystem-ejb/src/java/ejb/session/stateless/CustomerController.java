@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import Entity.CustomerEntity;
+import Entity.ReservationEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -38,5 +39,15 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         query.setParameter("contactNum", contactNum);
         return (CustomerEntity)query.getSingleResult();
         
+    }
+    
+    public ReservationEntity retrieveCustomerReservation(Long customerId) {
+        CustomerEntity cus = em.find(CustomerEntity.class, customerId);
+        return cus.getReservation();
+    }
+    
+    public void nullCustomerReservation(Long customerId) {
+        CustomerEntity cus = em.find(CustomerEntity.class, customerId);
+        cus.setReservation(null);
     }
 }

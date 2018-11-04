@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.RateType;
 import util.enumeration.RoomStatus;
 
 /**
@@ -127,12 +128,32 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
         
         List<RoomEntity> roomList = query.getResultList();
-        RoomEntity room = roomList.get(1);
+        RoomEntity room = roomList.get(0);
         room.setRoomStatus(RoomStatus.OCCUPIED);
         em.merge(room);
         return  room;
         
     }
+    
+    public RoomEntity walkInAllocateRoom(Long roomTypeId) {
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+        
+        List<RoomEntity> roomList = query.getResultList();
+        RoomEntity room = roomList.get(0);
+        room.setRoomStatus(RoomStatus.RESERVED);
+        em.merge(room);
+        return  room;
+    }
+    
+    public void changeRoomStatus(Long roomEntityId, RoomStatus status) {
+        RoomEntity room = em.find(RoomEntity.class, roomEntityId);
+        room.setRoomStatus(status);
+    }
+    
+    
 
 
 }

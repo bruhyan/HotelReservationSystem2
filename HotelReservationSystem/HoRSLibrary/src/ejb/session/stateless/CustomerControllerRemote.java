@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import Entity.CustomerEntity;
+import Entity.ReservationEntity;
 import javax.ejb.Remote;
 import util.exception.CustomerNotFoundException;
 
@@ -21,5 +22,9 @@ public interface CustomerControllerRemote {
     public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException;
 
     public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) throws CustomerNotFoundException;
+
+    public ReservationEntity retrieveCustomerReservation(Long customerId);
+
+    public void nullCustomerReservation(Long customerId);
     
 }

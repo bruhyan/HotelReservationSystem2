@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import Entity.BookingEntity;
 import Entity.ReservationEntity;
+import Entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -41,6 +42,18 @@ public class ReservationController implements ReservationControllerRemote, Reser
         reserv.getBookingList().size();
         return reserv.getBookingList();
     }
+    
+    public void addTransaction(Long reservationId, TransactionEntity transaction) {
+        ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        reserv.setTransaction(transaction);
+    }
+    
+    public TransactionEntity retrieveTransactionByReservationId(Long reservationId) {
+        ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        return reserv.getTransaction();
+    }
+    
+    
 
     
 }

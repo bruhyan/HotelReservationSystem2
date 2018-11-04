@@ -144,6 +144,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
         //find priciest of published
         //check if null later, come back
+        
         BigDecimal lowestRate = roomRateList.get(0).getRatePerNight();
 
         for (RoomRatesEntity roomRate : roomRateList) {
