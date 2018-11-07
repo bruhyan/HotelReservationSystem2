@@ -26,5 +26,7 @@ public interface CustomerControllerRemote {
     public ReservationEntity retrieveCustomerReservation(Long customerId);
 
     public void nullCustomerReservation(Long customerId);
+
+    public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
     
 }

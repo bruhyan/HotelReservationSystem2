@@ -50,4 +50,10 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         CustomerEntity cus = em.find(CustomerEntity.class, customerId);
         cus.setReservation(null);
     }
+    
+    public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
+        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :email");
+        query.setParameter("email", email);
+        return (CustomerEntity)query.getSingleResult();
+    }
 }
