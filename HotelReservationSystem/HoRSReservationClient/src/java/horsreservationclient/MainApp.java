@@ -34,11 +34,16 @@ public class MainApp {
         int input = 0;
         while(true) {
             System.out.println("==== Welcome to the HoRS Reservation Client ====");
+            if(loggedInUser == null) {
             System.out.println("1: Guest Login");
             System.out.println("2: Register as Guest");
             System.out.println("3: Search Hotel Room");
             System.out.println("4: Exit");
+            }
             if(loggedInUser != null) {
+                System.out.println("2: Register as Guest");
+                System.out.println("3: Search Hotel Room");
+                System.out.println("4: Exit");
                 System.out.println("5: View My Reservation Details");
                 System.out.println("6: View All My Reservations");
                 System.out.println("7: Logout");
