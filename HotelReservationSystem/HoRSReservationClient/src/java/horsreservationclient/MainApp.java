@@ -19,6 +19,15 @@ import util.exception.CustomerNotFoundException;
 public class MainApp {
     private CustomerEntity loggedInUser;
     private CustomerControllerRemote customerControllerRemote;
+
+    public MainApp() {
+    }
+
+    public MainApp(CustomerControllerRemote customerControllerRemote) {
+        this.customerControllerRemote = customerControllerRemote;
+    }
+    
+    
     
     public void runApp() {
         Scanner sc = new Scanner(System.in);
@@ -85,6 +94,21 @@ public class MainApp {
     
     public void doGuestRegistration(Scanner sc) {
         sc.nextLine();
+        System.out.println("===== Guest Registration Page ======");
+        System.out.println("Enter email:");
+        String email = sc.nextLine();
+        System.out.println("Enter contact number:");
+        String contactNumber = sc.nextLine();
+        System.out.println("Enter first name:");
+        String firstName = sc.nextLine();
+        System.out.println("Enter last name:");
+        String lastName = sc.nextLine();
+        System.out.println("Enter password:");
+        String password = sc.nextLine();
+        
+        CustomerEntity customer = new CustomerEntity(email, contactNumber, firstName, lastName, password);
+        customer = customerControllerRemote.createCustomerEntity(customer);
+        System.out.println("Customer "+customer.getEmail()+" successfully created");
     }
     
     public void doGuestOperations(Scanner sc) {
@@ -92,6 +116,8 @@ public class MainApp {
     }
     
     public void doLogout() {
+        System.out.println(loggedInUser.getEmail()+" successfully logged out");
         
+        loggedInUser = null;
     }
 }
