@@ -97,7 +97,8 @@ public class FrontOfficeModule {
     }
     
     public void doWalkInSearchRoom(Scanner sc) {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+        System.out.println("Enter check in year: [YYYY]");
+        int year = sc.nextInt();
         System.out.println("Enter check in month: [ 1(January)~12(December) ]");
         int month = sc.nextInt();
         month-=1;

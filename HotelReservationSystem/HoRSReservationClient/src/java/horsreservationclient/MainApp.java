@@ -7,6 +7,8 @@ package horsreservationclient;
 
 import Entity.CustomerEntity;
 import ejb.session.stateless.CustomerControllerRemote;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -80,7 +82,25 @@ public class MainApp {
     }
     
     public void doSearchHotelRoom(Scanner sc) {
-        System.out.println("TBC");
+        System.out.println("Enter check in year: [YYYY]");
+        int year = sc.nextInt();
+        System.out.println("Enter check in month: [ 1(January)~12(December) ]");
+        int month = sc.nextInt();
+        month-=1;
+        System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
+        int day = sc.nextInt();
+        Date checkInDate = new Date(year, month, day, 14, 0);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(checkInDate);
+        System.out.println("Enter how many nights of stay"); //12pm checkout
+        int nights = sc.nextInt();
+        cal.add(Calendar.DATE, nights);
+        cal.set(Calendar.HOUR_OF_DAY, 12);
+        Date checkOutDate = cal.getTime();
+        
+    }
+    
+    public void getAvailableRoomTypes(Date checkInDate, Date checkOutDate, Scanner sc) {
         
     }
     
