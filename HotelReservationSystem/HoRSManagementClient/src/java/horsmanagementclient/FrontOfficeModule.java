@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Scanner;
 import javax.ejb.EJB;
 import util.enumeration.RateType;
+import util.enumeration.ReservationType;
 import util.enumeration.RoomStatus;
 import util.exception.CustomerNotFoundException;
 
@@ -180,7 +181,7 @@ public class FrontOfficeModule {
                 cus = customerControllerRemote.createCustomerEntity(cus);
             }
         //create new Reservation
-        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, cus);
+        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, cus, ReservationType.WalkIn);
         reservation = reservationControllerRemote.createNewReservation(reservation);
         
         for(RoomTypeEntity roomType : desiredRoomTypes) {
