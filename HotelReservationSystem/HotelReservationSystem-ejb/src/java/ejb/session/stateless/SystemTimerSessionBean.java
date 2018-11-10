@@ -75,11 +75,8 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
                 doRegularAllocation(booking.getBookingId(), roomTypeId);
             } else {
 
-                if (booking.getReservation().isWalkIn()) {
-                    doWalkInUpgradeAllocation(booking.getBookingId(), roomTypeId);
-                } else {
-                    doUpgradeAllocation(booking.getBookingId(), roomTypeId);
-                }
+                doUpgradeAllocation(booking.getBookingId(), roomTypeId, booking.getReservation().isWalkIn());
+
             }
 
         }
@@ -97,10 +94,17 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     }
 
     //for online/partner
-    public void doUpgradeAllocation(Long bookingId, Long roomTypeId) {
+    public void doUpgradeAllocation(Long bookingId, Long roomTypeId, boolean isWalkIn) {
         BookingEntity booking = em.find(BookingEntity.class, bookingId);
         RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
-        RoomTypeEntity roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForOnlineOrPartner(roomTypeId);
+        RoomTypeEntity roomType;
+
+        if (!isWalkIn) {
+            roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForOnlineOrPartner(roomTypeId);
+        } else {
+            roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForWalkIn(roomTypeId);
+        }
+
         if (roomType == null) {
             //cannot allocate, report exception use case 16
             System.out.println("Booking id : " + booking.getBookingId() + "'s room cannot be allocated! All upgraded room type are unavailable!");
@@ -115,23 +119,5 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
         System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomName() + " to " + roomType.getRoomName() + "."); //Use case 16
     }
 
-    //for walkin
-    public void doWalkInUpgradeAllocation(Long bookingId, Long roomTypeId) {
-        BookingEntity booking = em.find(BookingEntity.class, bookingId);
-        RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
-        RoomTypeEntity roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForWalkIn(roomTypeId);
-        if (roomType == null) {
-            //cannot allocate, report exception use case 16
-            System.out.println("Booking id : " + booking.getBookingId() + "'s room cannot be allocated! All upgraded room type are unavailable!");
-            return;
-        }
-        Long upgradedId = roomType.getRoomTypeId();
-        roomType = em.find(RoomTypeEntity.class, upgradedId);
-        RoomEntity room = roomControllerLocal.allocateRoom(upgradedId);
-
-        booking.setRoom(room);
-        em.merge(booking);
-        System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomName() + " to " + roomType.getRoomName() + "."); //Use case 16
-    }
 
 }
