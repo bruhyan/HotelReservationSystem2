@@ -8,7 +8,6 @@ package ejb.session.stateless;
 import Entity.BookingEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -22,6 +21,7 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.enumeration.ReservationType;
 
 /**
  *
@@ -75,7 +75,7 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
                 doRegularAllocation(booking.getBookingId(), roomTypeId);
             } else {
 
-                doUpgradeAllocation(booking.getBookingId(), roomTypeId, booking.getReservation().isWalkIn());
+                doUpgradeAllocation(booking.getBookingId(), roomTypeId, booking.getReservation().getReservationType());
 
             }
 
@@ -94,12 +94,12 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     }
 
     //for online/partner
-    public void doUpgradeAllocation(Long bookingId, Long roomTypeId, boolean isWalkIn) {
+    public void doUpgradeAllocation(Long bookingId, Long roomTypeId, ReservationType reservationType) {
         BookingEntity booking = em.find(BookingEntity.class, bookingId);
         RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
         RoomTypeEntity roomType;
 
-        if (!isWalkIn) {
+        if (reservationType == ReservationType.WalkIn) {
             roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForOnlineOrPartner(roomTypeId);
         } else {
             roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForWalkIn(roomTypeId);

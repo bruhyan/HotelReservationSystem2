@@ -63,7 +63,7 @@ public class MainApp {
 //       for(RoomRatesEntity roomRate : roomRateList){
 //           System.out.println(roomRate.getName());
 //       }
-    System.out.println(roomTypeControllerRemote.findPricierAvailableRoomType(2l).getRoomName());
+//    System.out.println(roomTypeControllerRemote.findPricierAvailableRoomType(2l).getRoomName());
 //        BigDecimal rate = roomTypeControllerRemote.findPricierRoomType(1l);
 //        System.out.println(rate);
 
@@ -71,7 +71,7 @@ public class MainApp {
 //        for(RoomRatesEntity roomRate : roomRateList){
 //           System.out.println(roomRate.getName());
 //       }
-       System.out.println("It works");
+//       System.out.println("It works");
 //        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
 //        for(RoomEntity room : roomList){
 //            System.out.println(room.getRoomNumber());

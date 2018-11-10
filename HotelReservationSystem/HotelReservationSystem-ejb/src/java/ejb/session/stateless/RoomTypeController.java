@@ -144,16 +144,19 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
              
                 List<RoomRatesEntity> roomRateListExclude = roomRateControllerRemote.retrieveRoomRateListExcludeRoomType(roomTypeId);
 
-                //now we sort the room rate exclude into ascending order, either equal pricing, or next higher.
+                //Here need to sort out the price according to prof rules
                 Collections.sort(roomRateListExclude, (RoomRatesEntity r1, RoomRatesEntity r2)
                         -> r1.getRatePerNight().compareTo(r2.getRatePerNight()));
 
                 //sorted, now compare if == or >, get first one.
                 RoomRatesEntity pricierRoomRate = null;
-
+                BigDecimal currentRoomRate = currentRate.getRatePerNight();
+                
+                
+                
                 for (RoomRatesEntity roomRate : roomRateListExclude) {
                     System.out.println(currentRoomRate + " " + roomRate.getRatePerNight()); //checking the prices
-                    if (publishedRate.compareTo(roomRate.getRatePerNight()) == 0 || publishedRate.compareTo(roomRate.getRatePerNight()) < 0) {
+                    if (currentRoomRate.compareTo(roomRate.getRatePerNight()) == 0 || currentRoomRate.compareTo(roomRate.getRatePerNight()) < 0) {
                         pricierRoomRate = em.find(RoomRatesEntity.class, roomRate.getRoomRatesId());
 
                         //check if this list have any available roomType. Actually here maybe can use JPQL also, if free can try for fun
