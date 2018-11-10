@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import Entity.CustomerEntity;
 import Entity.ReservationEntity;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,14 +42,14 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         
     }
     
-    public ReservationEntity retrieveCustomerReservation(Long customerId) {
+    public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
         CustomerEntity cus = em.find(CustomerEntity.class, customerId);
-        return cus.getReservation();
+        return cus.getReservations();
     }
     
     public void nullCustomerReservation(Long customerId) {
         CustomerEntity cus = em.find(CustomerEntity.class, customerId);
-        cus.setReservation(null);
+        cus.getReservations().clear();
     }
     
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
@@ -56,4 +57,15 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         query.setParameter("email", email);
         return (CustomerEntity)query.getSingleResult();
     }
+    
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId){
+        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer ORDER BY r.reservationId DESC");
+        query.setParameter("customer", customer);
+        
+        return (ReservationEntity) query.getResultList().get(0);
+        
+        
+    }
+    
 }

@@ -228,7 +228,7 @@ public class FrontOfficeModule {
         CustomerEntity cus;
             try {
                 cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
-                ReservationEntity reservation = customerControllerRemote.retrieveCustomerReservation(cus.getCustomerId());
+                ReservationEntity reservation = customerControllerRemote.retrieveCustomerLatestReservation(cus.getCustomerId());
                 List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
                 
                 int index = 1;
@@ -264,7 +264,7 @@ public class FrontOfficeModule {
         CustomerEntity cus;
             try {
                 cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
-                ReservationEntity reservation = customerControllerRemote.retrieveCustomerReservation(cus.getCustomerId());
+                ReservationEntity reservation = customerControllerRemote.retrieveCustomerLatestReservation(cus.getCustomerId());
                 List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
                 
                 int index = 1;
