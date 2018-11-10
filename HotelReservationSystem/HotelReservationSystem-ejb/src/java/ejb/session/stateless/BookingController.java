@@ -27,8 +27,14 @@ public class BookingController implements BookingControllerRemote, BookingContro
     @Override
     public List<BookingEntity> retrieveBookingList(){
         Query query = em.createQuery("SELECT b FROM BookingEntity b");
-        return query.getResultList();
+        List<BookingEntity> bookings =  query.getResultList();
+        
+        for(BookingEntity booking : bookings){
+            booking.getReservation();
+        }
+        return bookings;
     }
+    
     
     @Override
     public BookingEntity createBooking(BookingEntity booking) {

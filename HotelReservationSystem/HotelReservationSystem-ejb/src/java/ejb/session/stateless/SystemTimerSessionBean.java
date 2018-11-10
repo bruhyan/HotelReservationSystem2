@@ -32,8 +32,7 @@ import javax.persistence.PersistenceContext;
 @Remote(SystemTimerSessionBeanRemote.class)
 public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, SystemTimerSessionBeanLocal {
 
-
-    @Resource 
+    @Resource
     private SessionContext sessionContext;
     @EJB
     private BookingControllerLocal bookingControllerLocal;
@@ -43,13 +42,12 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     private RoomTypeControllerLocal roomTypeControllerLocal;
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
-    
-    public SystemTimerSessionBean(){
-    
+
+    public SystemTimerSessionBean() {
+
     }
-    
-   
-    public void init(){
+
+    public void init() {
         TimerService timerService = sessionContext.getTimerService();
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setInfo("SystemRoomAllocation_Info");
@@ -57,64 +55,83 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
         schedule.dayOfWeek("*").hour("2");
         timerService.createCalendarTimer(schedule, timerConfig);
     }
-    
-    
+
     @Timeout
     @Override
-    public void roomAllocation() 
-    {
+    public void roomAllocation() {
         //business rule : booking requires room of room type, no more room type left, allocate one that is higher (More expensive? How to determine is a room type is better?
         // more expensive, higher capacity)
         //If no more, then just dont allocate.
-        
+
         List<BookingEntity> bookingList = bookingControllerLocal.retrieveBookingList();
-        
-        for(BookingEntity booking : bookingList){
+
+        for (BookingEntity booking : bookingList) {
+
             RoomTypeEntity roomTypeNeeded = booking.getRoomType();
             //check if roomtype is available.
             Long roomTypeId = roomTypeNeeded.getRoomTypeId();
-            
-            if(roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomTypeId)){
+
+            if (roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomTypeId)) {
                 doRegularAllocation(booking.getBookingId(), roomTypeId);
-            }else{
-                doUpgradeAllocation(booking.getBookingId(), roomTypeId);
+            } else {
+
+                if (booking.getReservation().isWalkIn()) {
+                    doWalkInUpgradeAllocation(booking.getBookingId(), roomTypeId);
+                } else {
+                    doUpgradeAllocation(booking.getBookingId(), roomTypeId);
+                }
             }
-           
-  
+
         }
     }
-    
 
-    
-    public void doRegularAllocation(Long bookingId, Long roomTypeId){
+    public void doRegularAllocation(Long bookingId, Long roomTypeId) {
         BookingEntity booking = em.find(BookingEntity.class, bookingId);
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
-        
+
         RoomEntity room = roomControllerLocal.allocateRoom(roomTypeId);
-        
+
         booking.setRoom(room);
         em.merge(booking);
-        
-        
+
     }
-    
-    public void doUpgradeAllocation(Long bookingId, Long roomTypeId){
+
+    //for online/partner
+    public void doUpgradeAllocation(Long bookingId, Long roomTypeId) {
         BookingEntity booking = em.find(BookingEntity.class, bookingId);
         RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
-        RoomTypeEntity roomType = roomTypeControllerLocal.findPricierAvailableRoomType(roomTypeId);
-        if(roomType == null){
-        //cannot allocate, report exception use case 16
-        System.out.println("Booking id : " + booking.getBookingId() + "'s room cannot be allocated! All upgraded room type are unavailable!");
-        return;
+        RoomTypeEntity roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForOnlineOrPartner(roomTypeId);
+        if (roomType == null) {
+            //cannot allocate, report exception use case 16
+            System.out.println("Booking id : " + booking.getBookingId() + "'s room cannot be allocated! All upgraded room type are unavailable!");
+            return;
         }
         Long upgradedId = roomType.getRoomTypeId();
         roomType = em.find(RoomTypeEntity.class, upgradedId);
         RoomEntity room = roomControllerLocal.allocateRoom(upgradedId);
-        
+
         booking.setRoom(room);
         em.merge(booking);
         System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomName() + " to " + roomType.getRoomName() + "."); //Use case 16
     }
 
+    //for walkin
+    public void doWalkInUpgradeAllocation(Long bookingId, Long roomTypeId) {
+        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+        RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
+        RoomTypeEntity roomType = roomTypeControllerLocal.findPricierAvailableRoomTypeForWalkIn(roomTypeId);
+        if (roomType == null) {
+            //cannot allocate, report exception use case 16
+            System.out.println("Booking id : " + booking.getBookingId() + "'s room cannot be allocated! All upgraded room type are unavailable!");
+            return;
+        }
+        Long upgradedId = roomType.getRoomTypeId();
+        roomType = em.find(RoomTypeEntity.class, upgradedId);
+        RoomEntity room = roomControllerLocal.allocateRoom(upgradedId);
+
+        booking.setRoom(room);
+        em.merge(booking);
+        System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomName() + " to " + roomType.getRoomName() + "."); //Use case 16
+    }
 
 }

@@ -19,5 +19,7 @@ import javax.ejb.Local;
 public interface RoomTypeControllerLocal {
 
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
-      public RoomTypeEntity findPricierAvailableRoomType(Long roomTypeId);
+      public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
+
+    public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId);
 }

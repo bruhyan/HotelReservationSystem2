@@ -37,7 +37,7 @@ public interface RoomTypeControllerRemote {
 
     public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
 
-    public RoomTypeEntity findPricierAvailableRoomType(Long roomTypeId);
+    public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
     
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
 }
