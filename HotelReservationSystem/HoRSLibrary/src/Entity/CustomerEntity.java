@@ -6,6 +6,8 @@
 package Entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +24,7 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
-    private ReservationEntity reservation;
+    private List<ReservationEntity> reservations;
     private String email;
     private String contactNumber;
     private String firstName;
@@ -31,6 +33,7 @@ public class CustomerEntity implements Serializable {
     private PartnerEntity partner;
 
     public CustomerEntity() {
+        this.reservations = new ArrayList<>();
     }
     
     //use this if customer is walk in
@@ -50,16 +53,6 @@ public class CustomerEntity implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
-    }
-    
-    
-
-    public ReservationEntity getReservation() {
-        return reservation;
-    }
-
-    public void setReservation(ReservationEntity reservation) {
-        this.reservation = reservation;
     }
 
     public String getEmail() {
@@ -143,6 +136,14 @@ public class CustomerEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
     }
     
 }
