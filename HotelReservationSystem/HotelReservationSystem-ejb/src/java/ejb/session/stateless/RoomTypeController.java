@@ -138,51 +138,45 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     @Override
     public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId) {
 
-        //find actual price of this roomType.
-        //First find the roomrates attached to this room type .
-        try{
-        RoomRatesEntity currentRate = findOnlineRateForRoomType(roomTypeId);
-        }catch(NoAvailableOnlineRoomRateException ex){
+        try {
+            RoomRatesEntity currentRate = findOnlineRateForRoomType(roomTypeId);
+            try {
+             
+                List<RoomRatesEntity> roomRateListExclude = roomRateControllerRemote.retrieveRoomRateListExcludeRoomType(roomTypeId);
+
+                //now we sort the room rate exclude into ascending order, either equal pricing, or next higher.
+                Collections.sort(roomRateListExclude, (RoomRatesEntity r1, RoomRatesEntity r2)
+                        -> r1.getRatePerNight().compareTo(r2.getRatePerNight()));
+
+                //sorted, now compare if == or >, get first one.
+                RoomRatesEntity pricierRoomRate = null;
+
+                for (RoomRatesEntity roomRate : roomRateListExclude) {
+                    System.out.println(currentRoomRate + " " + roomRate.getRatePerNight()); //checking the prices
+                    if (publishedRate.compareTo(roomRate.getRatePerNight()) == 0 || publishedRate.compareTo(roomRate.getRatePerNight()) < 0) {
+                        pricierRoomRate = em.find(RoomRatesEntity.class, roomRate.getRoomRatesId());
+
+                        //check if this list have any available roomType. Actually here maybe can use JPQL also, if free can try for fun
+                        List<RoomTypeEntity> pricierRoomTypes = pricierRoomRate.getRoomTypeList();
+
+                        for (RoomTypeEntity roomType : pricierRoomTypes) {
+                            if (roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
+                                return roomType;
+                            }
+                        }
+                        //means haven't found yet in current price range.
+
+                    }
+                    //go to next higher price, repeat.
+                }
+
+            } catch (NoResultException ex) {
+                System.out.println("No published room rate found for the given room type! Please create a room rate of published room type for this room type first.");
+            }
+        } catch (NoAvailableOnlineRoomRateException ex) {
             System.out.println("There is no room rate available for this room type in the first place! Please assign a normal rate at least.");
         }
-        try {
-            RoomRatesEntity currentRoomRate = (RoomRatesEntity) query.getSingleResult(); //gets me the published rate of a room type.
-            BigDecimal publishedRate = currentRoomRate.getRatePerNight();
 
-            //lowest rate is the rate in question, now find another room type that is higher.
-            //sort rates first, then find the one after highest rate. 
-            //one after highest rate shouldn't be same roomType.
-            List<RoomRatesEntity> roomRateListExclude = roomRateControllerRemote.retrieveRoomRateListExcludeRoomType(roomTypeId);
-
-            //now we sort the room rate exclude into ascending order, either equal pricing, or next higher.
-            Collections.sort(roomRateListExclude, (RoomRatesEntity r1, RoomRatesEntity r2)
-                    -> r1.getRatePerNight().compareTo(r2.getRatePerNight()));
-
-            //sorted, now compare if == or >, get first one.
-            RoomRatesEntity pricierRoomRate = null;
-
-            for (RoomRatesEntity roomRate : roomRateListExclude) {
-                System.out.println(currentRoomRate + " " + roomRate.getRatePerNight()); //checking the prices
-                if (publishedRate.compareTo(roomRate.getRatePerNight()) == 0 || publishedRate.compareTo(roomRate.getRatePerNight()) < 0) {
-                    pricierRoomRate = em.find(RoomRatesEntity.class, roomRate.getRoomRatesId());
-
-                    //check if this list have any available roomType. Actually here maybe can use JPQL also, if free can try for fun
-                    List<RoomTypeEntity> pricierRoomTypes = pricierRoomRate.getRoomTypeList();
-
-                    for (RoomTypeEntity roomType : pricierRoomTypes) {
-                        if (roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
-                            return roomType;
-                        }
-                    }
-                    //means haven't found yet in current price range.
-
-                }
-                //go to next higher price, repeat.
-            }
-
-        } catch (NoResultException ex) {
-            System.out.println("No published room rate found for the given room type! Please create a room rate of published room type for this room type first.");
-        }
         //Means no roomType available.
         return null;
     }
@@ -214,18 +208,20 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             if (!checkValidityOfRoomRate(roomRate)) { //skips expired/not started rates, price is determined by check in and check out date, it becomes not considered in our final prediction
                 continue;
             }
-            if (null != roomRate.getRateType()) switch (roomRate.getRateType()) {
-                case NORMAL:
-                    normal = true;
-                    break;
-                case PROMOTIONAL:
-                    promo = true;
-                    break;
-                case PEAK:
-                    peak = true;
-                    break;
-                default:
-                    break;
+            if (null != roomRate.getRateType()) {
+                switch (roomRate.getRateType()) {
+                    case NORMAL:
+                        normal = true;
+                        break;
+                    case PROMOTIONAL:
+                        promo = true;
+                        break;
+                    case PEAK:
+                        peak = true;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -265,7 +261,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         throw new NoAvailableOnlineRoomRateException("There is no available room rate to be used!");
 
     }
-    
+
     //This method will get the RoomRateEntity of room type when it is a reservation for today
     public RoomRatesEntity findWalkInRateForRoomTypeToday(Long roomTypeId) {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :rateType");
@@ -335,10 +331,9 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         //Means no roomType available.
         return null;
     }
-    
 
     //might be handy
-    public RoomTypeEntity findPricierRoomType(RoomRatesEntity currentRate) {
+    public RoomTypeEntity findPricierRoomTypeForOnline(RoomRatesEntity currentRate, Long roomTypeId) {
 
         //generate List of pricier room rates that is not the same room type and not published.
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId <> :roomTypeId AND r.rateType <> :rateType AND r.ratePerNight > :currentRate");
@@ -346,16 +341,14 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         query.setParameter("rateType", RateType.PUBLISHED);
 
         BigDecimal currentRatePerNight = currentRate.getRatePerNight();
-        List<RoomTypeEntity> pricierRoomTypes = pricierRoomRate.getRoomTypeList();
-
-        for (RoomTypeEntity roomType : pricierRoomTypes) {
-            if (roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
-                return roomType;
-            }
-        }
+//        List<RoomTypeEntity> pricierRoomTypes = pricierRoomRate.getRoomTypeList();
+//
+//        for (RoomTypeEntity roomType : pricierRoomTypes) {
+//            if (roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
+//                return roomType;
+//            }
+//        }
         return null;
     }
-
-
 
 }
