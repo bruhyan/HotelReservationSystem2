@@ -214,12 +214,18 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             if (!checkValidityOfRoomRate(roomRate)) { //skips expired/not started rates, price is determined by check in and check out date, it becomes not considered in our final prediction
                 continue;
             }
-            if (roomRate.getRateType() == RateType.NORMAL) {
-                normal = true;
-            } else if (roomRate.getRateType() == RateType.PROMOTIONAL) {
-                promo = true;
-            } else if (roomRate.getRateType() == RateType.PEAK) {
-                peak = true;
+            if (null != roomRate.getRateType()) switch (roomRate.getRateType()) {
+                case NORMAL:
+                    normal = true;
+                    break;
+                case PROMOTIONAL:
+                    promo = true;
+                    break;
+                case PEAK:
+                    peak = true;
+                    break;
+                default:
+                    break;
             }
         }
 
