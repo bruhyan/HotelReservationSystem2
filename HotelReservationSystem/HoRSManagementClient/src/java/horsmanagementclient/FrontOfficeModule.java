@@ -205,7 +205,7 @@ public class FrontOfficeModule {
         
     }
     
-    
+    //what if there is more than 1 published rate for particular room type on that night
     public BigDecimal calculatePrevailingRate(List<RoomTypeEntity> roomTypes, int nights) {
         BigDecimal totalAmount = new BigDecimal(0.00);
         for(int i = 0; i < nights; i++) {

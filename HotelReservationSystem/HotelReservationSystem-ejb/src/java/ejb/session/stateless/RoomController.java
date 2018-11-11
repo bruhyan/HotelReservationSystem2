@@ -106,6 +106,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
     }
     
+    //check if room type has available rooms
     @Override
     public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId){
         

@@ -44,7 +44,9 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
     
     public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
         CustomerEntity cus = em.find(CustomerEntity.class, customerId);
-        return cus.getReservations();
+        List<ReservationEntity> reservations = cus.getReservations();
+        reservations.size();
+        return reservations;
     }
     
     public void nullCustomerReservation(Long customerId) {

@@ -6,12 +6,12 @@
 package horsreservationclient;
 
 import Entity.CustomerEntity;
+import Entity.ReservationEntity;
 import ejb.session.stateless.CustomerControllerRemote;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.CustomerNotFoundException;
 
 /**
@@ -70,7 +70,7 @@ public class MainApp {
                 }else if(input == 5 && loggedInUser != null) {
                     doViewMyReservationDetails(sc);
                 }else if(input == 6 && loggedInUser != null) {
-                    doViewAllMyReservations(sc);
+                    doViewAllMyReservations();
                 }else if(input == 7 && loggedInUser != null) {
                     doLogout();
                 }
@@ -105,11 +105,33 @@ public class MainApp {
     }
     
     public void doViewMyReservationDetails(Scanner sc) {
-        System.out.println("TBC");
+        List<ReservationEntity> reservations = doViewAllMyReservations();
+        System.out.println("Select which reservation to view");
+        int choice = sc.nextInt();
+        ReservationEntity selected = reservations.get(choice-=1);
+        System.out.println("==============================================================");
+        System.out.println("Reservation ID: "+selected.getReservationId());
+        System.out.println("Reservation type: "+selected.getReservationType());
+        System.out.println("Guest name: "+ selected.getCustomer().getFirstName()); //do i need to go through controller to get the customer?
+        System.out.println("Guest email: "+selected.getCustomer().getEmail());
+        System.out.println("Reservation date: "+selected.getDateOfReservation());
+        System.out.println("Check in date: "+selected.getCheckInDateTime());
+        System.out.println("Check out date: "+selected.getCheckOutDateTime());
+        System.out.println("==============================================================");
+        
     }
     
-    public void doViewAllMyReservations(Scanner sc) {
-        System.out.println("TBC");
+    public List<ReservationEntity> doViewAllMyReservations() {
+        Long customerId = loggedInUser.getCustomerId();
+        List<ReservationEntity> reservations = customerControllerRemote.retrieveCustomerReservation(customerId);
+        int index = 1;
+        System.out.println("============= Reservation List =================");
+        for(ReservationEntity reservation : reservations) {
+            System.out.println("#"+index+" Reservation ID: "+reservation.getReservationId());
+            index++;
+        }
+        System.out.println("================================================");
+        return reservations;
     }
     
     public void doLogin(Scanner sc) {
