@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +24,8 @@ import util.enumeration.RateType;
  * @author mdk12
  */
 @Stateless
+@Local(RoomRateControllerLocal.class)
+@Remote(RoomRateControllerRemote.class)
 public class RoomRateController implements RoomRateControllerRemote, RoomRateControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

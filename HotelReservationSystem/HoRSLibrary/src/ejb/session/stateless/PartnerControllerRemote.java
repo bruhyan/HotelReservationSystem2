@@ -13,7 +13,7 @@ import javax.ejb.Remote;
  *
  * @author Bryan
  */
-@Remote
+
 public interface PartnerControllerRemote {
 
     public PartnerEntity createPartnerEntity(PartnerEntity partner);

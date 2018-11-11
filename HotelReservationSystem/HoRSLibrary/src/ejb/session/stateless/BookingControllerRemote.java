@@ -15,7 +15,6 @@ import javax.ejb.Remote;
  *
  * @author mdk12
  */
-@Remote
 public interface BookingControllerRemote {
 
     public List<BookingEntity> retrieveBookingList();

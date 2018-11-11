@@ -9,12 +9,9 @@ import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumeration.RoomStatus;
 
-/**
- *
- * @author mdk12
- */
-@Local
+
 public interface RoomControllerLocal {
 
     public List<RoomEntity> retrieveRoomListByType(RoomTypeEntity roomType);
@@ -24,5 +21,21 @@ public interface RoomControllerLocal {
     public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId);
 
     public RoomEntity allocateRoom(Long roomTypeId);
+
+    public void createNewRoom(RoomEntity room);
+
+    public List<RoomEntity> retrieveRoomList();
+
+    public RoomEntity retrieveRoomById(Long id);
+
+    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId);
+
+    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId);
+
+    public void deleteRoomById(Long id);
+
+    public RoomEntity walkInAllocateRoom(Long roomTypeId);
+
+    public void changeRoomStatus(Long roomEntityId, RoomStatus status);
     
 }

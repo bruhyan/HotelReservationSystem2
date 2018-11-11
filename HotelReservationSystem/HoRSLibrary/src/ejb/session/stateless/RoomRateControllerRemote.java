@@ -16,9 +16,8 @@ import util.enumeration.RateType;
  *
  * @author mdk12
  */
-@Remote
 public interface RoomRateControllerRemote {
-        public List<RoomRatesEntity> retrieveRoomRatesList();
+    public List<RoomRatesEntity> retrieveRoomRatesList();
 
     public void createNewRoomRate(RoomRatesEntity roomRates);
 

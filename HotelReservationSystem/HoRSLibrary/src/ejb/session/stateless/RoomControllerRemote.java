@@ -10,11 +10,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.RoomStatus;
 
-/**
- *
- * @author mdk12
- */
-@Remote
+
 public interface RoomControllerRemote {
 
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId);

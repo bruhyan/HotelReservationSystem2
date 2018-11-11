@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import Entity.CustomerEntity;
 import Entity.ReservationEntity;
 import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +21,8 @@ import util.exception.CustomerNotFoundException;
  * @author Bryan
  */
 @Stateless
+@Local(CustomerControllerLocal.class)
+@Remote(CustomerControllerRemote.class)
 public class CustomerController implements CustomerControllerRemote, CustomerControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

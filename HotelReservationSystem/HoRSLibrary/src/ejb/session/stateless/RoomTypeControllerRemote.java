@@ -12,11 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
 
-/**
- *
- * @author mdk12
- */
-@Remote
+
 public interface RoomTypeControllerRemote {
 
     public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType);

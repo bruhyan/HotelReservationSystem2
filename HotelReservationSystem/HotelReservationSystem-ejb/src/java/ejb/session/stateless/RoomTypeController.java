@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -26,6 +28,8 @@ import util.exception.NoAvailableOnlineRoomRateException;
  * @author mdk12
  */
 @Stateless
+@Local(RoomTypeControllerLocal.class)
+@Remote(RoomTypeControllerRemote.class)
 public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeControllerLocal {
 
     @EJB

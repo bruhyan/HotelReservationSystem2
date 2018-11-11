@@ -11,11 +11,6 @@ import Entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Remote;
 
-/**
- *
- * @author Bryan
- */
-@Remote
 public interface ReservationControllerRemote {
 
     public ReservationEntity createNewReservation(ReservationEntity reserv);

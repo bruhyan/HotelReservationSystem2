@@ -9,11 +9,12 @@ import Entity.BookingEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.enumeration.RateType;
 import util.enumeration.RoomStatus;
 
 /**
@@ -21,6 +22,8 @@ import util.enumeration.RoomStatus;
  * @author mdk12
  */
 @Stateless
+@Local(RoomControllerLocal.class)
+@Remote(RoomControllerRemote.class)
 public class RoomController implements RoomControllerRemote, RoomControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

@@ -9,6 +9,8 @@ import Entity.BookingEntity;
 import Entity.ReservationEntity;
 import Entity.TransactionEntity;
 import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +20,8 @@ import javax.persistence.PersistenceContext;
  * @author Bryan
  */
 @Stateless
+@Local(ReservationControllerLocal.class)
+@Remote(ReservationControllerRemote.class)
 public class ReservationController implements ReservationControllerRemote, ReservationControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

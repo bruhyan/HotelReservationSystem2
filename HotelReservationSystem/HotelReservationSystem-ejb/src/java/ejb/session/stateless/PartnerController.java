@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import Entity.PartnerEntity;
 import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +19,8 @@ import javax.persistence.Query;
  * @author Bryan
  */
 @Stateless
+@Local(PartnerControllerLocal.class)
+@Remote(PartnerControllerRemote.class)
 public class PartnerController implements PartnerControllerRemote, PartnerControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

@@ -15,7 +15,7 @@ import util.exception.CustomerNotFoundException;
  *
  * @author Bryan
  */
-@Remote
+
 public interface CustomerControllerRemote {
 
     public CustomerEntity createCustomerEntity(CustomerEntity cus);
