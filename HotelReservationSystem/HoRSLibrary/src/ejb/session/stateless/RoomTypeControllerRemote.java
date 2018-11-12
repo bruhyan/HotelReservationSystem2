@@ -11,6 +11,8 @@ import Entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.RateType;
+import util.exception.NoAvailableOnlineRoomRateException;
 
 
 public interface RoomTypeControllerRemote {
@@ -36,4 +38,8 @@ public interface RoomTypeControllerRemote {
     public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
     
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
+
+    public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
+
+    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException;
 }

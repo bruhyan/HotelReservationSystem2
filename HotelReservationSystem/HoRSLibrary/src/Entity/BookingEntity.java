@@ -35,19 +35,21 @@ public class BookingEntity implements Serializable {
     }
 
     //for reservations, to allocate room at 2am on current day.
+    //use this for walk in if check in date is in the future
     public BookingEntity(RoomTypeEntity roomType, ReservationEntity reservation){
         this();
         this.roomType = roomType;
         this.reservation = reservation;
     }
     
-    //probably for walk in entity.
+    //for walk in but allocate room immediately
     public BookingEntity(RoomEntity room, ReservationEntity reservation) {
         this();
         this.room = room;
         this.roomType = room.getRoomType();
         this.reservation = reservation;
     }
+    
 
     public RoomTypeEntity getRoomType() {
         return roomType;
