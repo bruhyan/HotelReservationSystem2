@@ -6,6 +6,10 @@
 package ejb.session.stateless;
 
 import Entity.CustomerEntity;
+import Entity.ReservationEntity;
+import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +21,8 @@ import util.exception.CustomerNotFoundException;
  * @author Bryan
  */
 @Stateless
+@Local(CustomerControllerLocal.class)
+@Remote(CustomerControllerRemote.class)
 public class CustomerController implements CustomerControllerRemote, CustomerControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
@@ -39,4 +45,33 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         return (CustomerEntity)query.getSingleResult();
         
     }
+    
+    public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
+        CustomerEntity cus = em.find(CustomerEntity.class, customerId);
+        List<ReservationEntity> reservations = cus.getReservations();
+        reservations.size();
+        return reservations;
+    }
+    
+    public void nullCustomerReservation(Long customerId) {
+        CustomerEntity cus = em.find(CustomerEntity.class, customerId);
+        cus.getReservations().clear();
+    }
+    
+    public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
+        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :email");
+        query.setParameter("email", email);
+        return (CustomerEntity)query.getSingleResult();
+    }
+    
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId){
+        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer ORDER BY r.reservationId DESC");
+        query.setParameter("customer", customer);
+        
+        return (ReservationEntity) query.getResultList().get(0);
+        
+        
+    }
+    
 }

@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import util.enumeration.ReservationType;
 
 /**
  *
@@ -37,13 +38,14 @@ public class ReservationEntity implements Serializable {
     private CustomerEntity customer;
     private TransactionEntity transaction;
     private Integer numOfGuests;
+    private ReservationType reservationType;
 
     public ReservationEntity() {
         this.bookingList = new ArrayList<>();
     }
 
     
-    public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, CustomerEntity customer) {
+    public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, CustomerEntity customer, ReservationType reservationType) {
         this();
         this.dateOfReservation = dateOfReservation;
         this.checkInDateTime = checkInDateTime;
@@ -51,9 +53,11 @@ public class ReservationEntity implements Serializable {
         this.showedUp = showedUp;
         this.bookingList = bookingList;
         this.customer = customer;
+        this.reservationType = reservationType;
         //this.transaction = transaction;
         //this.numOfGuests = numOfGuests;
     }
+    
     
     public void addBooking(BookingEntity booking){
         this.bookingList.add(booking);
@@ -157,6 +161,14 @@ public class ReservationEntity implements Serializable {
     @Override
     public String toString() {
         return "Entity.ReservationEntity[ id=" + reservationId + " ]";
+    }
+
+    public ReservationType getReservationType() {
+        return reservationType;
+    }
+
+    public void setReservationType(ReservationType reservationType) {
+        this.reservationType = reservationType;
     }
     
 }

@@ -5,19 +5,13 @@
  */
 package ejb.session.stateless;
 
-import Entity.PartnerEntity;
-import java.util.List;
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  *
  * @author Bryan
  */
-
-public interface PartnerControllerRemote {
-
-    public PartnerEntity createPartnerEntity(PartnerEntity partner);
-
-    public List<PartnerEntity> retrieveAllPartner();
+@Local
+public interface TransactionControllerLocal {
     
 }

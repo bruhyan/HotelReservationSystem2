@@ -9,6 +9,8 @@ import Entity.BookingEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
 import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,6 +22,8 @@ import util.enumeration.RoomStatus;
  * @author mdk12
  */
 @Stateless
+@Local(RoomControllerLocal.class)
+@Remote(RoomControllerRemote.class)
 public class RoomController implements RoomControllerRemote, RoomControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
@@ -105,6 +109,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
     }
     
+    //check if room type has available rooms
     @Override
     public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId){
         
@@ -127,12 +132,32 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
         
         List<RoomEntity> roomList = query.getResultList();
-        RoomEntity room = roomList.get(1);
+        RoomEntity room = roomList.get(0);
         room.setRoomStatus(RoomStatus.OCCUPIED);
         em.merge(room);
         return  room;
         
     }
+    
+    public RoomEntity walkInAllocateRoom(Long roomTypeId) {
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+        
+        List<RoomEntity> roomList = query.getResultList();
+        RoomEntity room = roomList.get(0);
+        room.setRoomStatus(RoomStatus.RESERVED);
+        em.merge(room);
+        return  room;
+    }
+    
+    public void changeRoomStatus(Long roomEntityId, RoomStatus status) {
+        RoomEntity room = em.find(RoomEntity.class, roomEntityId);
+        room.setRoomStatus(status);
+    }
+    
+    
 
 
 }

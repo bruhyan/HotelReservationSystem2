@@ -7,7 +7,10 @@ package ejb.session.stateless;
 
 import Entity.BookingEntity;
 import Entity.ReservationEntity;
+import Entity.TransactionEntity;
 import java.util.List;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +20,8 @@ import javax.persistence.PersistenceContext;
  * @author Bryan
  */
 @Stateless
+@Local(ReservationControllerLocal.class)
+@Remote(ReservationControllerRemote.class)
 public class ReservationController implements ReservationControllerRemote, ReservationControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
@@ -41,6 +46,18 @@ public class ReservationController implements ReservationControllerRemote, Reser
         reserv.getBookingList().size();
         return reserv.getBookingList();
     }
+    
+    public void addTransaction(Long reservationId, TransactionEntity transaction) {
+        ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        reserv.setTransaction(transaction);
+    }
+    
+    public TransactionEntity retrieveTransactionByReservationId(Long reservationId) {
+        ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        return reserv.getTransaction();
+    }
+    
+    
 
     
 }

@@ -5,19 +5,37 @@
  */
 package ejb.session.stateless;
 
+import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Local;
 
-/**
- *
- * @author mdk12
- */
-@Local
+
 public interface RoomTypeControllerLocal {
 
+    public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId);
+    
+    public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType);
+
+    public void addRoomRateById(Long roomTypeId, Long roomRateId);
+
+    public List<RoomTypeEntity> retrieveRoomTypeList();
+
+    public RoomTypeEntity retrieveRoomTypeById(long id);
+
+    public void deleteRoomTypeById(long id);
+
+    public RoomTypeEntity heavyUpdateRoom(long id, String name, String description, int size, String bed, String amenities, int capacity);
+
+    public RoomTypeEntity retrieveSingleRoomType();
+
+    public List<RoomEntity> retrieveRoomEntityByRoomType(RoomTypeEntity roomType);
+
+    public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
+
+    public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
+    
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
-      public RoomTypeEntity findPricierAvailableRoomType(Long roomTypeId);
 }

@@ -5,13 +5,18 @@
  */
 package ejb.session.stateless;
 
+import Entity.PartnerEntity;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
  *
  * @author Bryan
  */
-@Local
+
 public interface PartnerControllerLocal {
+    public PartnerEntity createPartnerEntity(PartnerEntity partner);
+
+    public List<PartnerEntity> retrieveAllPartner();
     
 }

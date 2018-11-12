@@ -10,14 +10,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.RateType;
 
 /**
  *
  * @author mdk12
  */
-@Remote
 public interface RoomRateControllerRemote {
-        public List<RoomRatesEntity> retrieveRoomRatesList();
+    public List<RoomRatesEntity> retrieveRoomRatesList();
 
     public void createNewRoomRate(RoomRatesEntity roomRates);
 
@@ -31,4 +31,6 @@ public interface RoomRateControllerRemote {
     public void addRoomTypeById(Long roomRateId,Long roomTypeId);
 
     public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId);
+
+    public RoomRatesEntity retriveRoomRateByRateType(RateType rateType);
 }

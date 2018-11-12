@@ -10,11 +10,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.RoomStatus;
 
-/**
- *
- * @author mdk12
- */
-@Remote
+
 public interface RoomControllerRemote {
 
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId);
@@ -31,6 +27,12 @@ public interface RoomControllerRemote {
 
     public void deleteRoomById(Long id);
     
-        public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId);
+    public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId);
+        
+    public RoomEntity allocateRoom(Long roomTypeId);
+
+    public RoomEntity walkInAllocateRoom(Long roomTypeId);
+
+    public void changeRoomStatus(Long roomEntityId, RoomStatus status);
     
 }

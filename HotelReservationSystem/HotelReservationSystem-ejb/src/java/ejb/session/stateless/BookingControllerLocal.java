@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import Entity.BookingEntity;
+import Entity.RoomEntity;
+import Entity.RoomTypeEntity;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -13,7 +15,13 @@ import javax.ejb.Local;
  *
  * @author mdk12
  */
-@Local
 public interface BookingControllerLocal {
-        public List<BookingEntity> retrieveBookingList();
+    public List<BookingEntity> retrieveBookingList();
+
+    public BookingEntity createBooking(BookingEntity booking);
+
+    public RoomTypeEntity retriveRoomTypeEntityByBookingId(Long bookingId);
+
+    public RoomEntity retrieveRoomEntityByBookingId(Long bookingId);
+    
 }

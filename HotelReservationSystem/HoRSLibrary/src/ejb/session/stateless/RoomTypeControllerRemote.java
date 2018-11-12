@@ -12,11 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
 
-/**
- *
- * @author mdk12
- */
-@Remote
+
 public interface RoomTypeControllerRemote {
 
     public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType);
@@ -37,6 +33,7 @@ public interface RoomTypeControllerRemote {
 
     public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
 
-    public RoomTypeEntity findPricierAvailableRoomType(Long roomTypeId);
+    public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
     
+    public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
 }

@@ -7,14 +7,10 @@ package ejb.session.stateless;
 
 import Entity.BookingEntity;
 import Entity.ReservationEntity;
+import Entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Remote;
 
-/**
- *
- * @author Bryan
- */
-@Remote
 public interface ReservationControllerRemote {
 
     public ReservationEntity createNewReservation(ReservationEntity reserv);
@@ -22,5 +18,9 @@ public interface ReservationControllerRemote {
     public void addBookings(long reservationId, BookingEntity booking);
 
     public List<BookingEntity> retrieveBookingListByReservationId(long reservationId);
+
+    public void addTransaction(Long reservationId, TransactionEntity transaction);
+
+    public TransactionEntity retrieveTransactionByReservationId(Long reservationId);
     
 }
