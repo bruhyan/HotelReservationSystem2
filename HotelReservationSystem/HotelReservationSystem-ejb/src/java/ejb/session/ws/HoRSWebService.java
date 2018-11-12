@@ -5,6 +5,7 @@
  */
 package ejb.session.ws;
 
+import Entity.PartnerEntity;
 import ejb.session.stateless.BookingControllerLocal;
 import ejb.session.stateless.CustomerControllerLocal;
 import ejb.session.stateless.PartnerControllerLocal;
@@ -16,6 +17,7 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import util.exception.PartnerNotFoundException;
 
 /**
  *
@@ -45,7 +47,39 @@ public class HoRSWebService {
 
     
     @WebMethod(operationName = "partnerLogin") 
-    public void partnerLogin(@WebParam(name ="email") String email, @WebParam(name = "password") String password) {
+    public PartnerEntity partnerLogin(@WebParam(name ="email") String email, @WebParam(name = "password") String password) {
+        PartnerEntity partner;
+        try{
+            partner = partnerControllerLocal.retrievePartnerByEmail(email);
+            if(!partner.getPassword().equals(password)) {
+                System.out.println("Incorrect password.");
+                return null;
+            }else {
+                return partner;
+            }
+        } catch (PartnerNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+    
+    @WebMethod(operationName = "partnerSearchRoom")
+    public void partnerSearchRoom() {
+        
+    }
+    
+    @WebMethod(operationName = "partnerReserveRoom")
+    public void partnerReserveRoom() {
+        
+    }
+    
+    @WebMethod(operationName = "viewPartnerReservationDetails")
+    public void viewPartnerReservationDetails() {
+        
+    }
+    
+    @WebMethod(operationName = "viewAllPartnerReservations")
+    public void viewAllPartnerReservations() {
         
     }
 

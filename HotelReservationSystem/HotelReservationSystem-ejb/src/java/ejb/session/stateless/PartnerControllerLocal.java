@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import Entity.PartnerEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.PartnerNotFoundException;
 
 /**
  *
@@ -18,5 +19,7 @@ public interface PartnerControllerLocal {
     public PartnerEntity createPartnerEntity(PartnerEntity partner);
 
     public List<PartnerEntity> retrieveAllPartner();
+
+    public PartnerEntity retrievePartnerByEmail(String email) throws PartnerNotFoundException;
     
 }

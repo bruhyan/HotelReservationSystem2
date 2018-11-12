@@ -184,6 +184,8 @@ public class FrontOfficeModule {
         ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, cus, ReservationType.WalkIn);
         reservation = reservationControllerRemote.createNewReservation(reservation);
         
+        
+        //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
         for(RoomTypeEntity roomType : desiredRoomTypes) {
             RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
             BookingEntity booking = new BookingEntity(room, reservation);
