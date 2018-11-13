@@ -11,10 +11,6 @@ import java.util.Date;
 import java.util.List;
 import util.enumeration.RateType;
 
-/**
- *
- * @author mdk12
- */
 
 public interface RoomRateControllerLocal {
 

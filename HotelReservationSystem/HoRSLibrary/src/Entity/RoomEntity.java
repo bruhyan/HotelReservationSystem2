@@ -32,6 +32,7 @@ public class RoomEntity implements Serializable {
     @OneToOne
     private BookingEntity booking;
     private RoomStatus roomStatus;
+    private Boolean isReserved;
 
     public RoomEntity() {
     }
@@ -111,6 +112,14 @@ public class RoomEntity implements Serializable {
     @Override
     public String toString() {
         return "Entity.RoomEntity[ id=" + roomId + " ]";
+    }
+
+    public Boolean getIsReserved() {
+        return isReserved;
+    }
+
+    public void setIsReserved(Boolean isReserved) {
+        this.isReserved = isReserved;
     }
 
 }

@@ -139,7 +139,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     }
 
     //Need to confirm with prof how to determine a upgrade
-    @Override
+    /*@Override
     public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId) {
 
         try {
@@ -184,14 +184,17 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
         //Means no roomType available.
         return null;
+
     }
-    
+    */
     public void removeRoomRate(Long roomTypeId, Long roomRateId){
        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
        RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
        roomType.getRoomRateList().remove(roomRate);
        roomRate.getRoomTypeList().remove(roomType);
     }
+
+    
 
     public boolean checkValidityOfRoomRate(RoomRatesEntity roomRate) {
         Date start = roomRate.getValidityStart();
@@ -293,6 +296,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     //This method will settle the walk in reservation for future dates in the event of unavailable room type.
     //It should be called only when walkIn is true
     //Precondition : Room type was unavailable, should be done in the system timer
+    /*
     @Override
     public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId) {
 
@@ -342,7 +346,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         }
         //Means no roomType available.
         return null;
-    }
+    }*/
 
     //might be handy
     public RoomTypeEntity findPricierRoomTypeForOnline(RoomRatesEntity currentRate, Long roomTypeId) {
@@ -363,6 +367,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return null;
     }
 
+    @Override
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType) {
         Query query = em.createQuery("SELECT r FROM RoomTypeEntity r JOIN r.roomRateList r1 WHERE r1.rateType = :rateType");
 

@@ -24,8 +24,10 @@ import util.enumeration.RateType;
  * @author mdk12
  */
 @Stateless
+
 @Remote(RoomRateControllerRemote.class)
 @Local(RoomRateControllerLocal.class)
+
 public class RoomRateController implements RoomRateControllerRemote, RoomRateControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

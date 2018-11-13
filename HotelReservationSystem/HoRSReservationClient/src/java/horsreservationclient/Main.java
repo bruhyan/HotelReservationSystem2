@@ -10,6 +10,7 @@ import ejb.session.stateless.CustomerControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import ejb.session.stateless.TransactionControllerRemote;
 import javax.ejb.EJB;
 
 /**
@@ -28,9 +29,11 @@ public class Main {
     private static ReservationControllerRemote reservationControllerRemote;
     @EJB
     private static BookingControllerRemote bookingControllerRemote;
+    @EJB
+    private static TransactionControllerRemote transactionControllerRemote;
     
     public static void main(String[] args) {
-        MainApp mainApp = new MainApp(customerControllerRemote, roomTypeControllerRemote, roomControllerRemote, reservationControllerRemote, bookingControllerRemote);
+        MainApp mainApp = new MainApp(customerControllerRemote, roomTypeControllerRemote, roomControllerRemote, reservationControllerRemote, bookingControllerRemote, transactionControllerRemote);
         mainApp.runApp();
     }
     

@@ -6,17 +6,25 @@
 package ejb.session.ws;
 
 import Entity.PartnerEntity;
+import Entity.RoomTypeEntity;
 import ejb.session.stateless.BookingControllerLocal;
 import ejb.session.stateless.CustomerControllerLocal;
 import ejb.session.stateless.PartnerControllerLocal;
 import ejb.session.stateless.ReservationControllerLocal;
+import ejb.session.stateless.RoomControllerLocal;
 import ejb.session.stateless.RoomRateControllerLocal;
 import ejb.session.stateless.RoomTypeControllerLocal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import util.enumeration.RateType;
 import util.exception.PartnerNotFoundException;
 
 /**
@@ -28,6 +36,8 @@ import util.exception.PartnerNotFoundException;
 
 public class HoRSWebService {
 
+    @EJB
+    private RoomControllerLocal roomControllerLocal;
     @EJB
     private CustomerControllerLocal customerControllerLocal;
     @EJB
@@ -64,7 +74,30 @@ public class HoRSWebService {
     }
     
     @WebMethod(operationName = "partnerSearchRoom")
-    public void partnerSearchRoom() {
+    public void partnerSearchRoom(@WebParam(name = "checkInDate") String checkInDate, @WebParam(name = "checkOutDate") String checkOutDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
+        Date checkInDateF = null;
+        Date checkOutDateF = null;
+        try {
+            checkInDateF = dateFormat.parse(checkInDate);
+            checkOutDateF = dateFormat.parse(checkOutDate);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+        
+        
+    }
+    
+    public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate, Date checkOutDate) {
+        List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
+        List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerLocal.retrieveRoomTypesByRateType(RateType.NORMAL);
+        for(RoomTypeEntity roomType : onlineRoomTypes) {
+            if(roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId(), checkInDate)) {
+                availRoomTypes.add(roomType);
+            }
+        }   
+        return availRoomTypes;
         
     }
     

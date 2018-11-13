@@ -6,8 +6,8 @@
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
+import java.util.Date;
 import java.util.List;
-import javax.ejb.Remote;
 import util.enumeration.RoomStatus;
 
 
@@ -27,7 +27,7 @@ public interface RoomControllerRemote {
 
     public void deleteRoomById(Long id);
     
-    public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId);
+    public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId, Date checkInDate);
         
     public RoomEntity allocateRoom(Long roomTypeId);
 
