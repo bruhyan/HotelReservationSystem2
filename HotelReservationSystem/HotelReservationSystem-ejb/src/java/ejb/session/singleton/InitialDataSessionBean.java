@@ -69,7 +69,7 @@ public class InitialDataSessionBean {
             initialiseRooms();
         }
         
-        setupTestRanks();
+       // setupTestRanks();
 
     }
 
@@ -212,7 +212,16 @@ public class InitialDataSessionBean {
         roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $5000 Rank 30", "Should apply promo", 2, "3 double size", "Free air", 5));
         //30
 
-        setRoomRanks(roomTypes);
+        
+//        RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
+        
+//            initaliseRoomRankingList();
+        
+        for (RoomTypeEntity roomType : roomTypes) {
+//            roomRank.getRoomTypes().add(roomType);
+            em.persist(roomType);
+            em.flush();//for the right ordering
+        }
     }
 
     public void setRoomRanks(List<RoomTypeEntity> roomTypes) {
