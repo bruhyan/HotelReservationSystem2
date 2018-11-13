@@ -39,14 +39,14 @@ public class MainApp {
     private PartnerControllerRemote partnerControllerRemote;
     private CustomerControllerRemote customerControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
-    private SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
+//    private SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
     private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
     
 
     public MainApp() {
     }
     
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, SystemTimerSessionBeanRemote systemTimerSessionBeanRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote) {
         this();
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
@@ -56,7 +56,7 @@ public class MainApp {
         this.partnerControllerRemote = partnerControllerRemote;
         this.customerControllerRemote = customerControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
-        this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
+//        this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
         this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
     }
     
@@ -91,7 +91,7 @@ public class MainApp {
     }
     
     public void runApp() {
-        systemTimerSessionBeanRemote.init();
+//        systemTimerSessionBeanRemote.init();
         Scanner sc = new Scanner(System.in);
         int input = 0;
         while(true) {
@@ -128,7 +128,7 @@ public class MainApp {
                         System.out.println("No Employee Currently Logged In !");
                     }
                 }else if(input == 4 && loggedInUser != null){
-                    systemTimerSessionBeanRemote.roomAllocation();
+//                    systemTimerSessionBeanRemote.roomAllocation();
                 }else if(input == 3 && loggedInUser == null){
                     
                 }

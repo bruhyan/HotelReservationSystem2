@@ -43,6 +43,7 @@ public class RoomEntity implements Serializable {
         this.isDisabled = false;
         this.roomStatus = RoomStatus.AVAILABLE;
         this.roomType = roomType;
+        this.isReserved = false;
     }
 
     public BookingEntity getBooking() {

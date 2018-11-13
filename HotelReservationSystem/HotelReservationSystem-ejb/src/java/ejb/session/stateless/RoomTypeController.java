@@ -43,10 +43,36 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
     @Override
     public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType) {
-        em.persist(roomType);
-        em.flush();
+
+        List<RoomTypeEntity> roomTypeList = retrieveRoomTypeList();
+        int rank = roomType.getRanking();
+        int lowestRank = getLowestRank();
+
+        if (rank == lowestRank + 1) {
+            em.persist(roomType);
+            em.flush();
+        } else {
+            List<RoomTypeEntity> roomTypeAdjust = getRoomTypeListToAdjust(rank);
+            for(RoomTypeEntity roomTypeOld : roomTypeAdjust){
+                System.out.println(roomTypeOld.getRanking() + " rank "+  roomTypeOld.getRoomTypeName());
+                roomTypeOld.setRanking(roomTypeOld.getRanking()+1);
+            }
+            em.persist(roomType);
+            em.flush();
+        }
 
         return roomType;
+    }
+
+    public List<RoomTypeEntity> getRoomTypeListToAdjust(int rank){
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.ranking >= :rank ORDER BY r.ranking DESC");
+        query.setParameter("rank", rank);
+        return query.getResultList();
+    }
+    
+    public int getLowestRank() {
+        Query query = em.createQuery("SELECT r.ranking FROM RoomTypeEntity r ORDER BY r.ranking DESC");
+        return query.getFirstResult();
     }
 
     public void updateRoomType(RoomTypeEntity roomType) { //not sure if this will work because of the lists and many things to change. Come back to check
@@ -186,15 +212,13 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return null;
 
     }
-    */
-    public void removeRoomRate(Long roomTypeId, Long roomRateId){
-       RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
-       RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
-       roomType.getRoomRateList().remove(roomRate);
-       roomRate.getRoomTypeList().remove(roomType);
+     */
+    public void removeRoomRate(Long roomTypeId, Long roomRateId) {
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
+        roomType.getRoomRateList().remove(roomRate);
+        roomRate.getRoomTypeList().remove(roomType);
     }
-
-    
 
     public boolean checkValidityOfRoomRate(RoomRatesEntity roomRate) {
         Date start = roomRate.getValidityStart();
@@ -293,6 +317,11 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         }
     }
 
+    public List<RoomTypeEntity> retrieveRoomTypeByRanking() {
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r ORDER BY r.ranking ASC");
+        return query.getResultList();
+    }
+
     //This method will settle the walk in reservation for future dates in the event of unavailable room type.
     //It should be called only when walkIn is true
     //Precondition : Room type was unavailable, should be done in the system timer
@@ -347,7 +376,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         //Means no roomType available.
         return null;
     }*/
-
     //might be handy
     public RoomTypeEntity findPricierRoomTypeForOnline(RoomRatesEntity currentRate, Long roomTypeId) {
 
@@ -376,7 +404,5 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return query.getResultList();
 
     }
-    
-    
 
 }

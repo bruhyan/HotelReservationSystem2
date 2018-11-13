@@ -39,8 +39,8 @@ public class Main {
     public static CustomerControllerRemote customerControllerRemote;
     @EJB
     public static ReservationControllerRemote reservationControllerRemote;
-    @EJB
-    public static SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
+//    @EJB
+//    public static SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
     @EJB
     public static RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
 
@@ -66,9 +66,9 @@ public class Main {
         SystemAdministrator sa = new SystemAdministrator(name, contact, email, password, address);
         sa = employeeControllerRemote.createSystemAdministrator(sa);
         System.out.println("Test success");*/
-        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote, roomTypeRankingControllerRemote);
+        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, roomTypeRankingControllerRemote);
         mainApp.test();
-
+        mainApp.runApp();
     }
 
 }

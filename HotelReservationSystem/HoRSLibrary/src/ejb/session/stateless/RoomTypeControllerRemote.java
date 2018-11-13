@@ -44,4 +44,6 @@ public interface RoomTypeControllerRemote {
     public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException;
 
     public void removeRoomRate(Long roomTypeId, Long roomRateId);
+
+    public List<RoomTypeEntity> retrieveRoomTypeByRanking();
 }

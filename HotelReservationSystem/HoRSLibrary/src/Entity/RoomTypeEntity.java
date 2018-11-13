@@ -38,13 +38,14 @@ public class RoomTypeEntity implements Serializable {
     private String amenities; //amenities using String for now, could think about enums or smt next time
     private Integer capacity;
     private boolean isDisabled;
+    private Integer ranking;
 
     public RoomTypeEntity() {
         this.roomList = new ArrayList<>();
         this.roomRateList = new ArrayList<>();
     }
 
-    public RoomTypeEntity(String roomName, String description, Integer size, String bed, String amenities, Integer capacity) {
+    public RoomTypeEntity(String roomName, String description, Integer size, String bed, String amenities, Integer capacity, Integer ranking) {
         this();
         this.roomTypeName = roomName;
         this.description = description;
@@ -53,8 +54,18 @@ public class RoomTypeEntity implements Serializable {
         this.amenities = amenities;
         this.capacity = capacity;
         this.isDisabled = false;
+        this.ranking = ranking;
     }
 
+    public Integer getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(Integer ranking) {
+        this.ranking = ranking;
+    }
+
+    
     public void addRoomRate(RoomRatesEntity roomRate){
             this.roomRateList.add(roomRate);
     }
