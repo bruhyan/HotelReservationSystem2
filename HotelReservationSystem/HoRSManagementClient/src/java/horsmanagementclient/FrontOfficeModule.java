@@ -50,16 +50,14 @@ public class FrontOfficeModule {
     private CustomerControllerRemote customerControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
-    @EJB
     private RoomRateControllerRemote roomRateControllerRemote;
-    @EJB
     private TransactionControllerRemote transactionControllerRemote;
 
     public FrontOfficeModule() {
 
     }
 
-    public FrontOfficeModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, BookingControllerRemote bookingControllerRemote) {
+    public FrontOfficeModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, BookingControllerRemote bookingControllerRemote, RoomRateControllerRemote roomRateControllerRemote, TransactionControllerRemote transactionControllerRemote) {
         this();
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
@@ -68,6 +66,8 @@ public class FrontOfficeModule {
         this.customerControllerRemote = customerControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
+        this.roomRateControllerRemote = roomRateControllerRemote;
+        this.transactionControllerRemote = transactionControllerRemote;
     }
 
     public void runModule() {
@@ -104,6 +104,7 @@ public class FrontOfficeModule {
     public void doWalkInSearchRoom(Scanner sc) {
         System.out.println("Enter check in year: [YYYY]");
         int year = sc.nextInt();
+        year-=1900;
         System.out.println("Enter check in month: [ 1(January)~12(December) ]");
         int month = sc.nextInt();
         month -= 1;
@@ -125,6 +126,7 @@ public class FrontOfficeModule {
             System.out.println("==== Room Types with available rooms =====");
             for (RoomTypeEntity roomType : availRoomTypes) {
                 System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
+                index++;
             }
             System.out.println("==========================================");
             System.out.println("Select desired room type by index");
@@ -188,14 +190,20 @@ public class FrontOfficeModule {
 
         //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
         Date today = new Date();
+        /*SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String testCheckInDate = df.format(checkInDate);
+        String testToday = df.format(today);*/
+        System.out.println("CheckInDate: "+checkInDate+" today date: "+today);
         
         if(checkInDate.after(today)) {//if future
+            System.out.println("Future");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
                 booking = bookingControllerRemote.createBooking(booking);
                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
             }
         }else {//if today
+            System.out.println("Today");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
                 BookingEntity booking = new BookingEntity(room, reservation);
@@ -229,11 +237,14 @@ public class FrontOfficeModule {
                 List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomType.getRoomTypeId());
                 for (RoomRatesEntity roomRate : roomRateList) {
                     if (roomRate.getRateType() == RateType.PUBLISHED) {
-                        totalAmount.add(roomRate.getRatePerNight());
+                        System.out.println("Rate per night: "+roomRate.getRatePerNight());
+                        totalAmount = totalAmount.add(roomRate.getRatePerNight());
+                        
                     }
                 }
             }
         }
+        System.out.println("Total: "+totalAmount);
         return totalAmount;
     }
 
@@ -251,7 +262,10 @@ public class FrontOfficeModule {
             System.out.println("===== Reservation rooms information =====");
             for (BookingEntity booking : bookingList) {
                 System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
-                System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                int roomNum = room.getRoomNumber();
+                //System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber() );
+                System.out.println("Room Number: "+roomNum);
                 index++;
                 System.out.println();
             }
