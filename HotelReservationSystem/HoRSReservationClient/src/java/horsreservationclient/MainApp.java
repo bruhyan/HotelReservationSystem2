@@ -128,6 +128,7 @@ public class MainApp {
         while(true) {
             List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
             int index = 1;
+            System.out.println("==========================================");
             for (RoomTypeEntity roomType : availRoomTypes) {
                 System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
             }
