@@ -11,6 +11,7 @@ import Entity.OperationManager;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import Entity.RoomTypeRanking;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import java.math.BigDecimal;
@@ -124,10 +125,10 @@ public class InitialDataSessionBean {
 
         //peak
         //valid peak, remember possible to have null.
-        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 1", BigDecimal.valueOf(50.00), date1, date2, RateType.PEAK));
-        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 2", BigDecimal.valueOf(150.00), date1, date2, RateType.PEAK));
-        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 3", BigDecimal.valueOf(500.00), date1, date2, RateType.PEAK));
-        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 4", BigDecimal.valueOf(5000.00), date1, date2, RateType.PEAK));
+        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 1", BigDecimal.valueOf(69.00), date1, date2, RateType.PEAK));
+        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 2", BigDecimal.valueOf(200.00), date1, date2, RateType.PEAK));
+        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 3", BigDecimal.valueOf(750.00), date1, date2, RateType.PEAK));
+        roomRates.add(new RoomRatesEntity("Peak Valid Test Rate 4", BigDecimal.valueOf(7000.00), date1, date2, RateType.PEAK));
 
         //invalid peak
         roomRates.add(new RoomRatesEntity("Peak Invalid Test Rate 5", BigDecimal.valueOf(150.00), date3, date4, RateType.PEAK));
@@ -136,10 +137,10 @@ public class InitialDataSessionBean {
 
         //promo
         //valid Promo, remember possible to have null.
-        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 1", BigDecimal.valueOf(50.00), date1, date2, RateType.PROMOTIONAL));
-        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 2", BigDecimal.valueOf(150.00), date1, date2, RateType.PROMOTIONAL));
-        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 3", BigDecimal.valueOf(500.00), date1, date2, RateType.PROMOTIONAL));
-        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 4", BigDecimal.valueOf(5000.00), date1, date2, RateType.PROMOTIONAL));
+        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 1", BigDecimal.valueOf(32.00), date1, date2, RateType.PROMOTIONAL));
+        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 2", BigDecimal.valueOf(130.00), date1, date2, RateType.PROMOTIONAL));
+        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 3", BigDecimal.valueOf(400.00), date1, date2, RateType.PROMOTIONAL));
+        roomRates.add(new RoomRatesEntity("Promo Valid Test Rate 4", BigDecimal.valueOf(4000.00), date1, date2, RateType.PROMOTIONAL));
 
         //invalid Promo
         roomRates.add(new RoomRatesEntity("Promo Invalid Test Rate 5", BigDecimal.valueOf(150.00), date3, date4, RateType.PROMOTIONAL));
@@ -158,47 +159,51 @@ public class InitialDataSessionBean {
         List<RoomTypeEntity> roomTypes = new ArrayList<>();
 
         //published and normal
-        roomTypes.add(new RoomTypeEntity("Published And Normal $50", "Should apply either", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Published And Normal $150", "Should apply either", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Published And Normal $500", "Should apply either", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Published And Normal $5000", "Should apply either", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $500", "Should apply either", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $5000", "Should apply either", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 1", "Should apply either", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 2", "Should apply either", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 3", "Should apply either", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 4", "Should apply either", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $500 Rank 5", "Should apply either", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $5000 Rank 6", "Should apply either", 2, "3 double size", "Free air", 5));
 
+        
+        
         //Normal And Promo
-        roomTypes.add(new RoomTypeEntity("Normal And Promo $50", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal And Promo $150", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal And Promo $500", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal And Promo $5000", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $500", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $5000", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 7", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 8", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 9", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 10", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $500 Rank 11", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $5000 Rank 12", "Should apply promo", 2, "3 double size", "Free air", 5));
         //12
         //Normal And Peak
-        roomTypes.add(new RoomTypeEntity("Normal and peak $50", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal and peak $150", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal and peak $500", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal and peak $5000", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $500", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $5000", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 13", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 14", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 15", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 16", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $500 Rank 17", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $5000 Rank 18", "Should apply peak", 2, "3 double size", "Free air", 5));
         //18
         //Promo And Peak
-        roomTypes.add(new RoomTypeEntity("Promo and peak $50", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Promo and peak $150", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Promo and peak $500", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Promo and peak $5000", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $500", "Should apply peak", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $5000", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 19", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 20", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 21", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 22", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $500 Rank 23", "Should apply peak", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $5000 Rank 24", "Should apply peak", 2, "3 double size", "Free air", 5));
         //24
         //Normal Promo And Peak
-        roomTypes.add(new RoomTypeEntity("Normal, promo and peak $50", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal, promo and peak $150", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal, promo and peak $500", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Normal, promo and peak $5000", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $500", "Should apply promo", 2, "3 double size", "Free air", 5));
-        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $5000", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 25", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 26", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 27", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 28", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $500 Rank 29", "Should apply promo", 2, "3 double size", "Free air", 5));
+        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $5000 Rank 30", "Should apply promo", 2, "3 double size", "Free air", 5));
         //30
 
+        RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
         for (RoomTypeEntity roomType : roomTypes) {
+            roomRank.getRoomTypes().add(roomType);
             em.persist(roomType);
             em.flush();//for the right ordering
         }

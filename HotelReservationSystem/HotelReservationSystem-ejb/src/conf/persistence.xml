@@ -16,6 +16,7 @@
     <class>Entity.OperationManager</class>
     <class>Entity.SalesManager</class>
     <class>Entity.PartnerEntity</class>
+    <class>Entity.RoomTypeRanking</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

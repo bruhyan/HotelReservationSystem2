@@ -5,13 +5,10 @@
  */
 package ejb.session.stateless;
 
-import javax.ejb.Remote;
+import Entity.RoomTypeRanking;
 
-/**
- *
- * @author mdk124
- */
-@Remote
+
 public interface RoomTypeRankingControllerRemote {
-    
+    public RoomTypeRanking getRoomTypeRanking();
+    public void setRoomTypeRank(Long roomTypeId, int rank);
 }

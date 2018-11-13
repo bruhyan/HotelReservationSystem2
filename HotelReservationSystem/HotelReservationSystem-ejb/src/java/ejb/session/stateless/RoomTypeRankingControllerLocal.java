@@ -5,13 +5,7 @@
  */
 package ejb.session.stateless;
 
-import javax.ejb.Local;
 
-/**
- *
- * @author mdk124
- */
-@Local
 public interface RoomTypeRankingControllerLocal {
     
 }

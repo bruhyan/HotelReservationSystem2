@@ -16,6 +16,7 @@ import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import ejb.session.stateless.RoomTypeRankingControllerRemote;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,14 +38,16 @@ public class HotelOperationModule {
     private RoomControllerRemote roomControllerRemote;
     private RoomTypeControllerRemote roomTypeControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
+    private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
 
-    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote) {
+    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
+        this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
     }
 
     public void runOperationManagerModuleModule() {
@@ -528,8 +531,12 @@ public class HotelOperationModule {
         RoomTypeEntity newRoomType = new RoomTypeEntity(name, description, size, bed, amenities, capacity);
         newRoomType = roomTypeControllerRemote.createNewRoomType(newRoomType);
         
-        showCurrentRoomTypeRank();
-
+        int range = showCurrentRoomTypeRank();
+        
+        System.out.println("Please indicate a rank for your new room type ranging from 1 to " + range);
+        int rank = sc.nextInt(); //rank is 1 + index
+        sc.nextLine();
+        roomTypeRankingControllerRemote.setRoomTypeRank(newRoomType.getRoomTypeId(), rank);
         roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId(), roomRateId);
         roomRateControllerRemote.addRoomTypeById(roomRateId, newRoomType.getRoomTypeId());
         int response = 0;
@@ -553,13 +560,18 @@ public class HotelOperationModule {
 
     }
     
-    public void showCurrentRoomTypeRank(){
+    public int showCurrentRoomTypeRank(){
         RoomTypeRanking roomTypeRanking = roomTypeRankingControllerRemote.getRoomTypeRanking();
         List<RoomTypeEntity> roomRanks = roomTypeRanking.getRoomTypes();
-        int index = 1;
+        int index = 0;
+        System.out.println("*** Current Room Type Ranking: ***");
         for(RoomTypeEntity roomType : roomRanks){
+            index++;
             System.out.println(index + ". " + roomType.getRoomTypeName());
+            
         }
+        return index;
+        
     }
 
     public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc) {

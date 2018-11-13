@@ -73,5 +73,9 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         
         
     }
+
+    public void persist(Object object) {
+        em.persist(object);
+    }
     
 }
