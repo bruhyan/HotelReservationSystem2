@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,22 +24,25 @@ import util.enumeration.RateType;
  * @author mdk12
  */
 @Stateless
+@Remote(RoomRateControllerRemote.class)
+@Local(RoomRateControllerLocal.class)
 public class RoomRateController implements RoomRateControllerRemote, RoomRateControllerLocal {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
     @EJB
     private RoomTypeControllerLocal roomTypeControllerLocal;
-
+@Override
     public void createNewRoomRate(RoomRatesEntity roomRates) {
         em.persist(roomRates);
         em.flush();
     }
-
+@Override
     public void updateRoomRates(RoomRatesEntity roomRates) {
         em.merge(roomRates);
     }
 
+    @Override
     public void deleteRoomRatesById(Long id) {
         RoomRatesEntity roomRates = retrieveRoomRatesById(id);
         //call room controller local to find list by Type
@@ -80,6 +85,8 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
     @Override
     public List<RoomRatesEntity> retrieveCompulsoryRoomRatesList() {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.rateType = :type1 OR r.rateType = :type2");
+        query.setParameter("type1", RateType.PUBLISHED);
+        query.setParameter("type2", RateType.NORMAL);
         return query.getResultList();
     }
 
