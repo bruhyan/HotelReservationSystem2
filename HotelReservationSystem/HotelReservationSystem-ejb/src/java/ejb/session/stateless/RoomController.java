@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import Entity.BookingEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -111,15 +112,22 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     
     //check if room type has available rooms
     @Override
-    public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId){
+    public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId, Date checkInDate){
         
         RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
         Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
         query.setParameter("roomType", roomType);
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
         
+        //if no available rooms, check if there are any rooms that will be available by the time of incoming customer check in
         if(query.getResultList().isEmpty()){
+            query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.checkOutDateTime < :checkInDate");
+            query.setParameter("checkInDate", checkInDate);
+            //if no such rooms
+            if(query.getResultList().isEmpty()) {
             return false;
+            }
+            
         }
         return true;
         

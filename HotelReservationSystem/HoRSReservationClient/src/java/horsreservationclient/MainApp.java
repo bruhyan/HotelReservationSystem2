@@ -126,7 +126,7 @@ public class MainApp {
         
         List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
         while(true) {
-            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
             int index = 1;
             for (RoomTypeEntity roomType : availRoomTypes) {
                 System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
@@ -202,11 +202,11 @@ public class MainApp {
     }
     
     //something wong: what if not available now but will be available before check in
-    public List<RoomTypeEntity> getAvailableRoomTypes() {
+    public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate) {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
         List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.NORMAL);
         for(RoomTypeEntity roomType : onlineRoomTypes) {
-            if(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
+            if(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId(), checkInDate)) {
                 availRoomTypes.add(roomType);
             }
         }   

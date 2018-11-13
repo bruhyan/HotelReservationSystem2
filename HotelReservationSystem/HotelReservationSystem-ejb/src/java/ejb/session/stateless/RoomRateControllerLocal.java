@@ -12,11 +12,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.RateType;
 
-/**
- *
- * @author mdk12
- */
-@Local
+
 public interface RoomRateControllerLocal {
 
     public List<RoomRatesEntity> retrieveRoomRatesList();

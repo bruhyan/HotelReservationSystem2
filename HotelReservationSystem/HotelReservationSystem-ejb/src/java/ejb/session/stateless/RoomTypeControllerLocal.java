@@ -10,6 +10,7 @@ import Entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumeration.RateType;
 
 /**
  *
@@ -19,7 +20,8 @@ import javax.ejb.Local;
 public interface RoomTypeControllerLocal {
 
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
-      public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
+      //public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
 
-    public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId);
+    //public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId);
+    public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
 }

@@ -120,7 +120,7 @@ public class FrontOfficeModule {
 
         List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
         while (true) {
-            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
             int index = 1;
             System.out.println("==== Room Types with available rooms =====");
             for (RoomTypeEntity roomType : availRoomTypes) {
@@ -147,14 +147,14 @@ public class FrontOfficeModule {
 
     }
 
-    public List<RoomTypeEntity> getAvailableRoomTypes() {
+    public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate) {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
 
         //Retrieve all roomtypes that are published and available
         List<RoomTypeEntity> publishedRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.PUBLISHED);
 
         for (RoomTypeEntity roomType : publishedRoomTypes) {
-            if (roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
+            if (roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId(), checkInDate)) {
                 availRoomTypes.add(roomType);
             }
         }
