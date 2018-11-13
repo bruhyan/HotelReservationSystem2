@@ -5,24 +5,26 @@
  */
 package horsreservationclient;
 
+import Entity.BookingEntity;
 import Entity.CustomerEntity;
 import Entity.ReservationEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import Entity.TransactionEntity;
 import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.CustomerControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
+import ejb.session.stateless.TransactionControllerRemote;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.RateType;
+import util.enumeration.ReservationType;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoAvailableOnlineRoomRateException;
 
@@ -37,17 +39,19 @@ public class MainApp {
     private RoomControllerRemote roomControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
+    private TransactionControllerRemote transactionControllerRemote;
     
 
     public MainApp() {
     }
 
-    public MainApp(CustomerControllerRemote customerControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, ReservationControllerRemote reservationControllerRemote, BookingControllerRemote bookingControllerRemote) {
+    public MainApp(CustomerControllerRemote customerControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, ReservationControllerRemote reservationControllerRemote, BookingControllerRemote bookingControllerRemote, TransactionControllerRemote transactionControllerRemote) {
         this.customerControllerRemote = customerControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
+        this.transactionControllerRemote = transactionControllerRemote;
         
     }
     
@@ -136,22 +140,52 @@ public class MainApp {
                 break;
             }
         }
-        BigDecimal totalPrevailingRate = calculatePrevailingRate(desiredRoomTypes, nights);
-        System.out.println("Total prevailing rate : " + totalPrevailingRate);
+        BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
+        System.out.println("Total prevailing rate : " + totalPrice);
         //initiate reserve room
         System.out.println("Do you want to reserve rooms?");
         System.out.println("Enter 1 to reserve, Enter 2 to exit");
         int reply = sc.nextInt();
         if (reply == 1) {
-            doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrevailingRate);
+            if(loggedInUser != null) {
+                doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrice);
+            }else {
+                System.out.println("You must be logged in to reserve rooms.");
+            }
         } 
     }
     
-    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrevailingRate) {
+    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrice) {
+        sc.nextLine();
         
+        //create new reservation
+        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
+        reservation = reservationControllerRemote.createNewReservation(reservation);
+        
+        //create individual room bookings
+        for(RoomTypeEntity roomType : desiredRoomTypes) {
+            BookingEntity booking = new BookingEntity(roomType, reservation);
+            booking = bookingControllerRemote.createBooking(booking);
+            reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+        }
+        
+        //create unpaid transaction
+        TransactionEntity transaction = new TransactionEntity(totalPrice, null, reservation);
+        transaction = transactionControllerRemote.createNewTransaction(transaction);
+        reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
+        
+        System.out.println("Reservation "+reservation.getReservationId()+" successfully created");
+        System.out.println("==== Finalized bookings and room types : ====");
+        System.out.println("Date of reservation: "+reservation.getDateOfReservation());
+        List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
+        for(BookingEntity bookings : finalBookings) {
+            System.out.println("BookingID: "+bookings.getBookingId()+" Room Type: "+bookings.getRoomType().getRoomTypeName());
+        }
+        System.out.println("Total price: "+transaction.getTotalCost());
+        System.out.println("=============================================");
     }
     
-    public BigDecimal calculatePrevailingRate(List<RoomTypeEntity> roomTypes, int nights) {
+    public BigDecimal calculateTotalPrice(List<RoomTypeEntity> roomTypes, int nights) {
         BigDecimal totalPrice = new BigDecimal(0.00);
         for(int i = 0; i < nights; i++) {
             for(RoomTypeEntity roomType : roomTypes) {

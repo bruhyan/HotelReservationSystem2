@@ -135,14 +135,14 @@ public class FrontOfficeModule {
                 break;
             }
         }
-        BigDecimal totalPrevailingRate = calculatePrevailingRate(desiredRoomTypes, nights);
-        System.out.println("Total prevailing rate : " + totalPrevailingRate);
+        BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
+        System.out.println("Total prevailing rate : " + totalPrice);
         //initiate reserve room
         System.out.println("Do you want to reserve rooms?");
         System.out.println("Enter 1 to reserve, Enter 2 to exit");
         int reply = sc.nextInt();
         if (reply == 1) {
-            doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrevailingRate);
+            doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrice);
         }
 
     }
@@ -162,7 +162,7 @@ public class FrontOfficeModule {
         return availRoomTypes;
     }
 
-    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrevailingRate) {
+    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrice) {
         sc.nextLine();
         //check if customer exists, retrieve if exists
         System.out.println("Enter customer contact number");
@@ -192,34 +192,37 @@ public class FrontOfficeModule {
         if(checkInDate.after(today)) {//if future
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
-                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
                 booking = bookingControllerRemote.createBooking(booking);
+                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
             }
         }else {//if today
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
                 BookingEntity booking = new BookingEntity(room, reservation);
-                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
                 booking = bookingControllerRemote.createBooking(booking);
+                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+                
             }
         }
 
-        //create transaction
-        TransactionEntity transaction = new TransactionEntity(totalPrevailingRate, loggedInUser, reservation);
+        //create unpaid transaction
+        TransactionEntity transaction = new TransactionEntity(totalPrice, loggedInUser, reservation);
         transaction = transactionControllerRemote.createNewTransaction(transaction);
         reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
 
         System.out.println("Reservation " + reservation.getReservationId() + " successfully created");
-        System.out.println("==== Finalized bookings and rooms : =====");
+        System.out.println("==== Finalized bookings and room types : =====");
+        System.out.println("Date of reservation: "+reservation.getDateOfReservation());
         List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
         for (BookingEntity bookingz : finalBookings) {
-            System.out.println("BookingID: " + bookingz.getBookingId() + " Room number: " + bookingz.getRoom().getRoomNumber());
+            System.out.println("BookingID: " + bookingz.getBookingId() + " Room Type: " + bookingz.getRoomType().getRoomTypeName());
         }
-        System.out.println("=========================================");
+        System.out.println("Total price: "+transaction.getTotalCost());
+        System.out.println("=============================================");
     }
 
     //what if there is more than 1 published rate for particular room type on that night
-    public BigDecimal calculatePrevailingRate(List<RoomTypeEntity> roomTypes, int nights) {
+    public BigDecimal calculateTotalPrice(List<RoomTypeEntity> roomTypes, int nights) {
         BigDecimal totalAmount = new BigDecimal(0.00);
         for (int i = 0; i < nights; i++) {
             for (RoomTypeEntity roomType : roomTypes) {
@@ -279,6 +282,7 @@ public class FrontOfficeModule {
             cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
             ReservationEntity reservation = customerControllerRemote.retrieveCustomerLatestReservation(cus.getCustomerId());
             List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
+            TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(reservation.getReservationId());
 
             int index = 1;
             System.out.println("===== Reservation rooms information =====");
@@ -288,6 +292,7 @@ public class FrontOfficeModule {
                 index++;
                 System.out.println();
             }
+            System.out.println("Total price: $"+transaction.getTotalCost());
             System.out.println("=========================================");
             System.out.println("Enter 1 to confirm check out");
             int reply = sc.nextInt();
@@ -301,7 +306,6 @@ public class FrontOfficeModule {
                 System.out.println("Enter 1 to make payment");
                 reply = sc.nextInt();
                 if (reply == 1) {
-                    TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(reservation.getReservationId());
                     transaction = transactionControllerRemote.payTransaction(transaction.getTransactionId());
                     System.out.println("Transaction " + transaction.getTransactionId() + " paid successfully on " + transaction.getDatePaid());
                     System.out.println("Check out completed.");
