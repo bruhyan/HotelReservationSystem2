@@ -110,6 +110,7 @@ public class MainApp {
     public void doSearchHotelRoom(Scanner sc) {
         System.out.println("Enter check in year: [YYYY]");
         int year = sc.nextInt();
+        year-=1900;
         System.out.println("Enter check in month: [ 1(January)~12(December) ]");
         int month = sc.nextInt();
         month-=1;
@@ -131,6 +132,7 @@ public class MainApp {
             System.out.println("==========================================");
             for (RoomTypeEntity roomType : availRoomTypes) {
                 System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
+                index++;
             }
             System.out.println("==========================================");
             System.out.println("Select desired room type by index");
@@ -142,7 +144,7 @@ public class MainApp {
             }
         }
         BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
-        System.out.println("Total prevailing rate : " + totalPrice);
+        System.out.println("Total price : " + totalPrice);
         //initiate reserve room
         System.out.println("Do you want to reserve rooms?");
         System.out.println("Enter 1 to reserve, Enter 2 to exit");
@@ -184,6 +186,8 @@ public class MainApp {
         }
         System.out.println("Total price: "+transaction.getTotalCost());
         System.out.println("=============================================");
+        
+        
     }
     
     public BigDecimal calculateTotalPrice(List<RoomTypeEntity> roomTypes, int nights) {
@@ -193,7 +197,7 @@ public class MainApp {
                 try {
                     RoomRatesEntity prevailingRate = roomTypeControllerRemote.findOnlineRateForRoomType(roomType.getRoomTypeId());
                     BigDecimal priceForTheNight = prevailingRate.getRatePerNight();
-                    totalPrice.add(priceForTheNight);
+                    totalPrice = totalPrice.add(priceForTheNight);
                 } catch (NoAvailableOnlineRoomRateException ex) {
                     System.out.println(ex.getMessage());
                 }

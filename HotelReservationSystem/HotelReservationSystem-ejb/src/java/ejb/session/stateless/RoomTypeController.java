@@ -244,9 +244,9 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         boolean peak = false;
 
         for (RoomRatesEntity roomRate : roomRates) {
-            if (!checkValidityOfRoomRate(roomRate)) { //skips expired/not started rates, price is determined by check in and check out date, it becomes not considered in our final prediction
-                continue;
-            }
+//            if (!checkValidityOfRoomRate(roomRate)) { //skips expired/not started rates, price is determined by check in and check out date, it becomes not considered in our final prediction
+//                continue;
+//            }
             if (null != roomRate.getRateType()) {
                 switch (roomRate.getRateType()) {
                     case NORMAL:
@@ -264,35 +264,36 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             }
         }
 
+        System.out.println(normal + " " + promo + " " + peak);
         //5 rules here
         if (normal && promo && peak) {
             //find cheapest promo
             Query rule = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :p ORDER BY r.ratePerNight ASC");
-            query.setParameter("p", RateType.PROMOTIONAL);
-            query.setParameter("roomTypeId", roomTypeId);
+            rule.setParameter("p", RateType.PROMOTIONAL);
+            rule.setParameter("roomTypeId", roomTypeId);
 
             //cheapest first.
             return (RoomRatesEntity) rule.getResultList().get(0);
         } else if (promo && peak && !normal || normal && peak && !promo) {
             //apply peak, assume only 1
             Query rule = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :p");
-            query.setParameter("p", RateType.PEAK);
-            query.setParameter("roomTypeId", roomTypeId);
+            rule.setParameter("p", RateType.PEAK);
+            rule.setParameter("roomTypeId", roomTypeId);
 
             return (RoomRatesEntity) rule.getSingleResult();
         } else if (normal && promo && !peak) {
             //apply cheapest promo
             Query rule = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :p ORDER BY r.ratePerNight ASC");
-            query.setParameter("p", RateType.PROMOTIONAL);
-            query.setParameter("roomTypeId", roomTypeId);
+            rule.setParameter("p", RateType.PROMOTIONAL);
+            rule.setParameter("roomTypeId", roomTypeId);
 
             //cheapest first.
             return (RoomRatesEntity) rule.getResultList().get(0);
         } else if (normal && !promo && !peak) {
             //apply normal
             Query rule = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :p");
-            query.setParameter("p", RateType.NORMAL);
-            query.setParameter("roomTypeId", roomTypeId);
+            rule.setParameter("p", RateType.NORMAL);
+            rule.setParameter("roomTypeId", roomTypeId);
 
             return (RoomRatesEntity) rule.getSingleResult();
         }

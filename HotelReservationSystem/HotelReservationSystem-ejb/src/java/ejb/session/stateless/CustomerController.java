@@ -12,6 +12,7 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CustomerNotFoundException;
@@ -42,15 +43,33 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
     public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) throws CustomerNotFoundException {
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.contactNumber = :contactNum");
         query.setParameter("contactNum", contactNum);
-        return (CustomerEntity)query.getSingleResult();
         
+        try{
+            return (CustomerEntity)query.getSingleResult();
+        }catch(NoResultException ex){
+            System.out.println("Error!");
+            throw new CustomerNotFoundException("Customer not found!");
+        }
+       
+//        
+//        
+//        try {
+//            query.setParameter("contactNum", contactNum);
+//            cus = (CustomerEntity)query.getSingleResult();
+//        } catch(NoResultException ex) {
+//            System.out.println("Shit" + ex.getMessage());
+//            throw new CustomerNotFoundException("Customer not found");
+//        }
+//        return cus;
     }
     
     public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
-        CustomerEntity cus = em.find(CustomerEntity.class, customerId);
-        List<ReservationEntity> reservations = cus.getReservations();
-        reservations.size();
-        return reservations;
+        //CustomerEntity cus = em.find(CustomerEntity.class, customerId);
+        //List<ReservationEntity> reservations = cus.getReservations();
+        //reservations.size();
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer.customerId = :customerId");
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
     }
     
     public void nullCustomerReservation(Long customerId) {
