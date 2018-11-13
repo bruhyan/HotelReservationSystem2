@@ -31,7 +31,7 @@ public class RoomTypeEntity implements Serializable {
     private List<RoomEntity> roomList;
     @ManyToMany
     private List<RoomRatesEntity> roomRateList;
-    private String roomName;
+    private String roomTypeName;
     private String description;
     private Integer size;
     private String bed;
@@ -46,7 +46,7 @@ public class RoomTypeEntity implements Serializable {
 
     public RoomTypeEntity(String roomName, String description, Integer size, String bed, String amenities, Integer capacity) {
         this();
-        this.roomName = roomName;
+        this.roomTypeName = roomName;
         this.description = description;
         this.size = size;
         this.bed = bed;
@@ -84,12 +84,12 @@ public class RoomTypeEntity implements Serializable {
         this.roomRateList = roomRateList;
     }
 
-    public String getRoomName() {
-        return roomName;
+    public String getRoomTypeName() {
+        return roomTypeName;
     }
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setRoomTypeName(String roomTypeName) {
+        this.roomTypeName = roomTypeName;
     }
 
     public String getDescription() {

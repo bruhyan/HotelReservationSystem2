@@ -10,6 +10,7 @@ import Entity.EmployeeEntity;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import Entity.RoomTypeRanking;
 import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
@@ -398,7 +399,7 @@ public class HotelOperationModule {
 
             for (RoomTypeEntity roomType : roomTypeList) {
 
-                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomName() + " .");
+                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " .");
             }
             System.out.print(">");
             Long roomTypeId = sc.nextLong();
@@ -418,7 +419,7 @@ public class HotelOperationModule {
             System.out.println("Select the room type you'd wish to view in more detail, update or delete :");
             for (RoomTypeEntity roomType : roomTypeList) {
 
-                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomName() + " .");
+                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " .");
 
             }
             System.out.print(">");
@@ -432,7 +433,7 @@ public class HotelOperationModule {
         RoomTypeEntity roomType = roomTypeControllerRemote.retrieveRoomTypeById(roomTypeId);
         int response = 0;
         System.out.println("============= Selected Room Type Information:  ===========");
-        System.out.println("Room Type Name: " + roomType.getRoomName());
+        System.out.println("Room Type Name: " + roomType.getRoomTypeName());
         System.out.println("Room Type description: " + roomType.getDescription());
         System.out.println("Room Type amenities: " + roomType.getAmenities());
         System.out.println("Room Type bed: " + roomType.getBed());
@@ -470,7 +471,7 @@ public class HotelOperationModule {
     }
 
     public void doUpdateRoomType(RoomTypeEntity roomType, Scanner sc) {
-        System.out.println("Enter new Room Type Name: ( previous: " + roomType.getRoomName() + " ) \n");
+        System.out.println("Enter new Room Type Name: ( previous: " + roomType.getRoomTypeName() + " ) \n");
         System.out.print(">");
         String name = sc.nextLine();
         System.out.println("Enter new description: ( previous: " + roomType.getDescription() + " ) \n");
@@ -526,6 +527,8 @@ public class HotelOperationModule {
 
         RoomTypeEntity newRoomType = new RoomTypeEntity(name, description, size, bed, amenities, capacity);
         newRoomType = roomTypeControllerRemote.createNewRoomType(newRoomType);
+        
+        showCurrentRoomTypeRank();
 
         roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId(), roomRateId);
         roomRateControllerRemote.addRoomTypeById(roomRateId, newRoomType.getRoomTypeId());
@@ -548,6 +551,15 @@ public class HotelOperationModule {
             break;
         }
 
+    }
+    
+    public void showCurrentRoomTypeRank(){
+        RoomTypeRanking roomTypeRanking = roomTypeRankingControllerRemote.getRoomTypeRanking();
+        List<RoomTypeEntity> roomRanks = roomTypeRanking.getRoomTypes();
+        int index = 1;
+        for(RoomTypeEntity roomType : roomRanks){
+            System.out.println(index + ". " + roomType.getRoomTypeName());
+        }
     }
 
     public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc) {

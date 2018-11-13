@@ -71,7 +71,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     public RoomTypeEntity heavyUpdateRoom(long id, String name, String description, int size, String bed, String amenities, int capacity) {
         RoomTypeEntity roomType = retrieveRoomTypeById(id);
         roomType.setAmenities(amenities);
-        roomType.setRoomName(name);
+        roomType.setRoomTypeName(name);
         roomType.setDescription(description);
         roomType.setSize(size);
         roomType.setBed(bed);

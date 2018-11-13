@@ -116,7 +116,7 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
 
         booking.setRoom(room);
         em.merge(booking);
-        System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomName() + " to " + roomType.getRoomName() + "."); //Use case 16
+        System.out.println("Booking id : " + booking.getBookingId() + "'s room type have been upgraded from " + oldRoomType.getRoomTypeName() + " to " + roomType.getRoomTypeName() + "."); //Use case 16
     }
 
 

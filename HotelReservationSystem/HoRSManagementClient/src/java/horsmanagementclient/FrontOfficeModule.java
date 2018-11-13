@@ -124,7 +124,7 @@ public class FrontOfficeModule {
             int index = 1;
             System.out.println("==== Room Types with available rooms =====");
             for (RoomTypeEntity roomType : availRoomTypes) {
-                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomName());
+                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
             }
             System.out.println("==========================================");
             System.out.println("Select desired room type by index");
@@ -247,7 +247,7 @@ public class FrontOfficeModule {
             int index = 1;
             System.out.println("===== Reservation rooms information =====");
             for (BookingEntity booking : bookingList) {
-                System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomName());
+                System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
                 System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
                 index++;
                 System.out.println();
@@ -283,7 +283,7 @@ public class FrontOfficeModule {
             int index = 1;
             System.out.println("===== Reservation rooms information =====");
             for (BookingEntity booking : bookingList) {
-                System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomName());
+                System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
                 System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
                 index++;
                 System.out.println();

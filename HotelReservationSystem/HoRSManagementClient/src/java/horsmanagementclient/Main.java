@@ -21,6 +21,7 @@ import ejb.session.stateless.SystemTimerSessionBeanRemote;
  * @author Bryan
  */
 public class Main {
+
     @EJB
     public static EmployeeControllerRemote employeeControllerRemote;
     @EJB
@@ -46,7 +47,7 @@ public class Main {
     public static void main(String[] args) {
         //int year = Calendar.getInstance().get(Calendar.YEAR);
         //System.out.println(year);
-        
+
 //         create employee shortcut
         /*Scanner sc = new Scanner(System.in);
         System.out.println("Enter name");
@@ -62,11 +63,9 @@ public class Main {
         SystemAdministrator sa = new SystemAdministrator(name, contact, email, password, address);
         sa = employeeControllerRemote.createSystemAdministrator(sa);
         System.out.println("Test success");*/
-        
         MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote);
         mainApp.test();
-        
 
     }
-    
+
 }

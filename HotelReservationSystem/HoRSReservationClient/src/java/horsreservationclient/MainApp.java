@@ -125,7 +125,7 @@ public class MainApp {
             List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
             int index = 1;
             for (RoomTypeEntity roomType : availRoomTypes) {
-                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomName());
+                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
             }
             System.out.println("==========================================");
             System.out.println("Select desired room type by index");
