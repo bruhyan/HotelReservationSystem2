@@ -143,7 +143,7 @@ public class MainApp {
             }
         }
         BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
-        System.out.println("Total price : " + totalPrice);
+        System.out.println("Total price : $" + totalPrice);
         //initiate reserve room
         System.out.println("Do you want to reserve rooms?");
         System.out.println("Enter 1 to reserve, Enter 2 to exit");
