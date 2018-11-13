@@ -84,7 +84,7 @@ public class HoRSWebService {
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
-        List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+        //List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
         
         
     }

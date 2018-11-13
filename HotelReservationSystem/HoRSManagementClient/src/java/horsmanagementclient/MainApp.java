@@ -8,6 +8,8 @@ package horsmanagementclient;
 import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
+import Entity.RoomTypeEntity;
+import Entity.RoomTypeRanking;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
@@ -59,6 +61,15 @@ public class MainApp {
     }
     
     public void test(){
+        
+        RoomTypeRanking roomTypeRank = roomTypeRankingControllerRemote.getRoomTypeRanking();
+        int index = 1;
+        for(RoomTypeEntity roomType : roomTypeRank.getRoomTypes()){
+            
+            System.out.println(index + " room Type : " + roomType.getRoomTypeName());
+            index++;
+        }
+        
        // System.out.println(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(1l));
 //       List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.findPricierRoomType(2l);
 //       for(RoomRatesEntity roomRate : roomRateList){
