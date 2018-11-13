@@ -145,7 +145,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         try {
             RoomRatesEntity currentRate = findOnlineRateForRoomType(roomTypeId);
             try {
-             
+
                 List<RoomRatesEntity> roomRateListExclude = roomRateControllerRemote.retrieveRoomRateListExcludeRoomType(roomTypeId);
 
                 //Here need to sort out the price according to prof rules
@@ -155,9 +155,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
                 //sorted, now compare if == or >, get first one.
                 RoomRatesEntity pricierRoomRate = null;
                 BigDecimal currentRoomRate = currentRate.getRatePerNight();
-                
-                
-                
+
                 for (RoomRatesEntity roomRate : roomRateListExclude) {
                     System.out.println(currentRoomRate + " " + roomRate.getRatePerNight()); //checking the prices
                     if (currentRoomRate.compareTo(roomRate.getRatePerNight()) == 0 || currentRoomRate.compareTo(roomRate.getRatePerNight()) < 0) {
@@ -357,5 +355,16 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 //        }
         return null;
     }
+
+    public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType) {
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r JOIN r.roomRateList r1 WHERE r1.rateType = :rateType");
+
+        query.setParameter("rateType", rateType);
+
+        return query.getResultList();
+
+    }
+    
+    
 
 }

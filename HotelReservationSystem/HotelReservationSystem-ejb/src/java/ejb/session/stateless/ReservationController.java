@@ -57,6 +57,11 @@ public class ReservationController implements ReservationControllerRemote, Reser
         return reserv.getTransaction();
     }
     
+    public void customerShowedUp(Long reservationId) {
+        ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        reserv.setShowedUp(true);
+    }
+    
     
 
     

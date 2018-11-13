@@ -11,6 +11,11 @@ import Entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Remote;
 
+/**
+ *
+ * @author Bryan
+ */
+@Remote
 public interface ReservationControllerRemote {
 
     public ReservationEntity createNewReservation(ReservationEntity reserv);
@@ -22,5 +27,7 @@ public interface ReservationControllerRemote {
     public void addTransaction(Long reservationId, TransactionEntity transaction);
 
     public TransactionEntity retrieveTransactionByReservationId(Long reservationId);
+
+    public void customerShowedUp(Long reservationId);
     
 }

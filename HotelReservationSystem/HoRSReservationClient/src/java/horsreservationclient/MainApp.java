@@ -7,12 +7,24 @@ package horsreservationclient;
 
 import Entity.CustomerEntity;
 import Entity.ReservationEntity;
+import Entity.RoomRatesEntity;
+import Entity.RoomTypeEntity;
+import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.CustomerControllerRemote;
+import ejb.session.stateless.ReservationControllerRemote;
+import ejb.session.stateless.RoomControllerRemote;
+import ejb.session.stateless.RoomTypeControllerRemote;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.enumeration.RateType;
 import util.exception.CustomerNotFoundException;
+import util.exception.NoAvailableOnlineRoomRateException;
 
 /**
  *
@@ -21,12 +33,22 @@ import util.exception.CustomerNotFoundException;
 public class MainApp {
     private CustomerEntity loggedInUser;
     private CustomerControllerRemote customerControllerRemote;
+    private RoomTypeControllerRemote roomTypeControllerRemote;
+    private RoomControllerRemote roomControllerRemote;
+    private ReservationControllerRemote reservationControllerRemote;
+    private BookingControllerRemote bookingControllerRemote;
+    
 
     public MainApp() {
     }
 
-    public MainApp(CustomerControllerRemote customerControllerRemote) {
+    public MainApp(CustomerControllerRemote customerControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, ReservationControllerRemote reservationControllerRemote, BookingControllerRemote bookingControllerRemote) {
         this.customerControllerRemote = customerControllerRemote;
+        this.roomTypeControllerRemote = roomTypeControllerRemote;
+        this.roomControllerRemote = roomControllerRemote;
+        this.reservationControllerRemote = reservationControllerRemote;
+        this.bookingControllerRemote = bookingControllerRemote;
+        
     }
     
     
@@ -98,10 +120,63 @@ public class MainApp {
         cal.set(Calendar.HOUR_OF_DAY, 12);
         Date checkOutDate = cal.getTime();
         
+        List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
+        while(true) {
+            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+            int index = 1;
+            for (RoomTypeEntity roomType : availRoomTypes) {
+                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomName());
+            }
+            System.out.println("==========================================");
+            System.out.println("Select desired room type by index");
+            int choice = sc.nextInt();
+            desiredRoomTypes.add(availRoomTypes.get(choice -= 1));
+            System.out.println("Enter 1 to continue adding more room types");
+            if (sc.nextInt() != 1) {
+                break;
+            }
+        }
+        BigDecimal totalPrevailingRate = calculatePrevailingRate(desiredRoomTypes, nights);
+        System.out.println("Total prevailing rate : " + totalPrevailingRate);
+        //initiate reserve room
+        System.out.println("Do you want to reserve rooms?");
+        System.out.println("Enter 1 to reserve, Enter 2 to exit");
+        int reply = sc.nextInt();
+        if (reply == 1) {
+            doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrevailingRate);
+        } 
     }
     
-    public void getAvailableRoomTypes(Date checkInDate, Date checkOutDate, Scanner sc) {
+    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrevailingRate) {
         
+    }
+    
+    public BigDecimal calculatePrevailingRate(List<RoomTypeEntity> roomTypes, int nights) {
+        BigDecimal totalPrice = new BigDecimal(0.00);
+        for(int i = 0; i < nights; i++) {
+            for(RoomTypeEntity roomType : roomTypes) {
+                try {
+                    RoomRatesEntity prevailingRate = roomTypeControllerRemote.findOnlineRateForRoomType(roomType.getRoomTypeId());
+                    BigDecimal priceForTheNight = prevailingRate.getRatePerNight();
+                    totalPrice.add(priceForTheNight);
+                } catch (NoAvailableOnlineRoomRateException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
+        return totalPrice;
+    }
+    
+    //something wong: what if not available now but will be available before check in
+    public List<RoomTypeEntity> getAvailableRoomTypes() {
+        List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
+        List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.NORMAL);
+        for(RoomTypeEntity roomType : onlineRoomTypes) {
+            if(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId())) {
+                availRoomTypes.add(roomType);
+            }
+        }   
+        return availRoomTypes;
     }
     
     public void doViewMyReservationDetails(Scanner sc) {
