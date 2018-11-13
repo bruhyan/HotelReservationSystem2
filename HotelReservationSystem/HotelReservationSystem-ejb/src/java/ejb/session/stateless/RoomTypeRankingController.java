@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import Entity.RoomTypeEntity;
 import Entity.RoomTypeRanking;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -27,14 +29,34 @@ public class RoomTypeRankingController implements RoomTypeRankingControllerRemot
     @Override
     public RoomTypeRanking getRoomTypeRanking(){
         
-        return em.find(RoomTypeRanking.class, 1l);
+        RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
+//        List<RoomTypeEntity> roomTypes = 
+                roomRank.getRoomTypes().size();
+                
+//       
+//        for(RoomTypeEntity roomType : roomTypes){
+//            roomType.get
+//        }
+        return roomRank;
         
     }
     public void setRoomTypeRank(Long roomTypeId, int rank){
         RoomTypeRanking roomTypeRanking = em.find(RoomTypeRanking.class, 1l);
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
         
-        roomTypeRanking.getRoomTypes().add(rank - 1, roomType);
+        List<RoomTypeEntity> temporaryList = roomTypeRanking.getRoomTypes();
+        
+        List<RoomTypeEntity> newCloneList = new ArrayList(temporaryList);
+        newCloneList.add(rank - 1, roomType);
+        roomTypeRanking.getRoomTypes().clear();
+        em.persist(roomTypeRanking);
+        em.flush();
+        
+        roomTypeRanking.setRoomTypes(newCloneList);
+        em.persist(roomTypeRanking);
+        em.flush();
+        
+        //roomTypeRanking.getRoomTypes().add(rank - 1, roomType);
         
     }
 }

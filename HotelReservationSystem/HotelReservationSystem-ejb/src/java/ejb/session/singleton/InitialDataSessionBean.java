@@ -47,7 +47,11 @@ public class InitialDataSessionBean {
         RoomRatesEntity r1 = em.find(RoomRatesEntity.class, 1l);
         RoomTypeEntity r2 = em.find(RoomTypeEntity.class, 1l);
         RoomEntity r3 = em.find(RoomEntity.class, 1l);
+        RoomTypeRanking r4 = em.find(RoomTypeRanking.class, 1l);
 
+        if (r4 == null) {
+            initaliseRoomRankingList();
+        }
         if (e == null) {
             initialiseEmployeeData();
         }
@@ -64,15 +68,24 @@ public class InitialDataSessionBean {
         if (r3 == null) {
             initialiseRooms();
         }
+        
+        setupTestRanks();
+
+    }
+
+    public void initaliseRoomRankingList() {
+        RoomTypeRanking roomRanking = new RoomTypeRanking();
+        em.persist(roomRanking);
+        em.flush();
 
     }
 
     public void initialiseEmployeeData() {
         //String name, String contactNumber, String email, String password, String address
-        SystemAdministrator e1 = new SystemAdministrator("System Admin", "1", "90001000", "1", "NUS Computing");
-        OperationManager e2 = new OperationManager("Operation Manager", "2", "91234567", "1", "Merlion Hotel");
-        SalesManager e3 = new SalesManager("Sales Manager", "3", "99999999", "1", "Merlion Hotel");
-        GuestRelationOfficer e4 = new GuestRelationOfficer("Guest Officer", "4", "62353535", "1", "Merlion Hotel");
+        SystemAdministrator e1 = new SystemAdministrator("System Admin", "90001000", "1", "1", "NUS Computing");
+        OperationManager e2 = new OperationManager("Operation Manager", "91234567", "2", "1", "Merlion Hotel");
+        SalesManager e3 = new SalesManager("Sales Manager", "99999999", "3", "1", "Merlion Hotel");
+        GuestRelationOfficer e4 = new GuestRelationOfficer("Guest Officer", "62353535", "4", "1", "Merlion Hotel");
 
         em.persist(e1);
         em.persist(e2);
@@ -166,8 +179,6 @@ public class InitialDataSessionBean {
         roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $500 Rank 5", "Should apply either", 2, "3 double size", "Free air", 5));
         roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $5000 Rank 6", "Should apply either", 2, "3 double size", "Free air", 5));
 
-        
-        
         //Normal And Promo
         roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 7", "Should apply promo", 2, "3 double size", "Free air", 5));
         roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 8", "Should apply promo", 2, "3 double size", "Free air", 5));
@@ -201,12 +212,24 @@ public class InitialDataSessionBean {
         roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $5000 Rank 30", "Should apply promo", 2, "3 double size", "Free air", 5));
         //30
 
+        setRoomRanks(roomTypes);
+    }
+
+    public void setRoomRanks(List<RoomTypeEntity> roomTypes) {
         RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
         for (RoomTypeEntity roomType : roomTypes) {
             roomRank.getRoomTypes().add(roomType);
             em.persist(roomType);
             em.flush();//for the right ordering
         }
+    }
+    
+    public void setupTestRanks(){
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");
+        List<RoomTypeEntity> roomTypes = query.getResultList();
+        
+        setRoomRanks(roomTypes);
+        
     }
 
     public void setRoomTypesToRoomRates() {
@@ -256,7 +279,7 @@ public class InitialDataSessionBean {
             RoomRatesEntity roomRatePromo = em.find(RoomRatesEntity.class, Long.valueOf(i));
             roomType.getRoomRateList().add(roomRatePromo);
             roomRatePromo.getRoomTypeList().add(roomType);
-            
+
             RoomRatesEntity roomRatePeak = em.find(RoomRatesEntity.class, Long.valueOf(i - 6));
             roomType.getRoomRateList().add(roomRatePeak);
             roomRatePeak.getRoomTypeList().add(roomType);

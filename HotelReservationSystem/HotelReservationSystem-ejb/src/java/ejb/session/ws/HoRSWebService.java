@@ -74,7 +74,10 @@ public class HoRSWebService {
     }
     
     @WebMethod(operationName = "partnerSearchRoom")
-    public void partnerSearchRoom(@WebParam(name = "checkInDate") String checkInDate, @WebParam(name = "checkOutDate") String checkOutDate) {
+    public void partnerSearchRoom(@WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate) {
+        
+        //use this if cannot pass in date
+        /*
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
         Date checkInDateF = null;
         Date checkOutDateF = null;
@@ -83,13 +86,14 @@ public class HoRSWebService {
             checkOutDateF = dateFormat.parse(checkOutDate);
         } catch (ParseException ex) {
             ex.printStackTrace();
-        }
-        List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+        }*/
+        
+        List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
         
         
     }
     
-    public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate, Date checkOutDate) {
+    public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate) {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
         List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerLocal.retrieveRoomTypesByRateType(RateType.NORMAL);
         for(RoomTypeEntity roomType : onlineRoomTypes) {

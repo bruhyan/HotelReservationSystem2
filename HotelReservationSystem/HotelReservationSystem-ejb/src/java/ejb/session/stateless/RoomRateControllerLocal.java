@@ -9,7 +9,6 @@ import Entity.RoomRatesEntity;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
 import util.enumeration.RateType;
 
 

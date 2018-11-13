@@ -67,7 +67,7 @@ public class Main {
         sa = employeeControllerRemote.createSystemAdministrator(sa);
         System.out.println("Test success");*/
         MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote, roomTypeRankingControllerRemote);
-        mainApp.test();
+        mainApp.runApp();
 
     }
 

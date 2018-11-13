@@ -42,4 +42,6 @@ public interface RoomTypeControllerRemote {
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
 
     public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException;
+
+    public void removeRoomRate(Long roomTypeId, Long roomRateId);
 }

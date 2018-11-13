@@ -184,7 +184,17 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
         //Means no roomType available.
         return null;
-    }*/
+
+    }
+    */
+    public void removeRoomRate(Long roomTypeId, Long roomRateId){
+       RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+       RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
+       roomType.getRoomRateList().remove(roomRate);
+       roomRate.getRoomTypeList().remove(roomType);
+    }
+
+    
 
     public boolean checkValidityOfRoomRate(RoomRatesEntity roomRate) {
         Date start = roomRate.getValidityStart();
