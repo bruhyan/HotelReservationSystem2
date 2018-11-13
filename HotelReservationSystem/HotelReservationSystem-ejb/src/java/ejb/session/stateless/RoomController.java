@@ -141,7 +141,9 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
         List<RoomEntity> roomList = query.getResultList();
         RoomEntity room = roomList.get(0);
+
         room.setIsReserved(true);
+
         em.merge(room);
         return  room;
         
