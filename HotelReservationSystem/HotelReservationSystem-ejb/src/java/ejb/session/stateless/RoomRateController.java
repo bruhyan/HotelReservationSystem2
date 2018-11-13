@@ -28,85 +28,93 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
     private EntityManager em;
     @EJB
     private RoomTypeControllerLocal roomTypeControllerLocal;
-    
-    public void createNewRoomRate(RoomRatesEntity roomRates){
+
+    public void createNewRoomRate(RoomRatesEntity roomRates) {
         em.persist(roomRates);
         em.flush();
     }
-    
-    public void updateRoomRates(RoomRatesEntity roomRates){
+
+    public void updateRoomRates(RoomRatesEntity roomRates) {
         em.merge(roomRates);
     }
-    
-    public void deleteRoomRatesById(Long id){
-    RoomRatesEntity roomRates = retrieveRoomRatesById(id);
+
+    public void deleteRoomRatesById(Long id) {
+        RoomRatesEntity roomRates = retrieveRoomRatesById(id);
         //call room controller local to find list by Type
         List<RoomTypeEntity> roomTypes = roomTypeControllerLocal.retrieveRoomTypeListByRates(roomRates);
-        if(!roomTypes.isEmpty()){
+        if (!roomTypes.isEmpty()) {
             //set all to be disabled
-            for(RoomTypeEntity roomType : roomTypes){
+            for (RoomTypeEntity roomType : roomTypes) {
                 roomType.setIsDisabled(true); //set all the type disable
-                
-                
+
             }
             roomRates.setIsDisabled(true);
-        
-        }else{
+
+        } else {
             em.remove(roomRates);
         }
     }
-        public void addRoomTypeById(Long roomRateId,Long roomTypeId){
+
+    @Override
+    public void addRoomTypeById(Long roomRateId, Long roomTypeId) {
         RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
-        
+
         roomRate.addRoomType(roomType);
-        
+
         em.merge(roomRate);
     }
 
-    public RoomRatesEntity retrieveRoomRatesById(Long id){
-        return em.find(RoomRatesEntity.class, id);
-        
-    }
-    
     @Override
-    public List<RoomRatesEntity> retrieveRoomRatesList(){
+    public RoomRatesEntity retrieveRoomRatesById(Long id) {
+        return em.find(RoomRatesEntity.class, id);
+
+    }
+
+    @Override
+    public List<RoomRatesEntity> retrieveRoomRatesList() {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r");
         return query.getResultList();
     }
+
+    @Override
+    public List<RoomRatesEntity> retrieveCompulsoryRoomRatesList() {
+        Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.rateType = :type1 OR r.rateType = :type2");
+        return query.getResultList();
+    }
+
     //heavyUpdateRoomRate(roomRate.getRoomRatesId(), roomRateName, ratePerNight, date2, date3);
-    public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd){
-            RoomRatesEntity roomRates = retrieveRoomRatesById(roomRateId);
+    public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd) {
+        RoomRatesEntity roomRates = retrieveRoomRatesById(roomRateId);
         roomRates.setName(roomRateName);
         roomRates.setRatePerNight(ratePerNight);
         roomRates.setValidityStart(dateStart);
         roomRates.setValidityEnd(dateEnd);
         updateRoomRate(roomRates);
         return roomRates;
-    
+
     }
-    
-        public void updateRoomRate(RoomRatesEntity roomRates){ //not sure if this will work because of the lists and many things to change. Come back to check
+
+    public void updateRoomRate(RoomRatesEntity roomRates) { //not sure if this will work because of the lists and many things to change. Come back to check
         em.merge(roomRates);
-        
+
     }
-        //get a list of room rates exclude a roomType
+    //get a list of room rates exclude a roomType
+
     @Override
-        public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId){
-                Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId <> :roomTypeId");
-                query.setParameter("roomTypeId", roomTypeId);
-                return query.getResultList();
-        }
-        
+    public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId) {
+        Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId <> :roomTypeId");
+        query.setParameter("roomTypeId", roomTypeId);
+        return query.getResultList();
+    }
+
     public RoomRatesEntity retriveRoomRateByRateType(RateType rateType) {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.rateType = :rateType");
         query.setParameter("rateType", rateType);
-        return (RoomRatesEntity)query.getSingleResult();
+        return (RoomRatesEntity) query.getSingleResult();
     }
-        
-        
+
     //get list of room by room type.
-    
 //    public List<RoomRatesEntity> retrieveRoomRatesListByType(RoomTypeEntity roomType){
 //
 //        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType"); //find out if this is correct

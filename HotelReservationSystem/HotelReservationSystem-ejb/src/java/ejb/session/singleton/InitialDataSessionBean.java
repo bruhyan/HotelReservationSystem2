@@ -47,7 +47,11 @@ public class InitialDataSessionBean {
         RoomRatesEntity r1 = em.find(RoomRatesEntity.class, 1l);
         RoomTypeEntity r2 = em.find(RoomTypeEntity.class, 1l);
         RoomEntity r3 = em.find(RoomEntity.class, 1l);
+        RoomTypeRanking r4 = em.find(RoomTypeRanking.class, 1l);
 
+        if (r4 == null) {
+            initaliseRoomRankingList();
+        }
         if (e == null) {
             initialiseEmployeeData();
         }
@@ -64,6 +68,13 @@ public class InitialDataSessionBean {
         if (r3 == null) {
             initialiseRooms();
         }
+
+    }
+
+    public void initaliseRoomRankingList() {
+        RoomTypeRanking roomRanking = new RoomTypeRanking();
+        em.persist(roomRanking);
+        em.flush();
 
     }
 
@@ -166,8 +177,6 @@ public class InitialDataSessionBean {
         roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $500 Rank 5", "Should apply either", 2, "3 double size", "Free air", 5));
         roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $5000 Rank 6", "Should apply either", 2, "3 double size", "Free air", 5));
 
-        
-        
         //Normal And Promo
         roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 7", "Should apply promo", 2, "3 double size", "Free air", 5));
         roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 8", "Should apply promo", 2, "3 double size", "Free air", 5));
@@ -256,7 +265,7 @@ public class InitialDataSessionBean {
             RoomRatesEntity roomRatePromo = em.find(RoomRatesEntity.class, Long.valueOf(i));
             roomType.getRoomRateList().add(roomRatePromo);
             roomRatePromo.getRoomTypeList().add(roomType);
-            
+
             RoomRatesEntity roomRatePeak = em.find(RoomRatesEntity.class, Long.valueOf(i - 6));
             roomType.getRoomRateList().add(roomRatePeak);
             roomRatePeak.getRoomTypeList().add(roomType);

@@ -24,9 +24,11 @@ public class RoomTypeRanking implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeRankingId;
+    private String name;
     private List<RoomTypeEntity> roomTypes;
 
     public RoomTypeRanking() {
+        this.name = "Ranking List";
         this.roomTypes = new ArrayList<>();
     }
     

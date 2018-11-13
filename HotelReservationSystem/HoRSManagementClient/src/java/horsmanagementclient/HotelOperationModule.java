@@ -166,7 +166,7 @@ public class HotelOperationModule {
 
         RoomRatesEntity roomRate = new RoomRatesEntity(roomRateName, ratePerNight, date2, date3, rateType);
         roomRateControllerRemote.createNewRoomRate(roomRate);
-        
+
         System.out.println("New Room rate of name : " + roomRate.getName() + " has been created!");
     }
 
@@ -525,14 +525,14 @@ public class HotelOperationModule {
         System.out.print(">");
         Integer capacity = sc.nextInt();
 
-        Long roomRateId = chooseRoomRate(sc);
+        Long roomRateId = chooseFirstRoomRate(sc);
         sc.nextLine();
 
         RoomTypeEntity newRoomType = new RoomTypeEntity(name, description, size, bed, amenities, capacity);
         newRoomType = roomTypeControllerRemote.createNewRoomType(newRoomType);
-        
+
         int range = showCurrentRoomTypeRank();
-        
+
         System.out.println("Please indicate a rank for your new room type ranging from 1 to " + range);
         int rank = sc.nextInt(); //rank is 1 + index
         sc.nextLine();
@@ -543,7 +543,7 @@ public class HotelOperationModule {
         //add another roomrate here if needed
         while (true) {
             while (response < 1 || response > 2) {
-                System.out.println("Add another room rate?");
+                System.out.println("Add another room rate of a different type?");
                 System.out.println("1. Yes");
                 System.out.println("2. No, System will create the room type and return you to the operation manager page.");
                 System.out.print(">");
@@ -559,29 +559,88 @@ public class HotelOperationModule {
         }
 
     }
-    
-    public int showCurrentRoomTypeRank(){
+
+    public int showCurrentRoomTypeRank() {
         RoomTypeRanking roomTypeRanking = roomTypeRankingControllerRemote.getRoomTypeRanking();
         List<RoomTypeEntity> roomRanks = roomTypeRanking.getRoomTypes();
         int index = 0;
         System.out.println("*** Current Room Type Ranking: ***");
-        for(RoomTypeEntity roomType : roomRanks){
+        for (RoomTypeEntity roomType : roomRanks) {
             index++;
             System.out.println(index + ". " + roomType.getRoomTypeName());
-            
+
         }
         return index;
-        
+
     }
 
     public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc) {
-        Long roomRateId = chooseRoomRate(sc);
-        roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), roomRateId);
-        roomRateControllerRemote.addRoomTypeById(roomRateId, roomType.getRoomTypeId());
+       chooseRoomRate(sc, roomType);
+
     }
 
-    public Long chooseRoomRate(Scanner sc) {
+    public void chooseRoomRate(Scanner sc, RoomTypeEntity roomType) {
         List<RoomRatesEntity> roomRatesList = roomRateControllerRemote.retrieveRoomRatesList();
+        List<RoomRatesEntity> currentRoomRates = roomType.getRoomRateList();
+        boolean hasPublished = false;
+        boolean hasNormal = false;
+        Long publishedRateId = null;
+        Long normalRateId = null;
+        for (RoomRatesEntity roomRate : currentRoomRates) {
+            if (roomRate.getRateType() == RateType.PUBLISHED) {
+                hasPublished = true;
+                publishedRateId = roomRate.getRoomRatesId();
+            }
+            if (roomRate.getRateType() == RateType.NORMAL) {
+                hasNormal = true;
+                normalRateId = roomRate.getRoomRatesId();
+            }
+        }
+
+        System.out.println("Choose room rate for this room type : ");
+//	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//	Date date = new Date();
+        for (RoomRatesEntity roomRateEntity : roomRatesList) { //validity check, use it at booking
+//            if(date.compareTo(roomRateEntity.getValidityEnd()) > 0){ //validity ended
+//            
+//            }else if(date.compareTo(roomRateEntity.getValidityStart()) > 0){ //validity haven't start
+//            
+//            }else{
+            System.out.println(roomRateEntity.getRoomRatesId() + ". Rate Type: " + roomRateEntity.getRateType() + ". Name: " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
+
+//            }
+        }
+        System.out.print(">");
+
+        Long choosenRatesId = sc.nextLong();
+
+        RoomRatesEntity chosenRates = roomRateControllerRemote.retrieveRoomRatesById(choosenRatesId);
+        if (chosenRates.getRateType() == RateType.PUBLISHED && hasPublished == true) {
+            doReplacePublishedRate(roomType, chosenRates,publishedRateId);
+        } else if (chosenRates.getRateType() == RateType.NORMAL && hasNormal == true) {
+            doReplaceNormalRate(roomType, chosenRates, normalRateId);
+        }
+
+    }
+
+    public void doReplacePublishedRate(RoomTypeEntity roomType, RoomRatesEntity chosenRates, Long publishedRateId) {
+        
+        roomTypeControllerRemote.removeRoomRate(roomType.getRoomTypeId(), publishedRateId);
+        roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), chosenRates.getRoomRatesId());
+        roomRateControllerRemote.addRoomTypeById(chosenRates.getRoomRatesId(), roomType.getRoomTypeId());
+    }
+
+    public void doReplaceNormalRate(RoomTypeEntity roomType, RoomRatesEntity chosenRates, Long normalRateId) {
+        roomTypeControllerRemote.removeRoomRate(roomType.getRoomTypeId(), normalRateId);
+        roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), chosenRates.getRoomRatesId());
+        roomRateControllerRemote.addRoomTypeById(chosenRates.getRoomRatesId(), roomType.getRoomTypeId());
+    }
+
+    public Long chooseFirstRoomRate(Scanner sc) {
+        List<RoomRatesEntity> roomRatesList = roomRateControllerRemote.retrieveCompulsoryRoomRatesList();
+
+        boolean hasPublished = false;
+        boolean hasNormal = false;
 
         System.out.println("Choose room rate for this room type : ");
 //	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

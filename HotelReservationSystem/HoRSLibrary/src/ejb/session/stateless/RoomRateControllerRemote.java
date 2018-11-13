@@ -33,4 +33,6 @@ public interface RoomRateControllerRemote {
     public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId);
 
     public RoomRatesEntity retriveRoomRateByRateType(RateType rateType);
+    
+    public List<RoomRatesEntity> retrieveCompulsoryRoomRatesList();
 }
