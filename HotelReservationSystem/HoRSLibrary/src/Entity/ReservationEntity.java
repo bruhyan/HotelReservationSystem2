@@ -36,6 +36,8 @@ public class ReservationEntity implements Serializable {
     private List<BookingEntity> bookingList;
     @ManyToOne
     private CustomerEntity customer;
+    @ManyToOne
+    private PartnerEntity partner;
     private TransactionEntity transaction;
     private Integer numOfGuests;
     private ReservationType reservationType;
@@ -44,18 +46,28 @@ public class ReservationEntity implements Serializable {
         this.bookingList = new ArrayList<>();
     }
 
-    
+    //use this if customer reservation
     public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, CustomerEntity customer, ReservationType reservationType) {
         this();
         this.dateOfReservation = dateOfReservation;
         this.checkInDateTime = checkInDateTime;
         this.checkOutDateTime = checkOutDateTime;
         this.showedUp = showedUp;
-        this.bookingList = bookingList;
         this.customer = customer;
         this.reservationType = reservationType;
         //this.transaction = transaction;
         //this.numOfGuests = numOfGuests;
+    }
+    
+    //use this if partner reservation
+
+    public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, PartnerEntity partner, ReservationType reservationType) {
+        this.dateOfReservation = dateOfReservation;
+        this.checkInDateTime = checkInDateTime;
+        this.checkOutDateTime = checkOutDateTime;
+        this.showedUp = showedUp;
+        this.partner = partner;
+        this.reservationType = reservationType;
     }
     
     
@@ -169,6 +181,14 @@ public class ReservationEntity implements Serializable {
 
     public void setReservationType(ReservationType reservationType) {
         this.reservationType = reservationType;
+    }
+
+    public PartnerEntity getPartner() {
+        return partner;
+    }
+
+    public void setPartner(PartnerEntity partner) {
+        this.partner = partner;
     }
     
 }

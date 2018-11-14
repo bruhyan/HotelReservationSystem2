@@ -239,6 +239,7 @@ public class HotelOperationModule {
         int response = 0;
         System.out.println("============= Selected Room Type Information:  ===========");
         System.out.println("Room Rate Name: " + roomRate.getName());
+        System.out.println("Room Rate Type: " + roomRate.getRateType());
         System.out.println("Room Rate per night : $" + roomRate.getRatePerNight());
         System.out.println("Room Rate validity start: " + roomRate.getValidityStart());
         System.out.println("Room Rate validity end: " + roomRate.getValidityEnd());

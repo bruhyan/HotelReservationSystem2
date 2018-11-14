@@ -5,7 +5,9 @@
  */
 package ejb.session.ws;
 
+import Entity.BookingEntity;
 import Entity.PartnerEntity;
+import Entity.ReservationEntity;
 import Entity.RoomTypeEntity;
 import ejb.session.stateless.BookingControllerLocal;
 import ejb.session.stateless.CustomerControllerLocal;
@@ -14,8 +16,7 @@ import ejb.session.stateless.ReservationControllerLocal;
 import ejb.session.stateless.RoomControllerLocal;
 import ejb.session.stateless.RoomRateControllerLocal;
 import ejb.session.stateless.RoomTypeControllerLocal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.enumeration.RateType;
+import util.enumeration.ReservationType;
 import util.exception.PartnerNotFoundException;
 
 /**
@@ -117,8 +119,18 @@ public class HoRSWebService {
     }
     
     @WebMethod(operationName = "partnerReserveRoom")
-    public void partnerReserveRoom() {
-        //List<RoomTypeEntity> availRooms = partnerSearchRoom(email, password, checkInDate, checkOutDate);
+    public void partnerReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, BigDecimal totalPrice, PartnerEntity partner) {
+        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, partner, ReservationType.Partner);
+        reservation = reservationControllerLocal.createNewReservation(reservation);
+        
+        //create individual room bookings
+        for(RoomTypeEntity roomType : desiredRoomTypes) {
+            BookingEntity booking = new BookingEntity(roomType, reservation);
+            booking = bookingControllerLocal.createBooking(booking);
+            reservationControllerLocal.addBookings(reservation.getReservationId(), booking);
+            
+            //stopped here
+        }
     }
     
     @WebMethod(operationName = "viewPartnerReservationDetails")
