@@ -28,4 +28,5 @@ public interface ReservationControllerLocal {
 
     public List<ReservationEntity> retrieveReservationByPartnerId(Long partnerId);
     
+    
 }

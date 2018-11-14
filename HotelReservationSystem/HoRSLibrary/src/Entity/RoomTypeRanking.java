@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -25,6 +26,7 @@ public class RoomTypeRanking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeRankingId;
     private String name;
+    @OneToMany
     private List<RoomTypeEntity> roomTypes;
 
     public RoomTypeRanking() {

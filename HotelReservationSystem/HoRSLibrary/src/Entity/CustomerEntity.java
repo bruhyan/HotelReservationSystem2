@@ -8,10 +8,12 @@ package Entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -24,12 +26,19 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
+    @OneToMany
     private List<ReservationEntity> reservations;
+    @Column(length = 256, unique = true, nullable = false)
     private String email;
+    @Column(length = 8, unique = true, nullable = false)
     private String contactNumber;
+    @Column(length = 256, nullable = false)
     private String firstName;
+    @Column(length = 256, nullable = false)
     private String lastName;
+    @Column(length = 32)
     private String password;
+    
     private PartnerEntity partner;
 
     public CustomerEntity() {

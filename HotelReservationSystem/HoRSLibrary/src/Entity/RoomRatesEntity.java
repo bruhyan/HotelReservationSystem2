@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +29,9 @@ public class RoomRatesEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomRatesId;
+    @Column(length = 256, nullable = false)
     private String name;
+    @Column(nullable = false, precision = 12, scale =2)
     private BigDecimal ratePerNight;
     private Date validityStart;
     private Date validityEnd;

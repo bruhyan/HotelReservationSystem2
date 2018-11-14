@@ -8,6 +8,7 @@ package Entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,10 +26,15 @@ public class EmployeeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long employeeId;
+    @Column(length = 256, nullable = false)
     private String name;
+    @Column(length = 8, nullable = false, unique = true)
     private String contactNumber;
+    @Column(length = 256, nullable = false, unique = true)
     private String email;
+    @Column(length = 32, nullable = false)
     private String password;
+    @Column(length = 256, nullable = false)
     private String address;
     @OneToMany(mappedBy="employee")
     private List<TransactionEntity> transactionList;

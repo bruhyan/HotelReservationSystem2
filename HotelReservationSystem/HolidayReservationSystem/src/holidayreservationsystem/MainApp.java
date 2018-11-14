@@ -245,6 +245,7 @@ public class MainApp {
         return port.partnerLogin(email, password);
     }
 
+
     private static java.util.List<holidayreservationsystem.RoomTypeEntity> partnerSearchRoom(java.lang.String email, java.lang.String password, javax.xml.datatype.XMLGregorianCalendar checkInDate, javax.xml.datatype.XMLGregorianCalendar checkOutDate) throws PartnerNotFoundException_Exception {
         holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
         holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();

@@ -6,10 +6,12 @@
 package Entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import util.enumeration.RoomStatus;
@@ -25,13 +27,18 @@ public class RoomEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
+    @Column(length = 4, unique = true, nullable = false)
     private Integer roomNumber;
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable =false)
     private RoomTypeEntity roomType;
+    @Column(nullable=false)
     private Boolean isDisabled;
     @OneToOne
     private BookingEntity booking;
+    @Column(nullable=false)
     private RoomStatus roomStatus;
+    @Column(nullable=false)
     private Boolean isReserved;
 
     public RoomEntity() {
