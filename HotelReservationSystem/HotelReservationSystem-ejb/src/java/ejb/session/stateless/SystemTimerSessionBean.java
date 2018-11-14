@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import Entity.BookingEntity;
+import Entity.ReservationEntity;
 import Entity.RoomAllocationException;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
@@ -22,7 +23,6 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import util.enumeration.ReservationType;
 
 /**
  *
@@ -43,6 +43,8 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     private RoomTypeControllerLocal roomTypeControllerLocal;
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
+    @EJB
+    private ReservationControllerLocal reservationControllerLocal;
 
     @EJB
     private RoomAllocationExceptionControllerLocal roomAllocationExceptionControllerLocal;
@@ -69,17 +71,24 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
 
         //new understanding : Ranking is done manually,
         //check availability on the day itself,  so needs to be available. Even if occupied and customer checking out, 
-        List<BookingEntity> bookingList = bookingControllerLocal.retrieveBookingList();
+        //Check reservation for today date
+        
+        List<ReservationEntity> reservationList = reservationControllerLocal.retrieveTodayReservationList();
+        
+        for(ReservationEntity reservation : reservationList){
+        
+        List<BookingEntity> bookingList = reservation.getBookingList();
         RoomAllocationException exception = new RoomAllocationException();
         exception = roomAllocationExceptionControllerLocal.saveException(exception);
         for (BookingEntity booking : bookingList) {
-
+            System.out.println("Booking found " + booking.getBookingId());
             RoomTypeEntity roomTypeNeeded = booking.getRoomType();
             //check if roomtype is available.
             Long roomTypeId = roomTypeNeeded.getRoomTypeId();
 
             if (roomControllerLocal.checkAvailabilityOfRoomTypeWhenAllocating(roomTypeId)) {
                 //RoomType is available, and not isReserved
+                            System.out.println("Regular Reservation made .");
                 doRegularAllocation(booking.getBookingId(), roomTypeId, exception);
             } else {
 
@@ -88,6 +97,7 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
             }
 
         }
+       }
     }
 
     public void doRegularAllocation(Long bookingId, Long roomTypeId, RoomAllocationException exception) {

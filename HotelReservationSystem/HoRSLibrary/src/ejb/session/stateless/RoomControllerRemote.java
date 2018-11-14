@@ -34,5 +34,7 @@ public interface RoomControllerRemote {
     public RoomEntity walkInAllocateRoom(Long roomTypeId);
 
     public void changeRoomStatus(Long roomEntityId, RoomStatus status);
+
+    public void changeIsReserved(Long roomId, boolean value);
     
 }

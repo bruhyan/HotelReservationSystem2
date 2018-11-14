@@ -155,6 +155,7 @@ public class FrontOfficeModule {
         //Retrieve all roomtypes that are published and available
         List<RoomTypeEntity> publishedRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.PUBLISHED);
 
+        // available + published filter , Need see if available now + available in future here.
         for (RoomTypeEntity roomType : publishedRoomTypes) {
             if (roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId(), checkInDate)) {
                 availRoomTypes.add(roomType);
@@ -276,6 +277,7 @@ public class FrontOfficeModule {
                 for (BookingEntity booking : bookingList) {
                     RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
                     roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.OCCUPIED);
+                    roomControllerRemote.changeIsReserved(room.getRoomId(), false);
                 }
                 reservationControllerRemote.customerShowedUp(reservation.getReservationId());
                 System.out.println("Check in completed");
