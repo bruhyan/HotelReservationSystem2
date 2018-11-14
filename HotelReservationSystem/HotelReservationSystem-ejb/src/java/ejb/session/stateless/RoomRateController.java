@@ -34,10 +34,13 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
     private EntityManager em;
     @EJB
     private RoomTypeControllerLocal roomTypeControllerLocal;
-@Override
-    public void createNewRoomRate(RoomRatesEntity roomRates) {
+    @Override
+    public RoomRatesEntity createNewRoomRate(RoomRatesEntity roomRates) {
         em.persist(roomRates);
         em.flush();
+        
+        
+        return em.find(RoomRatesEntity.class, roomRates.getRoomRatesId()); 
     }
 
 

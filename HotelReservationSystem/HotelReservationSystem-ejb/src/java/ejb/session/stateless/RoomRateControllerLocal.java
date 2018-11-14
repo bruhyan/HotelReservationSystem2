@@ -16,7 +16,7 @@ public interface RoomRateControllerLocal {
 
     public List<RoomRatesEntity> retrieveRoomRatesList();
 
-    public void createNewRoomRate(RoomRatesEntity roomRates);
+     public RoomRatesEntity createNewRoomRate(RoomRatesEntity roomRates);
 
 
 

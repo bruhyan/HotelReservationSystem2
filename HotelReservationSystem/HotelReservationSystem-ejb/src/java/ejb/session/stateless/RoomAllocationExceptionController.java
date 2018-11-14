@@ -6,11 +6,13 @@
 package ejb.session.stateless;
 
 import Entity.RoomAllocationException;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -33,6 +35,13 @@ public class RoomAllocationExceptionController implements RoomAllocationExceptio
         
         return em.find(RoomAllocationException.class, exception.getRoomAllocationExceptionId());
         
+    }
+    
+    public List<RoomAllocationException> retrieveTodayException(){
+        //basically latest one.
+        Query query;
+        query = em.createQuery("SELECT r FROM RoomAllocationException  r ORDER BY r.roomAllocationExceptionId DESC");
+        return query.getResultList();
     }
     
 }

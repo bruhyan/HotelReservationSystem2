@@ -18,7 +18,7 @@ import util.enumeration.RateType;
 public interface RoomRateControllerRemote {
     public List<RoomRatesEntity> retrieveRoomRatesList();
 
-    public void createNewRoomRate(RoomRatesEntity roomRates);
+    public RoomRatesEntity createNewRoomRate(RoomRatesEntity roomRates);
 
 
     public void deleteRoomRatesById(Long id);

@@ -5,7 +5,6 @@
     <class>Entity.Employee</class>
     <class>Entity.SystemAdministrator</class>
     <class>Entity.BookingEntity</class>
-    <class>Entity.CustomerEntity</class>
     <class>Entity.EmployeeEntity</class>
     <class>Entity.ReservationEntity</class>
     <class>Entity.RoomEntity</class>
@@ -17,6 +16,8 @@
     <class>Entity.SalesManager</class>
     <class>Entity.PartnerEntity</class>
     <class>Entity.RoomTypeRanking</class>
+    <class>Entity.CustomerEntity</class>
+    <class>Entity.RoomAllocationException</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

@@ -7,12 +7,13 @@ package horsmanagementclient;
 
 import Entity.BookingEntity;
 import Entity.EmployeeEntity;
+import Entity.RoomAllocationException;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
-import Entity.RoomTypeRanking;
 import ejb.session.stateless.BookingControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
+import ejb.session.stateless.RoomAllocationExceptionControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
@@ -39,8 +40,9 @@ public class HotelOperationModule {
     private RoomTypeControllerRemote roomTypeControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
     private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
+    private RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote;
 
-    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote) {
+    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote, RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
@@ -48,6 +50,7 @@ public class HotelOperationModule {
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
         this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
+        this.roomAllocationExceptionControllerRemote = roomAllocationExceptionControllerRemote;
     }
 
     public void runOperationManagerModuleModule() {
@@ -60,10 +63,11 @@ public class HotelOperationModule {
             System.out.println("2: View all rooms");
             System.out.println("3: Create New Room Type");
             System.out.println("4: View All Room Types"); //here can view room type details first then  delete or update also
-            System.out.println("5: View Room Allocation Exception Report");
-            System.out.println("6: Exit");
+            System.out.println("5: Add a Room Rate to a Room Type");
+            System.out.println("6: View Room Allocation Exception Report");
+            System.out.println("7: Exit");
             input = 0;
-            while (input < 1 || input > 6) {
+            while (input < 1 || input > 7) {
                 System.out.print(">");
                 input = sc.nextInt();
                 sc.nextLine();
@@ -76,18 +80,44 @@ public class HotelOperationModule {
                 } else if (input == 4) {
                     doViewAllRoomTypes(sc);
                 } else if (input == 5) {
-                    doViewRoomAllocationExceptionReport();
+                    doAttachRoomTypeAndRoomRate(sc);
                 } else if (input == 6) {
+                    doViewRoomAllocationExceptionReport();
+                } else if (input == 7) {
                     break;
                 } else {
                     System.out.println("Invalid input! Please try again!");
                 }
 
             }
-            if (input == 6) {
+            if (input == 7) {
                 break;
             }
         }
+    }
+
+    public void doAttachRoomTypeAndRoomRate(Scanner sc) {
+        List<RoomTypeEntity> roomTypeList = roomTypeControllerRemote.retrieveRoomTypeList();
+        RoomTypeEntity roomTypeChoosen;
+        if (roomTypeList.isEmpty()) {
+            System.out.println("You currently have no room types available! Please create a new one first.");
+            return;
+        } else {
+            System.out.println("Select the room type you'd wish add a room rate to : ");
+            for (RoomTypeEntity roomType : roomTypeList) {
+
+                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " .");
+
+            }
+            System.out.print(">");
+            Long roomTypeId = sc.nextLong();
+            sc.nextLine();
+
+            roomTypeChoosen = roomTypeControllerRemote.retrieveRoomTypeById(roomTypeId);
+
+        }
+        chooseRoomRate(sc, roomTypeChoosen);
+
     }
 
     public void runSalesManagerModule() {
@@ -165,9 +195,23 @@ public class HotelOperationModule {
         RateType rateType = RateType.values()[rateTypeInput - 1];
 
         RoomRatesEntity roomRate = new RoomRatesEntity(roomRateName, ratePerNight, date2, date3, rateType);
-        roomRateControllerRemote.createNewRoomRate(roomRate);
+        roomRate = roomRateControllerRemote.createNewRoomRate(roomRate);
 
         System.out.println("New Room rate of name : " + roomRate.getName() + " has been created!");
+    }
+
+    public void addRoomType(RoomRatesEntity roomRates, Scanner sc) {
+        List<RoomTypeEntity> roomTypeList = roomTypeControllerRemote.retrieveRoomTypeList();
+        System.out.println("Select the room type you want to link with this newly created room rate: ");
+
+        for (RoomTypeEntity roomType : roomTypeList) {
+
+            System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " .");
+        }
+        System.out.print(">");
+        Long roomTypeId = sc.nextLong();
+        sc.nextLine();
+
     }
 
     public void doViewAllRoomRate(Scanner sc) {
@@ -385,7 +429,12 @@ public class HotelOperationModule {
     }
 
     public void doViewRoomAllocationExceptionReport() {
-        System.out.println("Placeholder for something going wrong with room allocation, ie not enough rooms. come back and solve this");
+        List<RoomAllocationException> exceptionList = roomAllocationExceptionControllerRemote.retrieveTodayException();
+        List<String> exceptions = exceptionList.get(0).getExceptions();
+
+        for (String exception : exceptions) {
+            System.out.println(exception);
+        }
     }
 
     public Long selectRoomType(Scanner sc) {
