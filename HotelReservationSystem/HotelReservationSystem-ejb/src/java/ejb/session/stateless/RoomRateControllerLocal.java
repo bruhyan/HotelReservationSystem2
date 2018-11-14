@@ -18,7 +18,7 @@ public interface RoomRateControllerLocal {
 
     public void createNewRoomRate(RoomRatesEntity roomRates);
 
-    public void updateRoomRates(RoomRatesEntity roomRates);
+
 
     public void deleteRoomRatesById(Long id);
 

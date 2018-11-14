@@ -1,0 +1,38 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ejb.session.stateless;
+
+import Entity.RoomAllocationException;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+/**
+ *
+ * @author mdk12
+ */
+@Stateless
+@Remote(RoomAllocationExceptionControllerRemote.class)
+@Local(RoomAllocationExceptionControllerLocal.class)
+public class RoomAllocationExceptionController implements RoomAllocationExceptionControllerRemote, RoomAllocationExceptionControllerLocal {
+
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    public RoomAllocationException saveException(RoomAllocationException exception){
+        
+        em.persist(exception);
+        em.flush();
+        
+        
+        
+        return em.find(RoomAllocationException.class, exception.getRoomAllocationExceptionId());
+        
+    }
+    
+}

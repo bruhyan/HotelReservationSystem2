@@ -57,9 +57,13 @@ public class HoRSWebService {
 
     
     @WebMethod(operationName = "partnerLogin") 
-    public PartnerEntity partnerLogin(@WebParam(name ="email") String email, @WebParam(name = "password") String password) {
-        PartnerEntity partner;
-        try{
+    public PartnerEntity partnerLogin(@WebParam(name ="email") String email, @WebParam(name = "password") String password) throws PartnerNotFoundException {
+        PartnerEntity partner = partnerControllerLocal.partnerLogin(email, password);
+        if(partner == null) {
+            throw new PartnerNotFoundException("Partner not found");
+        }
+        return partner;
+        /*try{
             partner = partnerControllerLocal.retrievePartnerByEmail(email);
             if(!partner.getPassword().equals(password)) {
                 System.out.println("Incorrect password.");
@@ -70,12 +74,16 @@ public class HoRSWebService {
         } catch (PartnerNotFoundException ex) {
             System.out.println(ex.getMessage());
             return null;
-        }
+        }*/
     }
     
     @WebMethod(operationName = "partnerSearchRoom")
-    public void partnerSearchRoom(@WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate) {
-        
+    public List<RoomTypeEntity> partnerSearchRoom(@WebParam(name="email") String email, @WebParam(name = "password") String password,
+            @WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate) throws PartnerNotFoundException{
+        PartnerEntity partner = partnerControllerLocal.partnerLogin(email, password);
+        if(partner == null) {
+            throw new PartnerNotFoundException("Partner not found");
+        }
         //use this if cannot pass in date
         /*
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
@@ -93,9 +101,7 @@ public class HoRSWebService {
         }*/
         
         List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
-
-        
-        
+        return availRoomTypes;
     }
     
     public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate) {
@@ -112,7 +118,7 @@ public class HoRSWebService {
     
     @WebMethod(operationName = "partnerReserveRoom")
     public void partnerReserveRoom() {
-        
+        //List<RoomTypeEntity> availRooms = partnerSearchRoom(email, password, checkInDate, checkOutDate);
     }
     
     @WebMethod(operationName = "viewPartnerReservationDetails")

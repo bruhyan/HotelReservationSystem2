@@ -75,10 +75,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return query.getFirstResult();
     }
 
-    public void updateRoomType(RoomTypeEntity roomType) { //not sure if this will work because of the lists and many things to change. Come back to check
-        em.merge(roomType);
-
-    }
 
     public void addRoomRateById(Long roomTypeId, Long roomRateId) {
         RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
@@ -102,7 +98,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         roomType.setSize(size);
         roomType.setBed(bed);
         roomType.setCapacity(capacity);
-        updateRoomType(roomType);
+
         return roomType;
     }
 
@@ -147,7 +143,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             }
             //set roomType to be disabled as well.
             roomType.setIsDisabled(true);
-            updateRoomType(roomType);
+
 
         } else {
             em.remove(roomType);
@@ -330,6 +326,33 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         throw new NoAvailableOnlineRoomRateException("There is no available room rate to be used!");
 
     }
+    
+    public RoomTypeEntity getRoomTypeByRank(int rank){
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.ranking = :rank");
+        query.setParameter("rank", rank);
+        
+        return (RoomTypeEntity) query.getSingleResult();
+        
+    }
+    
+    public RoomTypeEntity findUpgradeRoomType(Long roomTypeId){
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        int currentRank = roomType.getRanking();
+        
+        //check availability of the next higher ranks
+        
+        for(int i = currentRank; i >= 1; i--){
+            
+            RoomTypeEntity nextRoomType = getRoomTypeByRank(i);
+            if(roomControllerLocal.checkAvailabilityOfRoomTypeWhenAllocating(nextRoomType.getRoomTypeId())){
+                return nextRoomType;
+            }
+            
+            
+        }
+
+        return null;
+    }
 
     //This method will get the RoomRateEntity of room type when it is a reservation for today
     public RoomRatesEntity findWalkInRateForRoomTypeToday(Long roomTypeId) {
@@ -424,6 +447,8 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 //        }
         return null;
     }
+    
+    
 
     @Override
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType) {

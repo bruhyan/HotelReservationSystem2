@@ -69,23 +69,24 @@ public class MainApp {
             System.out.println("4: Exit");
             }
             if(loggedInUser != null) {
+                System.out.println("1: Guest Logout");
                 System.out.println("2: Register as Guest");
                 System.out.println("3: Search Hotel Room");
                 System.out.println("4: Exit");
                 System.out.println("5: View My Reservation Details");
                 System.out.println("6: View All My Reservations");
-                System.out.println("7: Logout");
             }
             System.out.println("===============================================");
             input = 0;
-            while(input < 1 || input > 7) {
+            while(input < 1 || input > 6) {
                 System.out.print(">");
                 input = sc.nextInt();
                 if(input == 1) {
                     if(loggedInUser == null) {
                         doLogin(sc);
                     }else {
-                        System.out.println("Current logged in user: "+loggedInUser.getEmail());
+                        //System.out.println("Current logged in user: "+loggedInUser.getEmail());
+                        doLogout();
                     }
                 }else if(input == 2) {
                     doGuestRegistration(sc);
@@ -97,8 +98,6 @@ public class MainApp {
                     doViewMyReservationDetails(sc);
                 }else if(input == 6 && loggedInUser != null) {
                     doViewAllMyReservations();
-                }else if(input == 7 && loggedInUser != null) {
-                    doLogout();
                 }
             }
             if(input == 4) {
@@ -131,7 +130,7 @@ public class MainApp {
             int index = 1;
             System.out.println("==========================================");
             for (RoomTypeEntity roomType : availRoomTypes) {
-                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
+                System.out.println("#" + index + " RoomType: " + roomType.getRoomTypeName());
                 index++;
             }
             System.out.println("==========================================");
@@ -144,7 +143,7 @@ public class MainApp {
             }
         }
         BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
-        System.out.println("Total price : " + totalPrice);
+        System.out.println("Total price : $" + totalPrice);
         //initiate reserve room
         System.out.println("Do you want to reserve rooms?");
         System.out.println("Enter 1 to reserve, Enter 2 to exit");

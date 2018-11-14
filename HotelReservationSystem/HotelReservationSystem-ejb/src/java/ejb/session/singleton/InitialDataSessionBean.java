@@ -113,16 +113,16 @@ public class InitialDataSessionBean {
         List<RoomRatesEntity> roomRates = new ArrayList<>();
 
         //valid published, remember possible to have null.
-        roomRates.add(new RoomRatesEntity("Published Test Rate 1 : $100", BigDecimal.valueOf(150.00), date1, date2, RateType.PUBLISHED));
+        roomRates.add(new RoomRatesEntity("Published Test Rate 1 : $150", BigDecimal.valueOf(150.00), date1, date2, RateType.PUBLISHED));
         roomRates.add(new RoomRatesEntity("Normal Test Rate 1 : $200", BigDecimal.valueOf(100.00), date1, date2, RateType.NORMAL));
-        roomRates.add(new RoomRatesEntity("Published Test Rate 2 : $100", BigDecimal.valueOf(200.00), date1, date2, RateType.PUBLISHED));
-        roomRates.add(new RoomRatesEntity("Normal Test Rate 2 : $200", BigDecimal.valueOf(150.00), date1, date2, RateType.NORMAL));
-        roomRates.add(new RoomRatesEntity("Published Test Rate 3 : $100", BigDecimal.valueOf(500.00), date1, date2, RateType.PUBLISHED));
-        roomRates.add(new RoomRatesEntity("Normal Test Rate 3 : $200", BigDecimal.valueOf(350.00), date1, date2, RateType.NORMAL));
-        roomRates.add(new RoomRatesEntity("Published Test Rate 4 : $100", BigDecimal.valueOf(800.00), date1, date2, RateType.PUBLISHED));
-        roomRates.add(new RoomRatesEntity("Normal Test Rate 4 : $200", BigDecimal.valueOf(550.00), date1, date2, RateType.NORMAL));
-        roomRates.add(new RoomRatesEntity("Published Test Rate 5 : $100", BigDecimal.valueOf(9500.00), date1, date2, RateType.PUBLISHED));
-        roomRates.add(new RoomRatesEntity("Normal Test Rate 5 : $200", BigDecimal.valueOf(5000.00), date1, date2, RateType.NORMAL));
+        roomRates.add(new RoomRatesEntity("Published Test Rate 2 : 200", BigDecimal.valueOf(200.00), date1, date2, RateType.PUBLISHED));
+        roomRates.add(new RoomRatesEntity("Normal Test Rate 2 : $150", BigDecimal.valueOf(150.00), date1, date2, RateType.NORMAL));
+        roomRates.add(new RoomRatesEntity("Published Test Rate 3 : $500", BigDecimal.valueOf(500.00), date1, date2, RateType.PUBLISHED));
+        roomRates.add(new RoomRatesEntity("Normal Test Rate 3 : $350", BigDecimal.valueOf(350.00), date1, date2, RateType.NORMAL));
+        roomRates.add(new RoomRatesEntity("Published Test Rate 4 : $800", BigDecimal.valueOf(800.00), date1, date2, RateType.PUBLISHED));
+        roomRates.add(new RoomRatesEntity("Normal Test Rate 4 : $550", BigDecimal.valueOf(550.00), date1, date2, RateType.NORMAL));
+        roomRates.add(new RoomRatesEntity("Published Test Rate 5 : $9500", BigDecimal.valueOf(9500.00), date1, date2, RateType.PUBLISHED));
+        roomRates.add(new RoomRatesEntity("Normal Test Rate 5 : $5000", BigDecimal.valueOf(5000.00), date1, date2, RateType.NORMAL));
 //        roomRates.add(new RoomRatesEntity("Published Valid Test Rate 3", BigDecimal.valueOf(500.00), date1, date2, RateType.PUBLISHED));
 //        roomRates.add(new RoomRatesEntity("Published Valid Test Rate 4", BigDecimal.valueOf(5000.00), date1, date2, RateType.PUBLISHED));
 //        roomRates.add(new RoomRatesEntity("Published Valid Test Rate 4", BigDecimal.valueOf(5000.00), date1, date2, RateType.PUBLISHED));

@@ -125,7 +125,7 @@ public class FrontOfficeModule {
             int index = 1;
             System.out.println("==== Room Types with available rooms =====");
             for (RoomTypeEntity roomType : availRoomTypes) {
-                System.out.println("Index: " + index + "RoomType: " + roomType.getRoomTypeName());
+                System.out.println("#" + index + " RoomType: " + roomType.getRoomTypeName());
                 index++;
             }
             System.out.println("==========================================");
@@ -138,7 +138,7 @@ public class FrontOfficeModule {
             }
         }
         BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
-        System.out.println("Total prevailing rate : " + totalPrice);
+        System.out.println("Total price: $" + totalPrice);
         //initiate reserve room
         System.out.println("Do you want to reserve rooms?");
         System.out.println("Enter 1 to reserve, Enter 2 to exit");
@@ -196,14 +196,14 @@ public class FrontOfficeModule {
         System.out.println("CheckInDate: "+checkInDate+" today date: "+today);
         
         if(checkInDate.after(today)) {//if future
-            System.out.println("Future");
+            //System.out.println("Future");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
                 booking = bookingControllerRemote.createBooking(booking);
                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
             }
         }else {//if today
-            System.out.println("Today");
+            //System.out.println("Today");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
                 BookingEntity booking = new BookingEntity(room, reservation);
@@ -225,7 +225,7 @@ public class FrontOfficeModule {
         for (BookingEntity bookingz : finalBookings) {
             System.out.println("BookingID: " + bookingz.getBookingId() + " Room Type: " + bookingz.getRoomType().getRoomTypeName());
         }
-        System.out.println("Total price: "+transaction.getTotalCost());
+        System.out.println("Total price: $"+transaction.getTotalCost());
         System.out.println("=============================================");
     }
 

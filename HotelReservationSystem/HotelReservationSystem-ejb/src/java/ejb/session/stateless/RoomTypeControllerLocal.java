@@ -24,4 +24,6 @@ public interface RoomTypeControllerLocal {
 
     //public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId);
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
+
+    public RoomTypeEntity findUpgradeRoomType(Long roomTypeId);
 }

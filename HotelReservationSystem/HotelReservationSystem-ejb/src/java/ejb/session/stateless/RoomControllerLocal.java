@@ -37,5 +37,8 @@ public interface RoomControllerLocal {
     public RoomEntity walkInAllocateRoom(Long roomTypeId);
 
     public void changeRoomStatus(Long roomEntityId, RoomStatus status);
+
+
+    public boolean checkAvailabilityOfRoomTypeWhenAllocating(Long roomTypeId);
     
 }

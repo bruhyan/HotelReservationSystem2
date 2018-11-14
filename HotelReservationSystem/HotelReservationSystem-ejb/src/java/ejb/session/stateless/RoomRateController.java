@@ -39,10 +39,7 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         em.persist(roomRates);
         em.flush();
     }
-@Override
-    public void updateRoomRates(RoomRatesEntity roomRates) {
-        em.merge(roomRates);
-    }
+
 
     @Override
     public void deleteRoomRatesById(Long id) {
@@ -50,11 +47,13 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         //call room controller local to find list by Type
         List<RoomTypeEntity> roomTypes = roomTypeControllerLocal.retrieveRoomTypeListByRates(roomRates);
         if (!roomTypes.isEmpty()) {
-            //set all to be disabled
-            for (RoomTypeEntity roomType : roomTypes) {
-                roomType.setIsDisabled(true); //set all the type disable
+//            //set all to be disabled
+//            for (RoomTypeEntity roomType : roomTypes) {
+//                roomType.setIsDisabled(true); //set all the type disable
+//
+//            }
 
-            }
+//Revamped : Just check if room rate is disabled when displaying room types to choose.
             roomRates.setIsDisabled(true);
 
         } else {
@@ -69,7 +68,7 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
 
         roomRate.addRoomType(roomType);
 
-        em.merge(roomRate);
+
     }
 
     @Override
@@ -99,15 +98,12 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         roomRates.setRatePerNight(ratePerNight);
         roomRates.setValidityStart(dateStart);
         roomRates.setValidityEnd(dateEnd);
-        updateRoomRate(roomRates);
+
         return roomRates;
 
     }
 
-    public void updateRoomRate(RoomRatesEntity roomRates) { //not sure if this will work because of the lists and many things to change. Come back to check
-        em.merge(roomRates);
 
-    }
     //get a list of room rates exclude a roomType
 
     @Override
