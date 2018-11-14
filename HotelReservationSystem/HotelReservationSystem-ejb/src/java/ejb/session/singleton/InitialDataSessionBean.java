@@ -87,7 +87,7 @@ public class InitialDataSessionBean {
         SalesManager e3 = new SalesManager("Sales Manager", "99999999", "3", "1", "Merlion Hotel");
         GuestRelationOfficer e4 = new GuestRelationOfficer("Guest Officer", "62353535", "4", "1", "Merlion Hotel");
         Date currentDate = new Date();
-        PartnerEntity e5 = new PartnerEntity("Holiday.com admin", "12334556", "5", "1", currentDate);
+        PartnerEntity e5 = new PartnerEntity("5", "1", "Holiday.com admin", "12334556", currentDate);
         
 
         em.persist(e1);
