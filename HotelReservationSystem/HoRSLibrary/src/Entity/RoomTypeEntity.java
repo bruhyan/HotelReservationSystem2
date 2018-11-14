@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.AmenitiesType;
 
 /**
@@ -87,7 +88,7 @@ public class RoomTypeEntity implements Serializable {
     }
     
     
-
+    @XmlTransient
     public List<RoomEntity> getRoomList() {
         return roomList;
     }
@@ -95,7 +96,7 @@ public class RoomTypeEntity implements Serializable {
     public void setRoomList(List<RoomEntity> roomList) {
         this.roomList = roomList;
     }
-
+    @XmlTransient
     public List<RoomRatesEntity> getRoomRateList() {
         return roomRateList;
     }

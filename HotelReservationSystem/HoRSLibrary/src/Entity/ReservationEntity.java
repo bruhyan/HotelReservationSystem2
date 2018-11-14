@@ -14,10 +14,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.ReservationType;
 
 /**
@@ -39,7 +39,7 @@ public class ReservationEntity implements Serializable {
     private Date checkOutDateTime;
     @Column(nullable = false)
     private Boolean showedUp;
-    @OneToMany(mappedBy="reservation")
+    @OneToMany(mappedBy = "reservation")
     private List<BookingEntity> bookingList;
     @ManyToOne
     private CustomerEntity customer;
@@ -67,9 +67,8 @@ public class ReservationEntity implements Serializable {
         //this.transaction = transaction;
         //this.numOfGuests = numOfGuests;
     }
-    
-    //use this if partner reservation
 
+    //use this if partner reservation
     public ReservationEntity(Date dateOfReservation, Date checkInDateTime, Date checkOutDateTime, Boolean showedUp, PartnerEntity partner, ReservationType reservationType) {
         this.dateOfReservation = dateOfReservation;
         this.checkInDateTime = checkInDateTime;
@@ -78,11 +77,11 @@ public class ReservationEntity implements Serializable {
         this.partner = partner;
         this.reservationType = reservationType;
     }
-    
-    
-    public void addBooking(BookingEntity booking){
+
+    public void addBooking(BookingEntity booking) {
         this.bookingList.add(booking);
     }
+
 
     public Date getDateOfReservation() {
         return dateOfReservation;
@@ -92,6 +91,7 @@ public class ReservationEntity implements Serializable {
         this.dateOfReservation = dateOfReservation;
     }
 
+    @XmlTransient
     public Date getCheckInDateTime() {
         return checkInDateTime;
     }
@@ -99,6 +99,7 @@ public class ReservationEntity implements Serializable {
     public void setCheckInDateTime(Date checkInDateTime) {
         this.checkInDateTime = checkInDateTime;
     }
+
 
     public Date getCheckOutDateTime() {
         return checkOutDateTime;
@@ -108,6 +109,7 @@ public class ReservationEntity implements Serializable {
         this.checkOutDateTime = checkOutDateTime;
     }
 
+
     public Boolean getShowedUp() {
         return showedUp;
     }
@@ -116,6 +118,7 @@ public class ReservationEntity implements Serializable {
         this.showedUp = showedUp;
     }
 
+    @XmlTransient
     public List<BookingEntity> getBookingList() {
         return bookingList;
     }
@@ -124,6 +127,7 @@ public class ReservationEntity implements Serializable {
         this.bookingList = bookingList;
     }
 
+    @XmlTransient
     public CustomerEntity getCustomer() {
         return customer;
     }
@@ -132,6 +136,7 @@ public class ReservationEntity implements Serializable {
         this.customer = customer;
     }
 
+    @XmlTransient
     public TransactionEntity getTransaction() {
         return transaction;
     }
@@ -147,10 +152,7 @@ public class ReservationEntity implements Serializable {
     public void setNumOfGuests(Integer numOfGuests) {
         this.numOfGuests = numOfGuests;
     }
-    
-    
-    
-    
+
     public Long getReservationId() {
         return reservationId;
     }
@@ -184,6 +186,7 @@ public class ReservationEntity implements Serializable {
         return "Entity.ReservationEntity[ id=" + reservationId + " ]";
     }
 
+
     public ReservationType getReservationType() {
         return reservationType;
     }
@@ -199,5 +202,5 @@ public class ReservationEntity implements Serializable {
     public void setPartner(PartnerEntity partner) {
         this.partner = partner;
     }
-    
+
 }

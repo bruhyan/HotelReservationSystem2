@@ -30,8 +30,7 @@ public class TransactionEntity implements Serializable {
     private Long transactionId;
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalCost;
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+
     private EmployeeEntity employee;
     @OneToOne
     private ReservationEntity reservation;

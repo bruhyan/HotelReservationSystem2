@@ -102,7 +102,8 @@ public class HoRSWebService {
         try {
             PartnerEntity partner = partnerLogin(email, password);
             BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
-            ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, partner, ReservationType.Partner);
+            ReservationEntity reservation;
+            reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, partner, ReservationType.Partner);
             reservation = reservationControllerLocal.createNewReservation(reservation);
 
             //create individual room bookings
@@ -151,6 +152,7 @@ public class HoRSWebService {
         
     }
     
+    @WebMethod(operationName = "calculateTotalPrice")
     public BigDecimal calculateTotalPrice(@WebParam(name ="roomTypes")List<RoomTypeEntity> roomTypes,@WebParam(name ="nights") int nights) {
         BigDecimal totalAmount = new BigDecimal(0.00);
         for (int i = 0; i < nights; i++) {

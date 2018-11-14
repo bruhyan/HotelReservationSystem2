@@ -16,6 +16,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -138,9 +139,15 @@ public class MainApp {
             GregorianCalendar c = new GregorianCalendar();
             c.setTime(checkInDate);
             XMLGregorianCalendar date1 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+//            XMLGregorianCalendar date1 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
             c.setTime(checkOutDate);
             XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
 
+//            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+            
+            //DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, 
+            //c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+            //DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
             List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
             while (true) {
                 List<RoomTypeEntity> roomTypeList = partnerSearchRoom(email, password, date1, date2);
@@ -159,6 +166,7 @@ public class MainApp {
                 if (sc.nextInt() != 1) {
                     break;
                 }
+            }
                 BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
                 System.out.println("Total price: $" + totalPrice);
                 //initiate reserve room
@@ -170,7 +178,7 @@ public class MainApp {
                     ReservationEntity reservation = partnerReserveRoom(email, password, date1, date2, desiredRoomTypes, nights);
                     System.out.println("A new reservation has been made at Merlion Hotel! Your reservation ID is : " + reservation.getReservationId());
                 }
-            }
+            
 
         } catch (PartnerNotFoundException_Exception ex) {
             System.out.println("Sorry, the credentials you have typed are either invalid or no such partner exist! \n");
@@ -258,6 +266,7 @@ public class MainApp {
         return port.partnerReserveRoom(email, password, checkInDate, checkOutDate, desiredRoomTypes, nights);
     }
 
+    
     private static ReservationEntity viewPartnerReservationDetails(java.lang.String email, java.lang.String password, java.lang.Long reservationId) throws PartnerNotFoundException_Exception, NoReservationFoundException_Exception {
         holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
         holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
