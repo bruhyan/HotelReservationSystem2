@@ -146,7 +146,7 @@ public class MainApp {
                     systemTimerSessionBeanRemote.roomAllocation();
 
                 }else if(input == 3 && loggedInUser == null){
-                    
+                    systemTimerSessionBeanRemote.roomAllocation();
                 }
             }
             if(input == 2) {

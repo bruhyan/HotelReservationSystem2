@@ -429,11 +429,15 @@ public class HotelOperationModule {
     }
 
     public void doViewRoomAllocationExceptionReport() {
+        try{
         List<RoomAllocationException> exceptionList = roomAllocationExceptionControllerRemote.retrieveTodayException();
         List<String> exceptions = exceptionList.get(0).getExceptions();
 
         for (String exception : exceptions) {
             System.out.println(exception);
+        }
+        }catch(ArrayIndexOutOfBoundsException ex){
+            System.out.println("Sorry you have no exception reports yet!");
         }
     }
 
