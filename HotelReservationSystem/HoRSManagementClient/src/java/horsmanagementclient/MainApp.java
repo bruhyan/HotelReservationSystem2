@@ -113,7 +113,7 @@ public class MainApp {
             if(loggedInUser == null) {
                 System.out.println("1: Employee Login");
             }else {
-                System.out.println("1: Do your shit");
+                System.out.println("1: Perform your duties");
             }
             System.out.println("2: Exit");
             if(loggedInUser != null) {
@@ -201,7 +201,7 @@ public class MainApp {
                         HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote, roomTypeRankingControllerRemote, roomAllocationExceptionControllerRemote);
             hotelOperationModule.runSalesManagerModule();
         }else {
-            System.out.println("wtf?");
+            System.out.println("This employee type does not exist!");
         }
     }
     
