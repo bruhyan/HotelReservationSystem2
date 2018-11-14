@@ -495,6 +495,50 @@ public class HotelOperationModule {
         Integer capacity = sc.nextInt();
 
         roomTypeControllerRemote.heavyUpdateRoom(roomType.getRoomTypeId(), name, description, size, bed, amenities, capacity);
+
+        RoomTypeEntity roomTypeUpdated = roomTypeControllerRemote.retrieveRoomTypeById(roomType.getRoomTypeId());
+        int response = 0;
+        //add another roomrate here if needed
+        while (true) {
+            while (response < 1 || response > 2) {
+                System.out.println("Would you like to add another room rate? ");
+                System.out.println("1. Yes");
+                System.out.println("2. No, System will create the room type and return you to the operation manager page.");
+                System.out.print(">");
+                response = sc.nextInt();
+                sc.nextLine();
+                if (response == 1) {
+                    addAnotherRoomRate(roomTypeUpdated, sc);
+                } else if (response == 2) {
+                    break;
+                }
+            }
+            break;
+        }
+        response = 0;
+        while (true) {
+            while (response < 1 || response > 2) {
+                System.out.println("Would you like to change the room rank? ");
+                System.out.println("1. Yes");
+                System.out.println("2. No, System will create the room type and return you to the operation manager page.");
+                System.out.print(">");
+                response = sc.nextInt();
+                sc.nextLine();
+                if (response == 1) {
+                    int range = showCurrentRoomTypeRank();
+
+                    System.out.println("Please indicate a rank for your new room type ranging from 1 to " + range);
+                    int rank = sc.nextInt(); //rank is 1 + index
+                    sc.nextLine();
+
+                    roomTypeControllerRemote.updateRoomRank(rank, roomType.getRoomTypeId());
+                } else if (response == 2) {
+                    break;
+                }
+            }
+            break;
+        }
+
         System.out.println("Room type has been updated!");
     }
 
@@ -528,17 +572,15 @@ public class HotelOperationModule {
         Long roomRateId = chooseFirstRoomRate(sc);
         sc.nextLine();
 
-        
-
         int range = showCurrentRoomTypeRank();
 
         System.out.println("Please indicate a rank for your new room type ranging from 1 to " + range);
         int rank = sc.nextInt(); //rank is 1 + index
         sc.nextLine();
-        
+
         RoomTypeEntity newRoomType = new RoomTypeEntity(name, description, size, bed, amenities, capacity, rank);
         newRoomType = roomTypeControllerRemote.createNewRoomType(newRoomType);
-        
+
         roomTypeControllerRemote.addRoomRateById(newRoomType.getRoomTypeId(), roomRateId);
         roomRateControllerRemote.addRoomTypeById(roomRateId, newRoomType.getRoomTypeId());
         int response = 0;
@@ -564,7 +606,7 @@ public class HotelOperationModule {
 
     public int showCurrentRoomTypeRank() {
         List<RoomTypeEntity> roomTypeRanking = roomTypeControllerRemote.retrieveRoomTypeByRanking();
-        
+
         int index = 0;
         System.out.println("*** Current Room Type Ranking: ***");
         for (RoomTypeEntity roomType : roomTypeRanking) {
@@ -577,20 +619,23 @@ public class HotelOperationModule {
     }
 
     public void addAnotherRoomRate(RoomTypeEntity roomType, Scanner sc) {
-       chooseRoomRate(sc, roomType);
+        chooseRoomRate(sc, roomType);
 
     }
 
     public void chooseRoomRate(Scanner sc, RoomTypeEntity roomType) {
         List<RoomRatesEntity> roomRatesList = roomRateControllerRemote.retrieveRoomRatesList();
-        List<RoomRatesEntity> currentRoomRates = roomType.getRoomRateList();
+        List<RoomRatesEntity> currentRoomRates = roomTypeControllerRemote.retrieveRoomRateListById(roomType.getRoomTypeId());
         boolean hasPublished = false;
         boolean hasNormal = false;
         Long publishedRateId = null;
         Long normalRateId = null;
         for (RoomRatesEntity roomRate : currentRoomRates) {
+            System.out.println(roomRate.getRateType());
             if (roomRate.getRateType() == RateType.PUBLISHED) {
+
                 hasPublished = true;
+                System.out.println(hasPublished);
                 publishedRateId = roomRate.getRoomRatesId();
             }
             if (roomRate.getRateType() == RateType.NORMAL) {
@@ -598,7 +643,7 @@ public class HotelOperationModule {
                 normalRateId = roomRate.getRoomRatesId();
             }
         }
-
+        System.out.println(hasPublished + " " + hasNormal);
         System.out.println("Choose room rate for this room type : ");
 //	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 //	Date date = new Date();
@@ -618,15 +663,19 @@ public class HotelOperationModule {
 
         RoomRatesEntity chosenRates = roomRateControllerRemote.retrieveRoomRatesById(choosenRatesId);
         if (chosenRates.getRateType() == RateType.PUBLISHED && hasPublished == true) {
-            doReplacePublishedRate(roomType, chosenRates,publishedRateId);
+            doReplacePublishedRate(roomType, chosenRates, publishedRateId);
         } else if (chosenRates.getRateType() == RateType.NORMAL && hasNormal == true) {
             doReplaceNormalRate(roomType, chosenRates, normalRateId);
-        }
+        } else {
+            roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), choosenRatesId);
+            roomRateControllerRemote.addRoomTypeById(choosenRatesId, roomType.getRoomTypeId());
+
+        }//or not published/not normal
 
     }
 
     public void doReplacePublishedRate(RoomTypeEntity roomType, RoomRatesEntity chosenRates, Long publishedRateId) {
-        
+
         roomTypeControllerRemote.removeRoomRate(roomType.getRoomTypeId(), publishedRateId);
         roomTypeControllerRemote.addRoomRateById(roomType.getRoomTypeId(), chosenRates.getRoomRatesId());
         roomRateControllerRemote.addRoomTypeById(chosenRates.getRoomRatesId(), roomType.getRoomTypeId());

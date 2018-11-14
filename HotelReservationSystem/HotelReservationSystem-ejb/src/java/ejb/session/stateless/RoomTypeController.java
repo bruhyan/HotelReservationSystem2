@@ -53,9 +53,9 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             em.flush();
         } else {
             List<RoomTypeEntity> roomTypeAdjust = getRoomTypeListToAdjust(rank);
-            for(RoomTypeEntity roomTypeOld : roomTypeAdjust){
-                System.out.println(roomTypeOld.getRanking() + " rank "+  roomTypeOld.getRoomTypeName());
-                roomTypeOld.setRanking(roomTypeOld.getRanking()+1);
+            for (RoomTypeEntity roomTypeOld : roomTypeAdjust) {
+                //System.out.println(roomTypeOld.getRanking() + " rank "+  roomTypeOld.getRoomTypeName());
+                roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
             }
             em.persist(roomType);
             em.flush();
@@ -64,12 +64,12 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return roomType;
     }
 
-    public List<RoomTypeEntity> getRoomTypeListToAdjust(int rank){
+    public List<RoomTypeEntity> getRoomTypeListToAdjust(int rank) {
         Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.ranking >= :rank ORDER BY r.ranking DESC");
         query.setParameter("rank", rank);
         return query.getResultList();
     }
-    
+
     public int getLowestRank() {
         Query query = em.createQuery("SELECT r.ranking FROM RoomTypeEntity r ORDER BY r.ranking DESC");
         return query.getFirstResult();
@@ -104,6 +104,35 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         roomType.setCapacity(capacity);
         updateRoomType(roomType);
         return roomType;
+    }
+
+    public void updateRoomRank(int rank, Long roomTypeId) {
+        List<RoomTypeEntity> roomTypeList = retrieveRoomTypeList();
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        int currentRank = roomType.getRanking();
+//
+//        if (rank == lowestRank + 1) {
+//            em.persist(roomType);
+//            em.flush();
+//        } else {
+        List<RoomTypeEntity> roomTypeAdjust = getRoomTypeListToAdjust(currentRank + 1);
+        for (RoomTypeEntity roomTypeOld : roomTypeAdjust) {
+            roomTypeOld.setRanking(roomTypeOld.getRanking() - 1);
+        }
+
+        int lowestRank = getLowestRank() + 1;
+
+        if (rank == lowestRank) {
+           roomType.setRanking(rank);
+        } else {
+            List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjust(rank);
+            for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) {
+                //System.out.println(roomTypeOld.getRanking() + " rank "+  roomTypeOld.getRoomTypeName());
+                roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
+            }
+            roomType.setRanking(rank);
+        }
+
     }
 
     public void deleteRoomTypeById(long id) {
