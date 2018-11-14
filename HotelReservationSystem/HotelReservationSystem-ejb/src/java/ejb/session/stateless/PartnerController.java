@@ -27,6 +27,7 @@ public class PartnerController implements PartnerControllerRemote, PartnerContro
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
+    private PartnerEntity loggedInPartner;
 
     @Override
     public PartnerEntity createPartnerEntity(PartnerEntity partner) {
@@ -49,6 +50,23 @@ public class PartnerController implements PartnerControllerRemote, PartnerContro
             return partner;
         }catch (NoResultException ex) {
             throw new PartnerNotFoundException("Partner not found");
+        }
+    }
+    
+    public PartnerEntity partnerLogin(String email, String password) {
+        PartnerEntity partner;
+        try{
+            partner = retrievePartnerByEmail(email);
+            if(!partner.getPassword().equals(password)) {
+                System.out.println("Incorrect password.");
+                return null;
+            }else {
+                loggedInPartner = partner;
+                return partner;
+            }
+        } catch (PartnerNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return null;
         }
     }
 

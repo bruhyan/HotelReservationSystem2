@@ -21,5 +21,7 @@ public interface PartnerControllerLocal {
     public List<PartnerEntity> retrieveAllPartner();
 
     public PartnerEntity retrievePartnerByEmail(String email) throws PartnerNotFoundException;
+
+    public PartnerEntity partnerLogin(String email, String password);
     
 }
