@@ -8,6 +8,7 @@ package Entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,13 +32,21 @@ public class RoomTypeEntity implements Serializable {
     private List<RoomEntity> roomList;
     @ManyToMany
     private List<RoomRatesEntity> roomRateList;
+    @Column(length = 256, nullable =false)
     private String roomTypeName;
+    @Column(length = 256, nullable =false)
     private String description;
+    @Column(nullable = false)
     private Integer size;
+    @Column(length = 256)
     private String bed;
+    @Column(length = 256)
     private String amenities; //amenities using String for now, could think about enums or smt next time
+    @Column(length = 2)
     private Integer capacity;
+    @Column(nullable = false)
     private boolean isDisabled;
+    @Column(nullable = false)
     private Integer ranking;
 
     public RoomTypeEntity() {

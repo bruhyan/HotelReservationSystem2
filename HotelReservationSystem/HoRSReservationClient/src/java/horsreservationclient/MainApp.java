@@ -183,7 +183,7 @@ public class MainApp {
         for(BookingEntity bookings : finalBookings) {
             System.out.println("BookingID: "+bookings.getBookingId()+" Room Type: "+bookings.getRoomType().getRoomTypeName());
         }
-        System.out.println("Total price: "+transaction.getTotalCost());
+        System.out.println("Total price: $"+transaction.getTotalCost());
         System.out.println("=============================================");
         
         

@@ -191,9 +191,6 @@ public class FrontOfficeModule {
 
         //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
         Date today = new Date();
-        /*SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        String testCheckInDate = df.format(checkInDate);
-        String testToday = df.format(today);*/
         System.out.println("CheckInDate: "+checkInDate+" today date: "+today);
         
         if(checkInDate.after(today)) {//if future

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,10 +27,15 @@ public class PartnerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partnerId;
+    @Column(length = 256, unique = true, nullable = false)
     private String email;
+    @Column(length = 32, nullable = false)
     private String password;
+    @Column(length = 256, nullable = false)
     private String name;
+    @Column(length = 8, nullable = false, unique = true)
     private String contactNumber;
+    @Column(nullable = false)
     private Date createdAt;
     @OneToMany(mappedBy="partner")
     private List<CustomerEntity> customersList;

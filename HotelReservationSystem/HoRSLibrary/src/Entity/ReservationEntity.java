@@ -9,12 +9,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import util.enumeration.ReservationType;
 
 /**
@@ -28,9 +31,13 @@ public class ReservationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
+    @Column(nullable = false)
     private Date dateOfReservation;
+    @Column(nullable = false)
     private Date checkInDateTime;
+    @Column(nullable = false)
     private Date checkOutDateTime;
+    @Column(nullable = false)
     private Boolean showedUp;
     @OneToMany(mappedBy="reservation")
     private List<BookingEntity> bookingList;
@@ -38,8 +45,10 @@ public class ReservationEntity implements Serializable {
     private CustomerEntity customer;
     @ManyToOne
     private PartnerEntity partner;
+    @OneToOne
     private TransactionEntity transaction;
     private Integer numOfGuests;
+    @Column(nullable = false)
     private ReservationType reservationType;
 
     public ReservationEntity() {
