@@ -76,7 +76,7 @@ public class HoRSWebService {
     
     @WebMethod(operationName = "partnerSearchRoom")
     public List<RoomTypeEntity> partnerSearchRoom(@WebParam(name ="email") String email, @WebParam(name ="password") String password,
-            Date checkInDate, Date checkOutDate) throws PartnerNotFoundException{
+           @WebParam(name ="checkInDate") Date checkInDate,@WebParam(name ="checkOutDate") Date checkOutDate) throws PartnerNotFoundException{
         PartnerEntity partner = partnerControllerLocal.partnerLogin(email, password);
         if(partner == null) {
             throw new PartnerNotFoundException("Partner not found");
