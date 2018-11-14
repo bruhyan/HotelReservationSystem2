@@ -5,12 +5,14 @@
  */
 package ejb.session.stateless;
 
+import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.RateType;
+import util.exception.NoAvailableOnlineRoomRateException;
 
 /**
  *
@@ -19,11 +21,38 @@ import util.enumeration.RateType;
 @Local
 public interface RoomTypeControllerLocal {
 
-    public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
-      //public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
+    public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType);
 
-    //public RoomTypeEntity findPricierAvailableRoomTypeForOnlineOrPartner(Long roomTypeId);
+    public void addRoomRateById(Long roomTypeId, Long roomRateId);
+
+    public List<RoomTypeEntity> retrieveRoomTypeList();
+
+    public RoomTypeEntity retrieveRoomTypeById(long id);
+
+    public void deleteRoomTypeById(long id);
+
+    public RoomTypeEntity heavyUpdateRoom(long id, String name, String description, int size, String bed, String amenities, int capacity);
+
+    public RoomTypeEntity retrieveSingleRoomType();
+
+    public List<RoomEntity> retrieveRoomEntityByRoomType(RoomTypeEntity roomType);
+
+    public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
+
+    //public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
+    
+    
+    public RoomTypeEntity findUpgradeRoomType(Long roomTypeId);
+    
+    public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
+
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
 
-    public RoomTypeEntity findUpgradeRoomType(Long roomTypeId);
+    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException;
+
+    public void removeRoomRate(Long roomTypeId, Long roomRateId);
+
+    public List<RoomTypeEntity> retrieveRoomTypeByRanking();
+
+    public void updateRoomRank(int rank, Long roomTypeId);
 }

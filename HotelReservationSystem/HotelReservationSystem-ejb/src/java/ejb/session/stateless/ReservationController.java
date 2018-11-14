@@ -99,5 +99,16 @@ public class ReservationController implements ReservationControllerRemote, Reser
         }
         return todayReservation;
     }
+    
+    public ReservationEntity retrieveReservationById(Long reservationId) {
+        ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        return reserv;
+    }
+    
+    public List<ReservationEntity> retrieveReservationByPartnerId (Long partnerId) {
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.partner.partnerId = :partnerId");
+        query.setParameter("partnerId", partnerId);
+        return query.getResultList();
+    }
 
 }

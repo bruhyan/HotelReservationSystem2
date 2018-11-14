@@ -8,7 +8,9 @@ package ejb.session.ws;
 import Entity.BookingEntity;
 import Entity.PartnerEntity;
 import Entity.ReservationEntity;
+import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
+import Entity.TransactionEntity;
 import ejb.session.stateless.BookingControllerLocal;
 import ejb.session.stateless.CustomerControllerLocal;
 import ejb.session.stateless.PartnerControllerLocal;
@@ -16,6 +18,7 @@ import ejb.session.stateless.ReservationControllerLocal;
 import ejb.session.stateless.RoomControllerLocal;
 import ejb.session.stateless.RoomRateControllerLocal;
 import ejb.session.stateless.RoomTypeControllerLocal;
+import ejb.session.stateless.TransactionControllerLocal;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,8 +28,10 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
+import util.exception.NoReservationFoundException;
 import util.exception.PartnerNotFoundException;
 
 /**
@@ -52,6 +57,8 @@ public class HoRSWebService {
     private ReservationControllerLocal reservationControllerLocal;
     @EJB
     private PartnerControllerLocal partnerControllerLocal;
+    @EJB
+    private TransactionControllerLocal transactionControllerLocal;
     
     
     
@@ -65,43 +72,15 @@ public class HoRSWebService {
             throw new PartnerNotFoundException("Partner not found");
         }
         return partner;
-        /*try{
-            partner = partnerControllerLocal.retrievePartnerByEmail(email);
-            if(!partner.getPassword().equals(password)) {
-                System.out.println("Incorrect password.");
-                return null;
-            }else {
-                return partner;
-            }
-        } catch (PartnerNotFoundException ex) {
-            System.out.println(ex.getMessage());
-            return null;
-        }*/
     }
     
     @WebMethod(operationName = "partnerSearchRoom")
-    public List<RoomTypeEntity> partnerSearchRoom(@WebParam(name="email") String email, @WebParam(name = "password") String password,
-            @WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate) throws PartnerNotFoundException{
+    public List<RoomTypeEntity> partnerSearchRoom(String email, String password,
+            Date checkInDate, Date checkOutDate) throws PartnerNotFoundException{
         PartnerEntity partner = partnerControllerLocal.partnerLogin(email, password);
         if(partner == null) {
             throw new PartnerNotFoundException("Partner not found");
         }
-        //use this if cannot pass in date
-        /*
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
-        Date checkInDateF = null;
-        Date checkOutDateF = null;
-        try {
-            checkInDateF = dateFormat.parse(checkInDate);
-            checkOutDateF = dateFormat.parse(checkOutDate);
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-
-        }
-        //List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
-
-        }*/
-        
         List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
         return availRoomTypes;
     }
@@ -119,29 +98,77 @@ public class HoRSWebService {
     }
     
     @WebMethod(operationName = "partnerReserveRoom")
-    public void partnerReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, BigDecimal totalPrice, PartnerEntity partner) {
-        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, partner, ReservationType.Partner);
-        reservation = reservationControllerLocal.createNewReservation(reservation);
-        
-        //create individual room bookings
-        for(RoomTypeEntity roomType : desiredRoomTypes) {
-            BookingEntity booking = new BookingEntity(roomType, reservation);
-            booking = bookingControllerLocal.createBooking(booking);
-            reservationControllerLocal.addBookings(reservation.getReservationId(), booking);
-            
-            //stopped here
+    public ReservationEntity partnerReserveRoom(String email, String password, Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, int nights) throws PartnerNotFoundException {
+        try {
+            PartnerEntity partner = partnerLogin(email, password);
+            BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
+            ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, partner, ReservationType.Partner);
+            reservation = reservationControllerLocal.createNewReservation(reservation);
+
+            //create individual room bookings
+            for(RoomTypeEntity roomType : desiredRoomTypes) {
+                BookingEntity booking = new BookingEntity(roomType, reservation);
+                booking = bookingControllerLocal.createBooking(booking);
+                reservationControllerLocal.addBookings(reservation.getReservationId(), booking);
+            }
+
+            //create unpaid transaction
+            TransactionEntity transaction = new TransactionEntity(totalPrice, null, reservation);
+            transaction = transactionControllerLocal.createNewTransaction(transaction);
+            reservationControllerLocal.addTransaction(reservation.getReservationId(), transaction);
+
+            return reservation;
+        } catch(PartnerNotFoundException ex) {
+            throw new PartnerNotFoundException("Partner not found");
         }
     }
     
     @WebMethod(operationName = "viewPartnerReservationDetails")
-    public void viewPartnerReservationDetails() {
+    public ReservationEntity viewPartnerReservationDetails(String email, String password, Long reservationId) throws PartnerNotFoundException, NoReservationFoundException {
+        try {
+            PartnerEntity partner = partnerLogin(email, password);
+            ReservationEntity reservation = reservationControllerLocal.retrieveReservationById(reservationId);
+            return reservation;
+        } catch (PartnerNotFoundException ex) {
+            throw new PartnerNotFoundException("Partner not found");
+        } catch(NoResultException ex) {
+            throw new NoReservationFoundException("no reservation found");
+        }
         
     }
     
     @WebMethod(operationName = "viewAllPartnerReservations")
-    public void viewAllPartnerReservations() {
+    public List<ReservationEntity> viewAllPartnerReservations(String email, String password) throws PartnerNotFoundException, NoReservationFoundException {
+        try {
+            PartnerEntity partner = partnerLogin(email, password);
+            List<ReservationEntity> reservations = reservationControllerLocal.retrieveReservationByPartnerId(partner.getPartnerId());
+            return reservations;
+        } catch (PartnerNotFoundException ex) {
+            throw new PartnerNotFoundException("Partner not found");
+        } catch (NoResultException ex) {
+            throw new NoReservationFoundException("No reservations found");
+        }
         
     }
+    
+    public BigDecimal calculateTotalPrice(List<RoomTypeEntity> roomTypes, int nights) {
+        BigDecimal totalAmount = new BigDecimal(0.00);
+        for (int i = 0; i < nights; i++) {
+            for (RoomTypeEntity roomType : roomTypes) {
+                List<RoomRatesEntity> roomRateList = roomTypeControllerLocal.retrieveRoomRateListById(roomType.getRoomTypeId());
+                for (RoomRatesEntity roomRate : roomRateList) {
+                    if (roomRate.getRateType() == RateType.PUBLISHED) {
+                        //System.out.println("Rate per night: "+roomRate.getRatePerNight());
+                        totalAmount = totalAmount.add(roomRate.getRatePerNight());
+                        
+                    }
+                }
+            }
+        }
+        //System.out.println("Total: "+totalAmount);
+        return totalAmount;
+    }
+
 
     
 }

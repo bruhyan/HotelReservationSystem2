@@ -23,5 +23,9 @@ public interface ReservationControllerLocal {
     public TransactionEntity retrieveTransactionByReservationId(Long reservationId);
 
     public List<ReservationEntity> retrieveTodayReservationList();
+
+    public ReservationEntity retrieveReservationById(Long reservationId);
+
+    public List<ReservationEntity> retrieveReservationByPartnerId(Long partnerId);
     
 }
