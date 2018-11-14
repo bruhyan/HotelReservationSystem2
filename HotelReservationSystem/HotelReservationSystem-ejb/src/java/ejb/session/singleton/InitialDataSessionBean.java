@@ -8,6 +8,7 @@ package ejb.session.singleton;
 import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
+import Entity.PartnerEntity;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
@@ -85,11 +86,15 @@ public class InitialDataSessionBean {
         OperationManager e2 = new OperationManager("Operation Manager", "91234567", "2", "1", "Merlion Hotel");
         SalesManager e3 = new SalesManager("Sales Manager", "99999999", "3", "1", "Merlion Hotel");
         GuestRelationOfficer e4 = new GuestRelationOfficer("Guest Officer", "62353535", "4", "1", "Merlion Hotel");
+        Date currentDate = new Date();
+        PartnerEntity e5 = new PartnerEntity("Holiday.com admin", "12334556", "5", "1", currentDate);
+        
 
         em.persist(e1);
         em.persist(e2);
         em.persist(e3);
         em.persist(e4);
+        em.persist(e5);
         em.flush();
     }
 
