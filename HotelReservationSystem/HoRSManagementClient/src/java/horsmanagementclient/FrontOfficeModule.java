@@ -238,14 +238,14 @@ public class FrontOfficeModule {
                 List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomType.getRoomTypeId());
                 for (RoomRatesEntity roomRate : roomRateList) {
                     if (roomRate.getRateType() == RateType.PUBLISHED) {
-                        System.out.println("Rate per night: "+roomRate.getRatePerNight());
+                        //System.out.println("Rate per night: "+roomRate.getRatePerNight());
                         totalAmount = totalAmount.add(roomRate.getRatePerNight());
                         
                     }
                 }
             }
         }
-        System.out.println("Total: "+totalAmount);
+        //System.out.println("Total: "+totalAmount);
         return totalAmount;
     }
 
