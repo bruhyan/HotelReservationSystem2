@@ -137,7 +137,7 @@ public class HotelOperationModule {
         System.out.print(">");
         String startDate = sc.nextLine();
         String endDate = null;
-        if (startDate.equals("")) {
+        if (startDate.equals("") || startDate == null || startDate == ("\n")) {
 
         } else {
             System.out.println("Enter validity end date (eg. 25-11-2000): \n");
@@ -154,7 +154,7 @@ public class HotelOperationModule {
                 e.printStackTrace();
             }
         }
-        System.out.println("Select rate type for this room rate : 1. Published 2. Normal 3. Peak 4. Promotional");
+        System.out.println("Select rate type for this room rate : 1. Published 2. Normal 3. Peak 4. Promotional \n");
         int rateTypeInput = 0;
         while (rateTypeInput < 1 || rateTypeInput > 4) {
             rateTypeInput = sc.nextInt();

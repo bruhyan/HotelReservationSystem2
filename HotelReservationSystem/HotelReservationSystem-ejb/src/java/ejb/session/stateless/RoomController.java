@@ -39,18 +39,16 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         Query query = em.createQuery("SELECT r FROM RoomEntity r");
         return query.getResultList();
     }
-    public void updateRoom(RoomEntity room){
-        em.merge(room);
-    }
+
     
     public void deleteRoomById(Long id){
         RoomEntity room = retrieveRoomById(id);
         //Double check here
         //Delete previous rooms that was set to disabled, or mass deletion by checking if smt is disabled when system starts.
-        if(room.getRoomStatus() == RoomStatus.OCCUPIED ){
+        if(room.getRoomStatus() == RoomStatus.OCCUPIED || room.getIsReserved() == true || room.getRoomStatus() != RoomStatus.AVAILABLE){
             room.setIsDisabled(true);
             //actually after is disabled for room, still must delete if a room is disabled.
-            em.merge(room);
+
         }else{
             em.remove(room);
         }
@@ -69,7 +67,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
         room.setRoomType(roomType);
-        em.merge(room);
+
         
         return room;
     }
@@ -84,7 +82,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
         room.setRoomType(roomType);
-        em.merge(room);
+
         
         return room;
     }
@@ -115,7 +113,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId, Date checkInDate){
         
         RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
         query.setParameter("roomType", roomType);
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
         
@@ -133,9 +131,22 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         
     }
     
+        //check if room type has available rooms
+    @Override
+    public boolean checkAvailabilityOfRoomTypeWhenAllocating(Long roomTypeId){
+        
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+        
+        return true;
+        
+    }
+    
     public RoomEntity allocateRoom(Long roomTypeId){
         RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
         query.setParameter("roomType", roomType);
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
         
@@ -144,14 +155,14 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
 
         room.setIsReserved(true);
 
-        em.merge(room);
+        
         return  room;
         
     }
     
     public RoomEntity walkInAllocateRoom(Long roomTypeId) {
         RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus");
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
         query.setParameter("roomType", roomType);
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
         
@@ -159,7 +170,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         RoomEntity room = roomList.get(0);
 
         room.setIsReserved(true);
-        em.merge(room);
+      
         return  room;
     }
     

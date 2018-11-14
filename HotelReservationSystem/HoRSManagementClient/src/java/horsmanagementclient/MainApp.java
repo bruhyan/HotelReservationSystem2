@@ -17,10 +17,12 @@ import ejb.session.stateless.CustomerControllerRemote;
 import ejb.session.stateless.EmployeeControllerRemote;
 import ejb.session.stateless.PartnerControllerRemote;
 import ejb.session.stateless.ReservationControllerRemote;
+import ejb.session.stateless.RoomAllocationExceptionControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 import ejb.session.stateless.RoomTypeRankingControllerRemote;
+import ejb.session.stateless.SystemTimerSessionBeanRemote;
 import ejb.session.stateless.TransactionControllerRemote;
 import java.util.Scanner;
 import util.exception.EmployeeNotFoundException;
@@ -42,13 +44,15 @@ public class MainApp {
 
     private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
     private TransactionControllerRemote transactionControllerRemote;
+    private RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote;
+    private SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
     
 
     public MainApp() {
     }
     
 
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, /*SystemTimerSessionBeanRemote systemTimerSessionBeanRemote,*/ RoomTypeRankingControllerRemote roomTypeRankingControllerRemote, TransactionControllerRemote transactionControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote,  CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, SystemTimerSessionBeanRemote systemTimerSessionBeanRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote, TransactionControllerRemote transactionControllerRemote, RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote) {
 
         this();
         this.employeeControllerRemote = employeeControllerRemote;
@@ -60,7 +64,9 @@ public class MainApp {
         this.customerControllerRemote = customerControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
 
-//        this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
+        this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
+
+        this.roomAllocationExceptionControllerRemote = roomAllocationExceptionControllerRemote;
 
         this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
         this.transactionControllerRemote = transactionControllerRemote;
@@ -68,14 +74,14 @@ public class MainApp {
     
     public void test(){
         
-        RoomTypeRanking roomTypeRank = roomTypeRankingControllerRemote.getRoomTypeRanking();
-        int index = 1;
-        for(RoomTypeEntity roomType : roomTypeRank.getRoomTypes()){
-            
-            System.out.println(index + " room Type : " + roomType.getRoomTypeName());
-            index++;
-        }
-        
+//        RoomTypeRanking roomTypeRank = roomTypeRankingControllerRemote.getRoomTypeRanking();
+//        int index = 1;
+//        for(RoomTypeEntity roomType : roomTypeRank.getRoomTypes()){
+//            
+//            System.out.println(index + " room Type : " + roomType.getRoomTypeName());
+//            index++;
+//        }
+//        
        // System.out.println(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(1l));
 //       List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.findPricierRoomType(2l);
 //       for(RoomRatesEntity roomRate : roomRateList){
@@ -98,7 +104,7 @@ public class MainApp {
     
     public void runApp() {
 
-//       systemTimerSessionBeanRemote.init();
+       systemTimerSessionBeanRemote.init();
 
         Scanner sc = new Scanner(System.in);
         int input = 0;
@@ -137,7 +143,7 @@ public class MainApp {
                     }
                 }else if(input == 4 && loggedInUser != null){
 
-//                    systemTimerSessionBeanRemote.roomAllocation();
+                    systemTimerSessionBeanRemote.roomAllocation();
 
                 }else if(input == 3 && loggedInUser == null){
                     
