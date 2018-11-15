@@ -148,4 +148,7 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
             em.remove(roomRate);
         }
     }
+    
+
+    
 }

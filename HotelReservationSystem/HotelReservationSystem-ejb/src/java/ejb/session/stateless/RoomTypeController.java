@@ -148,6 +148,16 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
 
         } else {
+            List<RoomRatesEntity> roomRatesLinked = roomType.getRoomRateList();
+            
+            for(RoomRatesEntity roomRate : roomRatesLinked){
+                roomRate = em.find(RoomRatesEntity.class, roomRate.getRoomRatesId());
+                roomRate.getRoomTypeList().remove(roomType);
+            }
+            roomType.getRoomRateList().clear();
+            
+            
+            
             em.remove(roomType);
         }
 
