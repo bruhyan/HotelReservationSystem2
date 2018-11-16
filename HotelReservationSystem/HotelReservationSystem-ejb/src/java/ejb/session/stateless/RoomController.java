@@ -218,7 +218,7 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     public RoomEntity
             allocateRoom(Long roomTypeId) {
         RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false AND r.isDisabled = false");
         query.setParameter("roomType", roomType);
         query.setParameter("roomStatus", RoomStatus.AVAILABLE);
 

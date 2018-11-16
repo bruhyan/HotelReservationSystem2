@@ -153,6 +153,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         if (!roomList.isEmpty()) {
             //set all to be disabled
             //set roomType to be disabled as well.
+            roomType.setRanking(-1);
             roomType.setIsDisabled(true);
 
         } else {
