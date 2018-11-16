@@ -22,20 +22,16 @@ import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
 import ejb.session.stateless.TransactionControllerRemote;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.EJB;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
 import util.enumeration.RoomStatus;
 import util.exception.CustomerNotFoundException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -104,7 +100,7 @@ public class FrontOfficeModule {
     public void doWalkInSearchRoom(Scanner sc) {
         System.out.println("Enter check in year: [YYYY]");
         int year = sc.nextInt();
-        year-=1900;
+        year -= 1900;
         System.out.println("Enter check in month: [ 1(January)~12(December) ]");
         int month = sc.nextInt();
         month -= 1;
@@ -157,10 +153,10 @@ public class FrontOfficeModule {
 
         // available + published filter , Need see if available now + available in future here.
         for (RoomTypeEntity roomType : publishedRoomTypes) {
-            
-                if(!roomType.isIsDisabled()){
+
+            if (!roomType.isIsDisabled()) {
                 availRoomTypes.add(roomType);
-                
+
             }
         }
 
@@ -193,39 +189,43 @@ public class FrontOfficeModule {
 
         //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
         Date today = new Date();
-        System.out.println("CheckInDate: "+checkInDate+" today date: "+today);
-        
-        if(checkInDate.after(today)) {//if future
+        System.out.println("CheckInDate: " + checkInDate + " today date: " + today);
+
+        if (checkInDate.after(today)) {//if future
             //System.out.println("Future");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
                 booking = bookingControllerRemote.createBooking(booking);
                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
             }
-        }else {//if today
+        } else {//if today
             //System.out.println("Today");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
                 BookingEntity booking = new BookingEntity(room, reservation);
                 booking = bookingControllerRemote.createBooking(booking);
                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
-                
+
             }
         }
 
         //create unpaid transaction
         TransactionEntity transaction = new TransactionEntity(totalPrice, loggedInUser, reservation);
         transaction = transactionControllerRemote.createNewTransaction(transaction);
-        reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
+        try {
+            reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
+        } catch (NoReservationFoundException ex) {
+            System.out.println("No reservation was found with the given ID!");
+        }
 
         System.out.println("Reservation " + reservation.getReservationId() + " successfully created");
         System.out.println("==== Finalized bookings and room types : =====");
-        System.out.println("Date of reservation: "+reservation.getDateOfReservation());
+        System.out.println("Date of reservation: " + reservation.getDateOfReservation());
         List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
         for (BookingEntity bookingz : finalBookings) {
             System.out.println("BookingID: " + bookingz.getBookingId() + " Room Type: " + bookingz.getRoomType().getRoomTypeName());
         }
-        System.out.println("Total price: $"+transaction.getTotalCost());
+        System.out.println("Total price: $" + transaction.getTotalCost());
         System.out.println("=============================================");
     }
 
@@ -239,7 +239,7 @@ public class FrontOfficeModule {
                     if (roomRate.getRateType() == RateType.PUBLISHED) {
                         //System.out.println("Rate per night: "+roomRate.getRatePerNight());
                         totalAmount = totalAmount.add(roomRate.getRatePerNight());
-                        
+
                     }
                 }
             }
@@ -265,7 +265,7 @@ public class FrontOfficeModule {
                 RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
                 int roomNum = room.getRoomNumber();
                 //System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber() );
-                System.out.println("Room Number: "+roomNum);
+                System.out.println("Room Number: " + roomNum);
                 index++;
                 System.out.println();
             }
@@ -284,6 +284,8 @@ public class FrontOfficeModule {
 
         } catch (CustomerNotFoundException ex) {
             System.out.println("Customer not found !");
+        } catch (NoReservationFoundException ex) {
+            System.out.println("Reservation Not Found !");
         }
 
     }
@@ -307,7 +309,7 @@ public class FrontOfficeModule {
                 index++;
                 System.out.println();
             }
-            System.out.println("Total price: $"+transaction.getTotalCost());
+            System.out.println("Total price: $" + transaction.getTotalCost());
             System.out.println("=========================================");
             System.out.println("Enter 1 to confirm check out");
             int reply = sc.nextInt();
@@ -332,6 +334,8 @@ public class FrontOfficeModule {
 
         } catch (CustomerNotFoundException ex) {
             System.out.println("Customer not found !");
+        } catch (NoReservationFoundException ex) {
+            System.out.println("Reservation Not Found !");
         }
     }
 

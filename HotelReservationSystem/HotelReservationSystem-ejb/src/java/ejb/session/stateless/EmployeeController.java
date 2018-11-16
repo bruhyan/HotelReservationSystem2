@@ -13,6 +13,7 @@ import Entity.SystemAdministrator;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.EmployeeNotFoundException;
@@ -74,8 +75,13 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
      public EmployeeEntity retrieveEmployeeByEmail(String email) throws EmployeeNotFoundException {
          Query query = em.createQuery("SELECT e FROM EmployeeEntity e WHERE e.email = :inEmail");
          query.setParameter("inEmail", email);
+         
+         try{
          EmployeeEntity employee = (EmployeeEntity)query.getSingleResult();
          return employee;
+         }catch(NoResultException ex){
+             throw new EmployeeNotFoundException("No employee with the given email was found!");
+         }
      }
      
     @Override

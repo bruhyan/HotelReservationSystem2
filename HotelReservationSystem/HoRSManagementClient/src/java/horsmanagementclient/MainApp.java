@@ -170,7 +170,7 @@ public class MainApp {
                 }
 
             }
-            if (loggedInUser != null && input == 3) {
+            if (loggedInUser != null && input == 3 || loggedInUser == null & input == 2) {
 
                 break;
             }

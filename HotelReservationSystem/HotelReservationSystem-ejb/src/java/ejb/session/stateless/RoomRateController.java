@@ -95,6 +95,7 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
     }
 
     //heavyUpdateRoomRate(roomRate.getRoomRatesId(), roomRateName, ratePerNight, date2, date3);
+    @Override
     public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd) {
         RoomRatesEntity roomRates = retrieveRoomRatesById(roomRateId);
         roomRates.setName(roomRateName);
@@ -116,31 +117,14 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         return query.getResultList();
     }
 
+    @Override
     public RoomRatesEntity retriveRoomRateByRateType(RateType rateType) {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.rateType = :rateType");
         query.setParameter("rateType", rateType);
         return (RoomRatesEntity) query.getSingleResult();
     }
 
-    //get list of room by room type.
-//    public List<RoomRatesEntity> retrieveRoomRatesListByType(RoomTypeEntity roomType){
-//
-//        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType"); //find out if this is correct
-//        query.setParameter("roomType", roomType);
-//        
-//        return query.getResultList();
-//        
-//    }
-//    public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId){
-//        
-//        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType  = :roomType"); //find out if this is correct
-//        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
-//        query.setParameter("roomType", roomType);
-//        
-//        return query.getResultList();
-//        
-//    }
-    
+    @Override
     public void deleteAllDisabledRoomRates() {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.isDisabled = true");
         List<RoomRatesEntity> roomRates = query.getResultList();

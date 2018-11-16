@@ -23,11 +23,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoAvailableOnlineRoomRateException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -130,7 +133,9 @@ public class MainApp {
 
             if (retrieved == false) {
                 for (RoomTypeEntity roomType : allRoomTypes) {
-
+                    if (roomType.isIsDisabled()) {
+                        continue;
+                    }
                     Integer roomTypeCount = roomControllerRemote.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);
                     Pair<RoomTypeEntity, Integer> roomTypePair = new Pair<>(roomType, roomTypeCount);
                     listOfRoomTypePairs.add(roomTypePair);
@@ -153,7 +158,7 @@ public class MainApp {
                 System.out.println("Please choose another room type.");
             } else {
                 desiredRoomTypes.add(listOfRoomTypePairs.get(choice).getKey());
-                Pair<RoomTypeEntity, Integer> newPair = new Pair<RoomTypeEntity, Integer>(listOfRoomTypePairs.get(choice).getKey() , listOfRoomTypePairs.get(choice).getValue() -1);
+                Pair<RoomTypeEntity, Integer> newPair = new Pair<RoomTypeEntity, Integer>(listOfRoomTypePairs.get(choice).getKey(), listOfRoomTypePairs.get(choice).getValue() - 1);
                 listOfRoomTypePairs.set(choice, newPair);
                 System.out.println("Enter 1 to continue adding more room types");
                 if (sc.nextInt() != 1) {
@@ -177,33 +182,39 @@ public class MainApp {
     }
 
     public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrice) {
-        sc.nextLine();
+        try {
+            sc.nextLine();
 
-        //create new reservation
-        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
-        reservation = reservationControllerRemote.createNewReservation(reservation);
+            //create new reservation
+            ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
+            reservation = reservationControllerRemote.createNewReservation(reservation);
 
-        //create individual room bookings
-        for (RoomTypeEntity roomType : desiredRoomTypes) {
-            BookingEntity booking = new BookingEntity(roomType, reservation);
-            booking = bookingControllerRemote.createBooking(booking);
-            reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+            //create individual room bookings
+            for (RoomTypeEntity roomType : desiredRoomTypes) {
+                BookingEntity booking = new BookingEntity(roomType, reservation);
+                booking = bookingControllerRemote.createBooking(booking);
+                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+            }
+
+            //create unpaid transaction
+            TransactionEntity transaction = new TransactionEntity(totalPrice, null, reservation);
+            transaction = transactionControllerRemote.createNewTransaction(transaction);
+            reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
+
+            System.out.println("Reservation " + reservation.getReservationId() + " successfully created");
+            System.out.println("==== Finalized bookings and room types : ====");
+            System.out.println("Date of reservation: " + reservation.getDateOfReservation());
+            List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
+            for (BookingEntity bookings : finalBookings) {
+                System.out.println("BookingID: " + bookings.getBookingId() + " Room Type: " + bookings.getRoomType().getRoomTypeName());
+            }
+            System.out.println("Total price: $" + transaction.getTotalCost());
+            System.out.println("=============================================");
+        } catch (NoReservationFoundException ex) {
+
+            System.out.println("Reservation Not Found !");
+
         }
-
-        //create unpaid transaction
-        TransactionEntity transaction = new TransactionEntity(totalPrice, null, reservation);
-        transaction = transactionControllerRemote.createNewTransaction(transaction);
-        reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
-
-        System.out.println("Reservation " + reservation.getReservationId() + " successfully created");
-        System.out.println("==== Finalized bookings and room types : ====");
-        System.out.println("Date of reservation: " + reservation.getDateOfReservation());
-        List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
-        for (BookingEntity bookings : finalBookings) {
-            System.out.println("BookingID: " + bookings.getBookingId() + " Room Type: " + bookings.getRoomType().getRoomTypeName());
-        }
-        System.out.println("Total price: $" + transaction.getTotalCost());
-        System.out.println("=============================================");
 
     }
 

@@ -100,7 +100,7 @@ public class HoRSWebService {
     }
     
     @WebMethod(operationName = "partnerReserveRoom")
-    public ReservationEntity partnerReserveRoom(@WebParam(name ="email")String email, @WebParam(name ="password")String password, @WebParam(name ="checkInDate")Date checkInDate, @WebParam(name ="checkOutDate")Date checkOutDate,@WebParam(name ="desiredRoomTypes") List<RoomTypeEntity> desiredRoomTypes, @WebParam(name ="nights")int nights) throws PartnerNotFoundException {
+    public ReservationEntity partnerReserveRoom(@WebParam(name ="email")String email, @WebParam(name ="password")String password, @WebParam(name ="checkInDate")Date checkInDate, @WebParam(name ="checkOutDate")Date checkOutDate,@WebParam(name ="desiredRoomTypes") List<RoomTypeEntity> desiredRoomTypes, @WebParam(name ="nights")int nights) throws PartnerNotFoundException, NoReservationFoundException {
         try {
             PartnerEntity partner = partnerLogin(email, password);
             BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);

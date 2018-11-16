@@ -18,6 +18,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CustomerNotFoundException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -37,8 +38,13 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         return cus;
     }
     
+    @Override
     public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException {
-        return em.find(CustomerEntity.class, customerId);  
+        CustomerEntity customer = em.find(CustomerEntity.class, customerId);  
+        if(customer == null){
+            throw new CustomerNotFoundException("No customer found with the given customer ID");
+        }
+        return customer;
     }
     
     @Override
@@ -82,16 +88,25 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :email");
         query.setParameter("email", email);
+        
+        try{
         return (CustomerEntity)query.getSingleResult();
+        }catch(NoResultException ex){
+            throw new CustomerNotFoundException("No customer with the given email was found!");
+        }
     }
     
-    public ReservationEntity retrieveCustomerLatestReservation(Long customerId){
+    @Override
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId) throws NoReservationFoundException{
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
         Query query = em.createQuery("SELECT r FROM ReservationEntity r INNER JOIN r.transaction t WHERE t.isPaid = false AND r.customer = :customer ORDER BY r.reservationId DESC");
         query.setParameter("customer", customer);
         
+        try{
         return (ReservationEntity) query.getResultList().get(0);
-        
+        }catch(ArrayIndexOutOfBoundsException ex){
+            throw new NoReservationFoundException("No new reservation was found for this customer!");
+        }
         
     }
 

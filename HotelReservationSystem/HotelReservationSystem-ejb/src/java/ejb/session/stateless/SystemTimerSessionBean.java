@@ -72,32 +72,34 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
         //new understanding : Ranking is done manually,
         //check availability on the day itself,  so needs to be available. Even if occupied and customer checking out, 
         //Check reservation for today date
-        
         List<ReservationEntity> reservationList = reservationControllerLocal.retrieveTodayReservationList();
         RoomAllocationException exception = new RoomAllocationException();
-        for(ReservationEntity reservation : reservationList){
-                System.out.println("Found reservation :" + reservation.getReservationId());
-        List<BookingEntity> bookingList = reservation.getBookingList();
+        for (ReservationEntity reservation : reservationList) {
+            System.out.println("Found reservation :" + reservation.getReservationId());
+            List<BookingEntity> bookingList = reservation.getBookingList();
 
-        exception = roomAllocationExceptionControllerLocal.saveException(exception);
-        for (BookingEntity booking : bookingList) {
-            System.out.println("Booking found " + booking.getBookingId());
-            RoomTypeEntity roomTypeNeeded = booking.getRoomType();
-            //check if roomtype is available.
-            Long roomTypeId = roomTypeNeeded.getRoomTypeId();
+            exception = roomAllocationExceptionControllerLocal.saveException(exception);
+            for (BookingEntity booking : bookingList) {
+                System.out.println("Booking found " + booking.getBookingId());
+                RoomTypeEntity roomTypeNeeded = booking.getRoomType();
+                //check if roomtype is available.
+                Long roomTypeId = roomTypeNeeded.getRoomTypeId();
 
-            if (roomControllerLocal.checkAvailabilityOfRoomTypeWhenAllocating(roomTypeId)) {
-                //RoomType is available, and not isReserved
-                            System.out.println("Regular Reservation made .");
-                doRegularAllocation(booking.getBookingId(), roomTypeId, exception);
-            } else {
+                //check if room has sufficient by checking if any there's one not deleted. not reserved, not occupied
+                //check if room type is not disabled or deleted
+                //Room rates how? should we care?
+                if (roomControllerLocal.checkAvailabilityOfRoomTypeWhenAllocating(roomTypeId)) {
+                    //RoomType is available, and not isReserved
+                    System.out.println("Regular Reservation made .");
+                    doRegularAllocation(booking.getBookingId(), roomTypeId, exception);
+                } else {
 
-                doUpgradeAllocation(booking.getBookingId(), roomTypeId, exception);
+                    doUpgradeAllocation(booking.getBookingId(), roomTypeId, exception);
+
+                }
 
             }
-
         }
-       }
     }
 
     public void doRegularAllocation(Long bookingId, Long roomTypeId, RoomAllocationException exception) {
@@ -113,11 +115,11 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     }
 
     public void doUpgradeAllocation(Long bookingId, Long roomTypeId, RoomAllocationException exception) {
-        
+
         BookingEntity booking = em.find(BookingEntity.class, bookingId);
         RoomTypeEntity oldRoomType = em.find(RoomTypeEntity.class, roomTypeId);
         RoomTypeEntity roomType;
-
+        System.out.println(roomTypeId);
         roomType = roomTypeControllerLocal.findUpgradeRoomType(roomTypeId);
 
         if (roomType == null) {
