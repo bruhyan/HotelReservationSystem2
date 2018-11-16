@@ -9,6 +9,7 @@ import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.RateType;
@@ -41,8 +42,6 @@ public interface RoomTypeControllerRemote {
 
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
 
-    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException;
-
     public void removeRoomRate(Long roomTypeId, Long roomRateId);
 
     public List<RoomTypeEntity> retrieveRoomTypeByRanking();
@@ -50,4 +49,6 @@ public interface RoomTypeControllerRemote {
     public void updateRoomRank(int rank, Long roomTypeId);
 
     public void deleteAllDisabledRoomType();
+
+    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId, Date currentDate) throws NoAvailableOnlineRoomRateException;
 }

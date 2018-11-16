@@ -175,8 +175,9 @@ public class HotelOperationModule {
             endDate = sc.next();
             sc.nextLine();
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
-
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy HH:mm:ss");
+            startDate = startDate + " 00:00:00";
+            endDate = endDate + " 23:59:59";
             try {
                 date2 = dateFormat.parse(startDate);
                 date3 = dateFormat.parse(endDate);
@@ -464,7 +465,9 @@ public class HotelOperationModule {
             List<RoomAllocationException> exceptionList = roomAllocationExceptionControllerRemote.retrieveTodayException();
             List<String> exceptions = exceptionList.get(0).getExceptions();
 
+            System.out.println("Viewing exception report ID : " + exceptionList.get(0).getRoomAllocationExceptionId());
             for (String exception : exceptions) {
+                
                 System.out.println(exception);
             }
         } catch (ArrayIndexOutOfBoundsException ex) {

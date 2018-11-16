@@ -157,8 +157,10 @@ public class FrontOfficeModule {
 
         // available + published filter , Need see if available now + available in future here.
         for (RoomTypeEntity roomType : publishedRoomTypes) {
-            if (roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId(), checkInDate)) {
+            
+                if(!roomType.isIsDisabled()){
                 availRoomTypes.add(roomType);
+                
             }
         }
 
@@ -314,6 +316,7 @@ public class FrontOfficeModule {
                     RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
                     roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.AVAILABLE);
                 }
+                //cancerous
                 System.out.println("Rooms set to available");
                 //pay transaction
                 System.out.println("Enter 1 to make payment");

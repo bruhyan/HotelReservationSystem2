@@ -75,7 +75,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return query.getFirstResult();
     }
 
-
     public void addRoomRateById(Long roomTypeId, Long roomRateId) {
         RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
@@ -111,6 +110,16 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 //            em.persist(roomType);
 //            em.flush();
 //        } else {
+        if (rank == 1) {
+
+            List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjust(rank);
+            for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) {
+                roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
+            }
+            roomType.setRanking(rank);
+            return;
+        }
+
         List<RoomTypeEntity> roomTypeAdjust = getRoomTypeListToAdjust(currentRank + 1);
         for (RoomTypeEntity roomTypeOld : roomTypeAdjust) {
             roomTypeOld.setRanking(roomTypeOld.getRanking() - 1);
@@ -119,7 +128,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         int lowestRank = getLowestRank() + 1;
 
         if (rank == lowestRank) {
-           roomType.setRanking(rank);
+            roomType.setRanking(rank);
         } else {
             List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjust(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) {
@@ -134,10 +143,10 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     public void deleteRoomTypeById(long id) {
         RoomTypeEntity roomType = retrieveRoomTypeById(id);
         int rank = roomType.getRanking();
-        
+
         List<RoomTypeEntity> roomTypes = getRoomTypeListToAdjust(rank + 1);
-        for(RoomTypeEntity roomTypeNew : roomTypes){
-            roomTypeNew.setRanking(roomTypeNew.getRanking()-1);
+        for (RoomTypeEntity roomTypeNew : roomTypes) {
+            roomTypeNew.setRanking(roomTypeNew.getRanking() - 1);
         }
         //call room controller local to find list by Type
         List<RoomEntity> roomList = roomControllerLocal.retrieveRoomListByTypeId(id); //this is returning null. Maybe EJB cannot call other ejb this way?
@@ -146,18 +155,15 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             //set roomType to be disabled as well.
             roomType.setIsDisabled(true);
 
-
         } else {
             List<RoomRatesEntity> roomRatesLinked = roomType.getRoomRateList();
-            
-            for(RoomRatesEntity roomRate : roomRatesLinked){
+
+            for (RoomRatesEntity roomRate : roomRatesLinked) {
                 roomRate = em.find(RoomRatesEntity.class, roomRate.getRoomRatesId());
                 roomRate.getRoomTypeList().remove(roomType);
             }
             roomType.getRoomRateList().clear();
-            
-            
-            
+
             em.remove(roomType);
         }
 
@@ -258,21 +264,26 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         roomType.getRoomRateList().remove(roomRate);
         roomRate.getRoomTypeList().remove(roomType);
     }
+//
+//    public boolean checkValidityOfRoomRate(RoomRatesEntity roomRate) {
+//        Date start = roomRate.getValidityStart();
+//        Date end = roomRate.getValidityEnd();
+//
+//        Date date = new Date();
+//        if (date.after(start) && date.before(end)) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
-    public boolean checkValidityOfRoomRate(RoomRatesEntity roomRate) {
-        Date start = roomRate.getValidityStart();
-        Date end = roomRate.getValidityEnd();
-
-        Date date = new Date();
-        if (date.after(start) && date.before(end)) {
-            return true;
-        }
-
-        return false;
+    boolean rateIsWithinRange(Date validityStart, Date validityEnd, Date currentDate) {
+        return (currentDate.before(validityEnd) || currentDate.after(validityStart));
     }
 
     //This method will find the final room rate to apply when given a room type id, call when making transaction
-    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException {
+    @Override
+    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId, Date currentDate) throws NoAvailableOnlineRoomRateException {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId");
         query.setParameter("roomTypeId", roomTypeId);
         List<RoomRatesEntity> roomRates = query.getResultList();
@@ -286,16 +297,32 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 //            if (!checkValidityOfRoomRate(roomRate)) { //skips expired/not started rates, price is determined by check in and check out date, it becomes not considered in our final prediction
 //                continue;
 //            }
+// if null do smt else
             if (null != roomRate.getRateType()) {
                 switch (roomRate.getRateType()) {
                     case NORMAL:
-                        normal = true;
+
+                        if (roomRate.getValidityStart() != null) {
+
+                            if (rateIsWithinRange(roomRate.getValidityStart(), roomRate.getValidityEnd(), currentDate)) {
+                                normal = true;
+                            }
+                        }else{
+                            normal = true;
+                        }
                         break;
                     case PROMOTIONAL:
-                        promo = true;
+
+                        if (rateIsWithinRange(roomRate.getValidityStart(), roomRate.getValidityEnd(), currentDate)) {
+                            promo = true;
+                        }
                         break;
+
                     case PEAK:
-                        peak = true;
+
+                        if (rateIsWithinRange(roomRate.getValidityStart(), roomRate.getValidityEnd(), currentDate)) {
+                            peak = true;
+                        }
                         break;
                     default:
                         break;
@@ -340,29 +367,27 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         throw new NoAvailableOnlineRoomRateException("There is no available room rate to be used!");
 
     }
-    
-    public RoomTypeEntity getRoomTypeByRank(int rank){
+
+    public RoomTypeEntity getRoomTypeByRank(int rank) {
         Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.ranking = :rank");
         query.setParameter("rank", rank);
-        
+
         return (RoomTypeEntity) query.getSingleResult();
-        
+
     }
-    
-    public RoomTypeEntity findUpgradeRoomType(Long roomTypeId){
+
+    public RoomTypeEntity findUpgradeRoomType(Long roomTypeId) {
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
         int currentRank = roomType.getRanking();
-        
+
         //check availability of the next higher ranks
-        
-        for(int i = currentRank; i >= 1; i--){
-            
+        for (int i = currentRank; i >= 1; i--) {
+
             RoomTypeEntity nextRoomType = getRoomTypeByRank(i);
-            if(roomControllerLocal.checkAvailabilityOfRoomTypeWhenAllocating(nextRoomType.getRoomTypeId())){
+            if (roomControllerLocal.checkAvailabilityOfRoomTypeWhenAllocating(nextRoomType.getRoomTypeId())) {
                 return nextRoomType;
             }
-            
-            
+
         }
 
         return null;
@@ -461,8 +486,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 //        }
         return null;
     }
-    
-    
 
     @Override
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType) {
@@ -473,12 +496,12 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         return query.getResultList();
 
     }
-    
+
     @Override
     public void deleteAllDisabledRoomType() {
         Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.isDisabled = true");
         List<RoomTypeEntity> roomTypes = query.getResultList();
-        for(RoomTypeEntity room : roomTypes) {
+        for (RoomTypeEntity room : roomTypes) {
             em.remove(room);
         }
     }

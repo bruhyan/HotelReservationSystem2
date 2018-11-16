@@ -85,7 +85,7 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
     
     public ReservationEntity retrieveCustomerLatestReservation(Long customerId){
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer ORDER BY r.reservationId DESC");
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r INNER JOIN r.transaction t WHERE t.isPaid = false AND r.customer = :customer ORDER BY r.reservationId DESC");
         query.setParameter("customer", customer);
         
         return (ReservationEntity) query.getResultList().get(0);

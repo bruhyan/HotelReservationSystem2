@@ -23,8 +23,6 @@ public interface RoomControllerRemote {
 
     public void deleteRoomById(Long id);
     
-    public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId, Date checkInDate);
-        
     public RoomEntity allocateRoom(Long roomTypeId);
 
     public RoomEntity walkInAllocateRoom(Long roomTypeId);
@@ -38,5 +36,7 @@ public interface RoomControllerRemote {
     public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId, boolean isDisabled);
 
     public void deleteAllDisabledRooms();
+
+    public boolean checkAvailabilityOfRoom(Date checkInDate, Date checkOutDate);
     
 }

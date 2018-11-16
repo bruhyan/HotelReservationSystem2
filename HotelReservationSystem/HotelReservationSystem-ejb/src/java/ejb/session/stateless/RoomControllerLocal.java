@@ -18,8 +18,6 @@ public interface RoomControllerLocal {
     
     public List<RoomEntity> retrieveRoomListByTypeId(Long roomTypeId);
 
-    public boolean checkAvailabilityOfRoomByRoomTypeId(Long RoomTypeId, Date checkInDate);
-
     public RoomEntity allocateRoom(Long roomTypeId);
 
     public void createNewRoom(RoomEntity room);

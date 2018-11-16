@@ -74,11 +74,11 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
         //Check reservation for today date
         
         List<ReservationEntity> reservationList = reservationControllerLocal.retrieveTodayReservationList();
-        
-        for(ReservationEntity reservation : reservationList){
-        
-        List<BookingEntity> bookingList = reservation.getBookingList();
         RoomAllocationException exception = new RoomAllocationException();
+        for(ReservationEntity reservation : reservationList){
+                System.out.println("Found reservation :" + reservation.getReservationId());
+        List<BookingEntity> bookingList = reservation.getBookingList();
+
         exception = roomAllocationExceptionControllerLocal.saveException(exception);
         for (BookingEntity booking : bookingList) {
             System.out.println("Booking found " + booking.getBookingId());

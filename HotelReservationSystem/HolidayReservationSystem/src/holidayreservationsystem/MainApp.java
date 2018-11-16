@@ -157,6 +157,7 @@ public class MainApp {
             List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
             while (true) {
                 List<RoomTypeEntity> roomTypeList = partnerSearchRoom(email, password, date1, date2);
+                
                 int index = 1;
                 System.out.println("==== Room Types with available rooms =====");
                 for (RoomTypeEntity roomType : roomTypeList) {

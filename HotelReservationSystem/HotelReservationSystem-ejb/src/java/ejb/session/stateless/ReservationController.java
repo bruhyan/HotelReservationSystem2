@@ -79,12 +79,13 @@ public class ReservationController implements ReservationControllerRemote, Reser
         Date today = cal.getTime();
 
         List<ReservationEntity> todayReservation = new ArrayList<>();
-
+        
         Query query = em.createQuery("SELECT r FROM ReservationEntity r ORDER BY r.reservationId ASC");
 
         List<ReservationEntity> allReservations = query.getResultList();
 
         for (ReservationEntity reservation : allReservations) {
+            em.refresh(reservation);
             cal.setTime(reservation.getCheckInDateTime());
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
@@ -92,11 +93,12 @@ public class ReservationController implements ReservationControllerRemote, Reser
             cal.set(Calendar.MILLISECOND, 0);
 
             if (today.equals(cal.getTime())) {
-                
+                em.refresh(reservation);
                 reservation.getBookingList();
                 todayReservation.add(reservation);
             }
         }
+        
         return todayReservation;
     }
     

@@ -129,7 +129,7 @@ public class MainApp {
             input = 0;
             if (loggedInUser == null) {
                 input = 0;
-                while (input < 1 || input > 2) {
+                while (input < 1 || input > 3) {
                     System.out.println(">");
                     input = sc.nextInt();
                     if (input == 1) {
@@ -138,6 +138,8 @@ public class MainApp {
                         //System.out.println("Employee Already Logged In !");
                     } else if (input == 2) {
                         break;
+                    } else if (input == 3) {
+                        systemTimerSessionBeanRemote.roomAllocation();
                     } else {
                         System.out.println("Invalid response, please try again!");
                     }
@@ -168,7 +170,7 @@ public class MainApp {
                 }
 
             }
-            if (loggedInUser == null && input == 2 || loggedInUser != null && input == 3) {
+            if (loggedInUser != null && input == 3) {
 
                 break;
             }

@@ -89,9 +89,11 @@ public class HoRSWebService {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
         List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerLocal.retrieveRoomTypesByRateType(RateType.NORMAL);
         for(RoomTypeEntity roomType : onlineRoomTypes) {
-            if(roomControllerLocal.checkAvailabilityOfRoomByRoomTypeId(roomType.getRoomTypeId(), checkInDate)) {
+           
+                if(!roomType.isIsDisabled()){
                 availRoomTypes.add(roomType);
-            }
+                }
+            
         }   
         return availRoomTypes;
         

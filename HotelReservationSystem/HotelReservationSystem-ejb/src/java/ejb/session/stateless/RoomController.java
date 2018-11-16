@@ -9,10 +9,8 @@ import Entity.BookingEntity;
 import Entity.ReservationEntity;
 import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -116,19 +114,28 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         return query.getResultList();
 
     }
-
+    
+    public int countRoom(){
+        Query query = em.createQuery("SELECT r FROM RoomEntity r");
+        
+        
+        return query.getResultList().size();
+        
+    }
+    
+    
     //check if room type has available rooms
     @Override
-    public boolean checkAvailabilityOfRoomByRoomTypeId(Long roomTypeId, Date checkInDate) {
+    public boolean checkAvailabilityOfRoom(Date checkInDate, Date checkOutDate) {
 
-        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
-        query.setParameter("roomType", roomType);
-        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
-        
-        if(!query.getResultList().isEmpty()){
-            return true;
-        }
+//        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+//        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
+//        query.setParameter("roomType", roomType);
+//        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+//        
+//        if(!query.getResultList().isEmpty()){
+//            return true;
+//        }
 
         //Logic : First check if available, If not, we check whether anyone is booking out 
         // A wants to checkout on 25-01, Currently occupied, + isreserved = false
@@ -137,43 +144,59 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         //new checkout date earlier than old check in date
         //find reservations with checkout date < check in, is occupied (dont need care about checkin date alr),
         // when found, means this roomType is available.
-        Calendar cal = Calendar.getInstance();
+//        Calendar cal = Calendar.getInstance();
+//
+//        cal.setTime(checkInDate);
+//
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        cal.set(Calendar.MILLISECOND, 0);
+//
+//        Date today = new Date();
+//        cal.setTime(today);
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        cal.set(Calendar.MILLISECOND, 0);
+//        today = cal.getTime();
 
-        cal.setTime(checkInDate);
+//        Query query2 = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.checkOutDateTime < :checkInDate AND r.checkInDateTime < :today");
+//        query2.setParameter("checkInDate", checkInDate);
+//        query2.setParameter("today", today);
 
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r");
+        
 
-        Date today = new Date();
-        cal.setTime(today);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        today = cal.getTime();
-
-        Query query2 = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.checkOutDateTime < :checkInDate AND r.checkInDateTime < :today");
-        query2.setParameter("checkInDate", checkInDate);
-        query2.setParameter("today", today);
-
-        List<ReservationEntity> occupiedReservationCanReserve = query2.getResultList();
-
-        System.out.println("Query ran, now testing");
-
-        for (ReservationEntity reservation : occupiedReservationCanReserve) {
-            System.out.println("Found one, " + reservation.getReservationId());
-
-            List<BookingEntity> bookings = reservation.getBookingList();
-            for (BookingEntity booking : bookings) {
-                            System.out.println("Room Type =  " + booking.getRoomType().getRoomTypeId() + " comparing with " + roomTypeId);
-                if (        Objects.equals(booking.getRoomType().getRoomTypeId(), roomTypeId)) {
-                    System.out.println("Success true");
-                    return true;
-                }
+        List<ReservationEntity> allReservations = query.getResultList();
+        
+        int roomCount = countRoom();
+     
+        for(ReservationEntity reservation : allReservations){
+            int bookingCount = reservation.getBookingList().size();
+            
+            if(checkInDate.before(reservation.getCheckOutDateTime()) && checkOutDate.after(reservation.getCheckInDateTime())){
+                roomCount-=bookingCount;
             }
         }
+        
+        if(roomCount >0){
+            return true;
+        }
+        
+
+//        for (ReservationEntity reservation : occupiedReservationCanReserve) {
+//            System.out.println("Found one, " + reservation.getReservationId());
+//
+//            List<BookingEntity> bookings = reservation.getBookingList();
+//            for (BookingEntity booking : bookings) {
+//                            System.out.println("Room Type =  " + booking.getRoomType().getRoomTypeId() + " comparing with " + roomTypeId);
+//                if (        Objects.equals(booking.getRoomType().getRoomTypeId(), roomTypeId)) {
+//                    System.out.println("Success true");
+//                    return true;
+//                }
+//            }
+//        }
         return false;
 
     }

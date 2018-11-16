@@ -8,7 +8,7 @@ package ejb.session.stateless;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
-import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.RateType;
@@ -48,7 +48,7 @@ public interface RoomTypeControllerLocal {
 
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
 
-    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId) throws NoAvailableOnlineRoomRateException;
+    public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId, Date currentDay) throws NoAvailableOnlineRoomRateException;
 
     public void removeRoomRate(Long roomTypeId, Long roomRateId);
 
