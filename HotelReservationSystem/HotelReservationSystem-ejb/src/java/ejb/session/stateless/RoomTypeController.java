@@ -302,12 +302,11 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
                 System.out.println(normal + " " + promo + " " + peak);
                 //5 rules here
                 if (normal && promo && peak) {
-                    //find cheapest promo
+                    //find promo
                     Query rule = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :p ORDER BY r.ratePerNight ASC");
                     rule.setParameter("p", RateType.PROMOTIONAL);
                     rule.setParameter("roomTypeId", roomTypeId);
 
-                    //cheapest first.
                     return (RoomRatesEntity) rule.getResultList().get(0);
                 } else if (promo && peak && !normal || normal && peak && !promo) {
                     //apply peak, assume only 1
@@ -317,12 +316,11 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
                     return (RoomRatesEntity) rule.getSingleResult();
                 } else if (normal && promo && !peak) {
-                    //apply cheapest promo
+                    //apply promo
                     Query rule = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId = :roomTypeId AND r.rateType = :p ORDER BY r.ratePerNight ASC");
                     rule.setParameter("p", RateType.PROMOTIONAL);
                     rule.setParameter("roomTypeId", roomTypeId);
 
-                    //cheapest first.
                     return (RoomRatesEntity) rule.getResultList().get(0);
                 } else if (normal && !promo && !peak) {
                     //apply normal

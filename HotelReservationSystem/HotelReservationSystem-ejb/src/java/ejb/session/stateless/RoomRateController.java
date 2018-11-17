@@ -34,22 +34,33 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
     private EntityManager em;
     @EJB
     private RoomTypeControllerLocal roomTypeControllerLocal;
+
     @Override
     public RoomRatesEntity createNewRoomRate(RoomRatesEntity roomRates) {
         em.persist(roomRates);
         em.flush();
-        
-        
-        return em.find(RoomRatesEntity.class, roomRates.getRoomRatesId()); 
-    }
 
+        return em.find(RoomRatesEntity.class, roomRates.getRoomRatesId());
+    }
 
     @Override
     public void deleteRoomRatesById(Long id) {
         RoomRatesEntity roomRates = retrieveRoomRatesById(id);
         //call room controller local to find list by Type
-        List<RoomTypeEntity> roomTypes = roomTypeControllerLocal.retrieveRoomTypeListByRates(roomRates);
-        if (!roomTypes.isEmpty()) {
+
+        if (roomRates.getRateType() == RateType.PROMOTIONAL || roomRates.getRateType() == RateType.PEAK) {
+            List<RoomTypeEntity> roomTypes = roomTypeControllerLocal.retrieveRoomTypeListByRates(roomRates);
+            for (RoomTypeEntity roomType : roomTypes) {
+                roomType = em.find(RoomTypeEntity.class, roomType.getRoomTypeId());
+                roomType.getRoomRateList().remove(roomRates);
+            }
+            roomRates.getRoomTypeList().clear();
+
+            em.remove(roomRates);
+        } else {
+
+            List<RoomTypeEntity> roomTypes = roomTypeControllerLocal.retrieveRoomTypeListByRates(roomRates);
+            if (!roomTypes.isEmpty()) {
 //            //set all to be disabled
 //            for (RoomTypeEntity roomType : roomTypes) {
 //                roomType.setIsDisabled(true); //set all the type disable
@@ -57,10 +68,17 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
 //            }
 
 //Revamped : Just check if room rate is disabled when displaying room types to choose.
-            roomRates.setIsDisabled(true);
+                roomRates.setIsDisabled(true);
 
-        } else {
-            em.remove(roomRates);
+            } else {
+                for (RoomTypeEntity roomType : roomTypes) {
+                    roomType = em.find(RoomTypeEntity.class, roomType.getRoomTypeId());
+                    roomType.getRoomRateList().remove(roomRates);
+                }
+                roomRates.getRoomTypeList().clear();
+
+                em.remove(roomRates);
+            }
         }
     }
 
@@ -70,7 +88,6 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
 
         roomRate.addRoomType(roomType);
-
 
     }
 
@@ -107,9 +124,7 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
 
     }
 
-
     //get a list of room rates exclude a roomType
-
     @Override
     public List<RoomRatesEntity> retrieveRoomRateListExcludeRoomType(Long roomTypeId) {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r JOIN r.roomTypeList r1 WHERE r1.roomTypeId <> :roomTypeId");
@@ -128,11 +143,9 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
     public void deleteAllDisabledRoomRates() {
         Query query = em.createQuery("SELECT r FROM RoomRatesEntity r WHERE r.isDisabled = true");
         List<RoomRatesEntity> roomRates = query.getResultList();
-        for(RoomRatesEntity roomRate : roomRates) {
+        for (RoomRatesEntity roomRate : roomRates) {
             em.remove(roomRate);
         }
     }
-    
 
-    
 }
