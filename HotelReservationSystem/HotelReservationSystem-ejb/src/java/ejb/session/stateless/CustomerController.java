@@ -9,7 +9,12 @@ package ejb.session.stateless;
 
 import Entity.CustomerEntity;
 import Entity.ReservationEntity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -112,15 +117,39 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
 
     public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId) {
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.transaction.isPaid = false");
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.transaction.isPaid = false AND r.showedUp = true");
         query.setParameter("customer", customer);
         return query.getResultList();
     }
 
     public List<ReservationEntity> retrieveReservationsForCheckIn(Long customerId) {
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.showedUp = false");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date limitDate = new Date();
+        String dateString = sdf2.format(limitDate);
+        String lowerLimitDateS = dateString+" 23:59:59";
+        String upperLimitDateS = dateString+" 14:00:00";
+        Date lowerLimitDateF;
+        Date upperLimitDateF;
+        try {
+            lowerLimitDateF = sdf.parse(lowerLimitDateS);
+            upperLimitDateF = sdf2.parse(upperLimitDateS);
+        } catch (ParseException ex) {
+            Logger.getLogger(CustomerController.class.getName()).log(Level.SEVERE, null, ex);
+            lowerLimitDateF = null;
+            upperLimitDateF = null;
+        }
+        
+        //can check in later ON THE STIPULATED DAY BUT CANNOT CHECK IN LATER THAN STIPULATED DAY
+        //need upper window and lower window --> current day 2pm to 11.59pm
+        //cannot see reservations that have check in later than today
+        System.out.println(lowerLimitDateF);
+        System.out.println(upperLimitDateF);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.showedUp = false AND r.checkInDateTime <= :lowerLimitDateF AND r.checkInDateTime >= :upperLimitDateF");
         query.setParameter("customer", customer);
+        query.setParameter("lowerLimitDateF", lowerLimitDateF);
+        query.setParameter("upperLimitDateF", upperLimitDateF);
         return query.getResultList();
     }
 
