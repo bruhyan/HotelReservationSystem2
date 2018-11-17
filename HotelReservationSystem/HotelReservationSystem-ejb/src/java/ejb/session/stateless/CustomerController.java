@@ -85,18 +85,31 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         return (CustomerEntity)query.getSingleResult();
     }
     
+    //probably unused
+    @Override
     public ReservationEntity retrieveCustomerLatestReservation(Long customerId){
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r INNER JOIN r.transaction t WHERE t.isPaid = false AND r.customer = :customer ORDER BY r.reservationId DESC");
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer ORDER BY r.reservationId DESC");
         query.setParameter("customer", customer);
         
         return (ReservationEntity) query.getResultList().get(0);
         
         
     }
-
-    public void persist(Object object) {
-        em.persist(object);
+    
+    public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId) {
+        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.transaction.isPaid = false");
+        query.setParameter("customer", customer);
+        return query.getResultList();
     }
+    
+    public List<ReservationEntity> retrieveReservationsForCheckIn(Long customerId) {
+        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.showedUp = false");
+        query.setParameter("customer", customer);
+        return query.getResultList();
+    }
+
     
 }

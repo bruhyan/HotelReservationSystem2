@@ -255,31 +255,55 @@ public class FrontOfficeModule {
         CustomerEntity cus;
         try {
             cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
-            ReservationEntity reservation = customerControllerRemote.retrieveCustomerLatestReservation(cus.getCustomerId());
-            List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
+            boolean exit = false;
+            while(exit == false) {
+                List<ReservationEntity> reservationsForCheckIn = customerControllerRemote.retrieveReservationsForCheckIn(cus.getCustomerId());
+                if(reservationsForCheckIn.size() == 0) {
+                    System.out.println("Customer :"+cus.getEmail()+" has no more reservations to check in");
+                    exit = true;
+                }else {
+                    System.out.println("===== List of unpaid reservations of customer: "+cus.getEmail()+" =====");
+                    int index = 1;
+                    for(ReservationEntity reservation : reservationsForCheckIn) {
+                        System.out.println("#"+index+" Reservation ID: "+ reservation.getReservationId() + " Reservation Date: " + reservation.getDateOfReservation());
+                    }
+                    System.out.println("========================================================================");
+                    System.out.println();
+                    System.out.println("Select reservation to check out by index number #");
+                    int reply = sc.nextInt();
+                    ReservationEntity selectedReservation = reservationsForCheckIn.get(reply-=1);
+                    List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(selectedReservation.getReservationId());
+                    TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(selectedReservation.getReservationId());
 
-            int index = 1;
-            System.out.println("===== Reservation rooms information =====");
-            for (BookingEntity booking : bookingList) {
-                System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
-                RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
-                int roomNum = room.getRoomNumber();
-                //System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber() );
-                System.out.println("Room Number: "+roomNum);
-                index++;
-                System.out.println();
-            }
-            System.out.println("=========================================");
-            System.out.println("Enter 1 to confirm check in");
-            int reply = sc.nextInt();
-            if (reply == 1) {
-                for (BookingEntity booking : bookingList) {
-                    RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
-                    roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.OCCUPIED);
-                    roomControllerRemote.changeIsReserved(room.getRoomId(), false);
+                    index = 1;
+                    System.out.println("===== Reservation rooms information =====");
+                    for (BookingEntity booking : bookingList) {
+                        System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
+                        System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                        index++;
+                        System.out.println();
+                    }
+                    System.out.println("Total price: $"+transaction.getTotalCost());
+                    System.out.println("=========================================");
+                    System.out.println("Enter 1 to confirm check in");
+                    reply = sc.nextInt();
+                    if (reply == 1) {
+                        for (BookingEntity booking : bookingList) {
+                            RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                            roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.OCCUPIED);
+                            roomControllerRemote.changeIsReserved(room.getRoomId(), false);
+                        }
+                        reservationControllerRemote.customerShowedUp(selectedReservation.getReservationId());
+                        System.out.println("Check in completed");
+                        System.out.println("Enter 1 to continue, 2 to exit");
+                        int input = sc.nextInt();
+                        if(input == 2) {
+                            exit = true;
+                        }
+                    }else {
+                        exit = true;
+                    }
                 }
-                reservationControllerRemote.customerShowedUp(reservation.getReservationId());
-                System.out.println("Check in completed");
             }
 
         } catch (CustomerNotFoundException ex) {
@@ -295,38 +319,66 @@ public class FrontOfficeModule {
         CustomerEntity cus;
         try {
             cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
-            ReservationEntity reservation = customerControllerRemote.retrieveCustomerLatestReservation(cus.getCustomerId());
-            List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
-            TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(reservation.getReservationId());
+            
+            boolean exit = false;
+            while(exit == false) {
+                List<ReservationEntity> unpaidReservations = customerControllerRemote.retrieveCustomerUnpaidReservation(cus.getCustomerId());
+                if(unpaidReservations.size() == 0) {
+                    System.out.println("Customer: "+cus.getEmail()+" has no more reservations to check out.");
+                    exit = true;
+                }else {
+                    int index = 1;
+                    System.out.println("===== List of unpaid reservations of customer: "+cus.getEmail()+" =====");
+                    for(ReservationEntity reservation : unpaidReservations) {
+                        System.out.println("#"+index+" Reservation ID: "+ reservation.getReservationId() + " Reservation Date: " + reservation.getDateOfReservation());
+                        index++;
+                    }
+                    System.out.println("========================================================================");
+                    System.out.println();
+                    System.out.println("Select reservation to check out by index number #");
+                    int reply = sc.nextInt();
+                    ReservationEntity selectedReservation = unpaidReservations.get(reply-=1);
+                    List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(selectedReservation.getReservationId());
+                    TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(selectedReservation.getReservationId());
 
-            int index = 1;
-            System.out.println("===== Reservation rooms information =====");
-            for (BookingEntity booking : bookingList) {
-                System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
-                System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
-                index++;
-                System.out.println();
-            }
-            System.out.println("Total price: $"+transaction.getTotalCost());
-            System.out.println("=========================================");
-            System.out.println("Enter 1 to confirm check out");
-            int reply = sc.nextInt();
-            if (reply == 1) {
-                for (BookingEntity booking : bookingList) {
-                    RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
-                    roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.AVAILABLE);
-                }
-                //cancerous
-                System.out.println("Rooms set to available");
-                //pay transaction
-                System.out.println("Enter 1 to make payment");
-                reply = sc.nextInt();
-                if (reply == 1) {
-                    transaction = transactionControllerRemote.payTransaction(transaction.getTransactionId());
-                    System.out.println("Transaction " + transaction.getTransactionId() + " paid successfully on " + transaction.getDatePaid());
-                    System.out.println("Check out completed.");
-                } else {
-                    System.out.println("why don't want pay? ):");
+                    index = 1;
+                    System.out.println("===== Reservation rooms information =====");
+                    for (BookingEntity booking : bookingList) {
+                        System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
+                        System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                        index++;
+                        System.out.println();
+                    }
+                    System.out.println("Total price: $"+transaction.getTotalCost());
+                    System.out.println("=========================================");
+                    System.out.println("Enter 1 to confirm check out");
+                    reply = sc.nextInt();
+                    if (reply == 1) {
+                        for (BookingEntity booking : bookingList) {
+                            RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                            roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.AVAILABLE);
+                        }
+
+                        System.out.println("Rooms set to available");
+                        //pay transaction
+                        System.out.println("Enter 1 to make payment");
+                        reply = sc.nextInt();
+                        if (reply == 1) {
+                            transaction = transactionControllerRemote.payTransaction(transaction.getTransactionId());
+                            System.out.println("Transaction " + transaction.getTransactionId() + " paid successfully on " + transaction.getDatePaid());
+                            System.out.println("Check out completed.");
+                            System.out.println("Enter 1 to continue, Enter 2 to exit");
+                            int input = sc.nextInt();
+                            if(input == 2) {
+                                exit = true;
+                            }
+                        } else {
+                            System.out.println("why don't want pay? ):");
+                            exit = true;
+                        }  
+                    }else {
+                        exit = true;
+                    }
                 }
             }
 

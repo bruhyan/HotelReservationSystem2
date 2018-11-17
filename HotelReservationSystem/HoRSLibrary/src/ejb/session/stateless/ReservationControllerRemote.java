@@ -30,4 +30,6 @@ public interface ReservationControllerRemote {
 
     public void customerShowedUp(Long reservationId);
     
+    public ReservationEntity retrieveReservationById(Long reservationId);
+    
 }

@@ -102,6 +102,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
         return todayReservation;
     }
     
+    @Override
     public ReservationEntity retrieveReservationById(Long reservationId) {
         ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
         return reserv;
@@ -112,5 +113,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
         query.setParameter("partnerId", partnerId);
         return query.getResultList();
     }
+    
+    
 
 }

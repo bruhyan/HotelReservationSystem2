@@ -30,5 +30,9 @@ public interface CustomerControllerLocal {
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 
     public ReservationEntity retrieveCustomerLatestReservation(Long customerId);
+    
+    public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId);
+
+    public List<ReservationEntity> retrieveReservationsForCheckIn(Long customerId);
 
 }

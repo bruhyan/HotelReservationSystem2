@@ -32,4 +32,8 @@ public interface CustomerControllerRemote {
 
     public ReservationEntity retrieveCustomerLatestReservation(Long customerId);
 
+    public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId);
+
+    public List<ReservationEntity> retrieveReservationsForCheckIn(Long customerId);
+
 }
