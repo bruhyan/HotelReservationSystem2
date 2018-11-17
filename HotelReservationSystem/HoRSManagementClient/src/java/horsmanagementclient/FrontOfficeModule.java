@@ -308,8 +308,6 @@ public class FrontOfficeModule {
 
         } catch (CustomerNotFoundException ex) {
             System.out.println("Customer not found !");
-        } catch (NoReservationFoundException ex) {
-            System.out.println("Reservation Not Found !");
         }
 
     }
@@ -386,8 +384,6 @@ public class FrontOfficeModule {
 
         } catch (CustomerNotFoundException ex) {
             System.out.println("Customer not found !");
-        } catch (NoReservationFoundException ex) {
-            System.out.println("Reservation Not Found !");
         }
     }
 
