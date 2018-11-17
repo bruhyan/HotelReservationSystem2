@@ -10,6 +10,7 @@ import Entity.ReservationEntity;
 import Entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.NoReservationFoundException;
 
 public interface ReservationControllerLocal {
     public ReservationEntity createNewReservation(ReservationEntity reserv);
@@ -18,7 +19,7 @@ public interface ReservationControllerLocal {
 
     public List<BookingEntity> retrieveBookingListByReservationId(long reservationId);
 
-    public void addTransaction(Long reservationId, TransactionEntity transaction);
+    public void addTransaction(Long reservationId, TransactionEntity transaction)  throws NoReservationFoundException;
 
     public TransactionEntity retrieveTransactionByReservationId(Long reservationId);
 

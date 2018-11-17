@@ -18,6 +18,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -51,8 +52,13 @@ public class ReservationController implements ReservationControllerRemote, Reser
         return reserv.getBookingList();
     }
 
-    public void addTransaction(Long reservationId, TransactionEntity transaction) {
+    public void addTransaction(Long reservationId, TransactionEntity transaction) throws NoReservationFoundException{
+        
         ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        
+        if(reserv == null){
+            throw new NoReservationFoundException();
+        }else
         reserv.setTransaction(transaction);
     }
 

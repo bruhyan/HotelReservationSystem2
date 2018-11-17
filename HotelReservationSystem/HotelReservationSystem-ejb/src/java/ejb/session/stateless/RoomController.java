@@ -11,6 +11,7 @@ import Entity.RoomEntity;
 import Entity.RoomTypeEntity;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -31,16 +32,19 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
+    @Override
     public void createNewRoom(RoomEntity room) {
         em.persist(room);
         em.flush();
     }
 
+    @Override
     public List<RoomEntity> retrieveRoomList() {
         Query query = em.createQuery("SELECT r FROM RoomEntity r");
         return query.getResultList();
     }
 
+    @Override
     public void deleteRoomById(Long id) {
         RoomEntity room = retrieveRoomById(id);
         //Double check here
@@ -54,17 +58,20 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         }
     }
 
+    @Override
     public void changeIsReserved(Long roomId, boolean value) {
         RoomEntity room = em.find(RoomEntity.class, roomId);
         room.setIsReserved(value);
     }
 
+    @Override
     public RoomEntity retrieveRoomById(Long id) {
         return em.find(RoomEntity.class, id);
 
     }
     //Overloaded method
 
+    @Override
     public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId, boolean isDisabled) {
         RoomEntity room = em.find(RoomEntity.class, id);
         room.setRoomNumber(roomNumber);
@@ -114,20 +121,109 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
         return query.getResultList();
 
     }
-    
-    public int countRoom(){
-        Query query = em.createQuery("SELECT r FROM RoomEntity r");
-        
-        
+
+    public int countRoomType(RoomTypeEntity roomType) {
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.isDisabled = false");
+        query.setParameter("roomType", roomType);
+
         return query.getResultList().size();
-        
+
     }
-    
-    
+
     //check if room type has available rooms
     @Override
-    public boolean checkAvailabilityOfRoom(Date checkInDate, Date checkOutDate) {
+    public int getNumberOfBookableRoomType(RoomTypeEntity roomType, Date checkInDate, Date checkOutDate) {
 
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r");
+
+        List<ReservationEntity> allReservations = query.getResultList();
+
+        int roomTypeCount = countRoomType(roomType);
+
+        for (ReservationEntity reservation : allReservations) {
+            List<BookingEntity> bookingList = reservation.getBookingList();
+            for (BookingEntity booking : bookingList) {
+                RoomTypeEntity bookingRoomType = booking.getRoomType();
+
+                if (checkInDate.before(reservation.getCheckOutDateTime()) && checkOutDate.after(reservation.getCheckInDateTime()) && Objects.equals(bookingRoomType.getRoomTypeId(), roomType.getRoomTypeId())) {
+                    roomTypeCount--;
+                }
+            }
+        }
+
+        return roomTypeCount;
+
+    }
+
+//check if room type has available rooms
+    @Override
+    public boolean checkAvailabilityOfRoomTypeWhenAllocating(Long roomTypeId) {
+
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        //If we want to check if the room rate is disabled, how do we know what room rate was used?
+        //look at reservation
+        Query query = em.createQuery("SELECT r FROM RoomEntity r JOIN r.roomType r1 WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false AND r.isDisabled = false AND r1.isDisabled = false");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+
+        List<RoomEntity> rooms = query.getResultList();
+
+        return !rooms.isEmpty();
+
+    }
+
+    @Override
+    public RoomEntity allocateRoom(Long roomTypeId) {
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false AND r.isDisabled = false");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+
+        List<RoomEntity> roomList = query.getResultList();
+        RoomEntity room = roomList.get(0);
+
+        room.setIsReserved(true);
+
+        return room;
+
+    }
+
+    @Override
+    public RoomEntity walkInAllocateRoom(Long roomTypeId) {
+        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
+        query.setParameter("roomType", roomType);
+        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
+
+        List<RoomEntity> roomList = query.getResultList();
+        RoomEntity room = roomList.get(0);
+
+        room.setIsReserved(true);
+
+        return room;
+    }
+
+    @Override
+    public void changeRoomStatus(Long roomEntityId, RoomStatus status) {
+        RoomEntity room = em.find(RoomEntity.class,
+                roomEntityId);
+        room.setRoomStatus(status);
+    }
+
+    @Override
+    public void deleteAllDisabledRooms() {
+        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.isDisabled = true");
+        List<RoomEntity> rooms = query.getResultList();
+        for (RoomEntity room : rooms) {
+            if (room.getRoomStatus() == RoomStatus.AVAILABLE) {
+                em.remove(room);
+            }
+        }
+    }
+
+}
+
+//Legacy Code with sentimental value. Deprecated because of flawed business assumptions
 //        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
 //        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
 //        query.setParameter("roomType", roomType);
@@ -136,14 +232,13 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
 //        if(!query.getResultList().isEmpty()){
 //            return true;
 //        }
-
-        //Logic : First check if available, If not, we check whether anyone is booking out 
-        // A wants to checkout on 25-01, Currently occupied, + isreserved = false
-        //B wants to check in on 27, although it shows occupied, actually can reserve.
-        //If old checkout < new check in , isReserved = true.
-        //new checkout date earlier than old check in date
-        //find reservations with checkout date < check in, is occupied (dont need care about checkin date alr),
-        // when found, means this roomType is available.
+//Logic : First check if available, If not, we check whether anyone is booking out 
+// A wants to checkout on 25-01, Currently occupied, + isreserved = false
+//B wants to check in on 27, although it shows occupied, actually can reserve.
+//If old checkout < new check in , isReserved = true.
+//new checkout date earlier than old check in date
+//find reservations with checkout date < check in, is occupied (dont need care about checkin date alr),
+// when found, means this roomType is available.
 //        Calendar cal = Calendar.getInstance();
 //
 //        cal.setTime(checkInDate);
@@ -160,31 +255,9 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
 //        cal.set(Calendar.SECOND, 0);
 //        cal.set(Calendar.MILLISECOND, 0);
 //        today = cal.getTime();
-
 //        Query query2 = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.checkOutDateTime < :checkInDate AND r.checkInDateTime < :today");
 //        query2.setParameter("checkInDate", checkInDate);
 //        query2.setParameter("today", today);
-
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r");
-        
-
-        List<ReservationEntity> allReservations = query.getResultList();
-        
-        int roomCount = countRoom();
-     
-        for(ReservationEntity reservation : allReservations){
-            int bookingCount = reservation.getBookingList().size();
-            
-            if(checkInDate.before(reservation.getCheckOutDateTime()) && checkOutDate.after(reservation.getCheckInDateTime())){
-                roomCount-=bookingCount;
-            }
-        }
-        
-        if(roomCount >0){
-            return true;
-        }
-        
-
 //        for (ReservationEntity reservation : occupiedReservationCanReserve) {
 //            System.out.println("Found one, " + reservation.getReservationId());
 //
@@ -197,76 +270,4 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
 //                }
 //            }
 //        }
-        return false;
 
-    }
-
-//check if room type has available rooms
-    @Override
-    public boolean checkAvailabilityOfRoomTypeWhenAllocating(Long roomTypeId) {
-
-        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false AND r.isDisabled = false");
-        query.setParameter("roomType", roomType);
-        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
-
-        List<RoomTypeEntity> roomTypes = query.getResultList();
-
-        if (roomTypes.isEmpty()) {
-            return false;
-        }
-        return true;
-
-    }
-
-    public RoomEntity
-            allocateRoom(Long roomTypeId) {
-        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
-        query.setParameter("roomType", roomType);
-        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
-
-        List<RoomEntity> roomList = query.getResultList();
-        RoomEntity room = roomList.get(0);
-
-        room.setIsReserved(true);
-
-        return room;
-
-    }
-
-    public RoomEntity
-            walkInAllocateRoom(Long roomTypeId) {
-        RoomTypeEntity roomType = em.find((RoomTypeEntity.class), roomTypeId);
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.roomType = :roomType AND r.roomStatus = :roomStatus AND r.isReserved = false");
-        query.setParameter("roomType", roomType);
-        query.setParameter("roomStatus", RoomStatus.AVAILABLE);
-
-        List<RoomEntity> roomList = query.getResultList();
-        RoomEntity room = roomList.get(0);
-
-        room.setIsReserved(true);
-
-        return room;
-    }
-
-    public void changeRoomStatus(Long roomEntityId, RoomStatus status) {
-        RoomEntity room = em.find(RoomEntity.class,
-                 roomEntityId);
-        room.setRoomStatus(status);
-    }
-    
-    public void deleteAllDisabledRooms() {
-        Query query = em.createQuery("SELECT r FROM RoomEntity r WHERE r.isDisabled = true");
-        List<RoomEntity> rooms = query.getResultList();
-        for(RoomEntity room : rooms) {
-            if(room.getRoomStatus() == RoomStatus.AVAILABLE) {
-                em.remove(room);
-            }
-        }
-    }
-    
-    
-    
-   
-}

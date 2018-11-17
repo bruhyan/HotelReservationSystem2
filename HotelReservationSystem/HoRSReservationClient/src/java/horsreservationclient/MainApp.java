@@ -23,10 +23,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.util.Pair;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoAvailableOnlineRoomRateException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -103,8 +107,6 @@ public class MainApp {
             }
         }
     }
-    
-    
 
     public void doSearchHotelRoom(Scanner sc) {
         System.out.println("Enter check in year: [YYYY]");
@@ -123,32 +125,45 @@ public class MainApp {
         cal.add(Calendar.DATE, nights);
         cal.set(Calendar.HOUR_OF_DAY, 12);
         Date checkOutDate = cal.getTime();
-
+        List<RoomTypeEntity> allRoomTypes = roomTypeControllerRemote.retrieveRoomTypeList();
         List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
+        List<Pair<RoomTypeEntity, Integer>> listOfRoomTypePairs = new ArrayList<>();
+        boolean retrieved = false;
         while (true) {
-            
-            boolean hasRooms = roomControllerRemote.checkAvailabilityOfRoom(checkInDate, checkOutDate);
-            
-            if(!hasRooms){
-                System.out.println("The hotel is fully booked! ");
-                break;
+
+            if (retrieved == false) {
+                for (RoomTypeEntity roomType : allRoomTypes) {
+                    if (roomType.isIsDisabled()) {
+                        continue;
+                    }
+                    Integer roomTypeCount = roomControllerRemote.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);
+                    Pair<RoomTypeEntity, Integer> roomTypePair = new Pair<>(roomType, roomTypeCount);
+                    listOfRoomTypePairs.add(roomTypePair);
+                }
             }
-            
-            
-            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
+            retrieved = true;
+            //  List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
             int index = 1;
             System.out.println("==========================================");
-            for (RoomTypeEntity roomType : availRoomTypes) {
-                System.out.println("#" + index + " RoomType: " + roomType.getRoomTypeName());
+            for (Pair<RoomTypeEntity, Integer> roomTypePair : listOfRoomTypePairs) {
+                System.out.println("#" + index + " RoomType: " + roomTypePair.getKey().getRoomTypeName() + ". Available Room Count : " + roomTypePair.getValue());
                 index++;
             }
             System.out.println("==========================================");
             System.out.println("Select desired room type by index");
             int choice = sc.nextInt();
-            desiredRoomTypes.add(availRoomTypes.get(choice -= 1));
-            System.out.println("Enter 1 to continue adding more room types");
-            if (sc.nextInt() != 1) {
-                break;
+            choice--;
+            if (listOfRoomTypePairs.get(choice).getValue() == 0) {
+                System.out.println("Sorry! There are no available room for this room type during the given check in and out date!");
+                System.out.println("Please choose another room type.");
+            } else {
+                desiredRoomTypes.add(listOfRoomTypePairs.get(choice).getKey());
+                Pair<RoomTypeEntity, Integer> newPair = new Pair<RoomTypeEntity, Integer>(listOfRoomTypePairs.get(choice).getKey(), listOfRoomTypePairs.get(choice).getValue() - 1);
+                listOfRoomTypePairs.set(choice, newPair);
+                System.out.println("Enter 1 to continue adding more room types");
+                if (sc.nextInt() != 1) {
+                    break;
+                }
             }
         }
         BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights, checkInDate);
@@ -167,33 +182,39 @@ public class MainApp {
     }
 
     public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrice) {
-        sc.nextLine();
+        try {
+            sc.nextLine();
 
-        //create new reservation
-        ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
-        reservation = reservationControllerRemote.createNewReservation(reservation);
+            //create new reservation
+            ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
+            reservation = reservationControllerRemote.createNewReservation(reservation);
 
-        //create individual room bookings
-        for (RoomTypeEntity roomType : desiredRoomTypes) {
-            BookingEntity booking = new BookingEntity(roomType, reservation);
-            booking = bookingControllerRemote.createBooking(booking);
-            reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+            //create individual room bookings
+            for (RoomTypeEntity roomType : desiredRoomTypes) {
+                BookingEntity booking = new BookingEntity(roomType, reservation);
+                booking = bookingControllerRemote.createBooking(booking);
+                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+            }
+
+            //create unpaid transaction
+            TransactionEntity transaction = new TransactionEntity(totalPrice, null, reservation);
+            transaction = transactionControllerRemote.createNewTransaction(transaction);
+            reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
+
+            System.out.println("Reservation " + reservation.getReservationId() + " successfully created");
+            System.out.println("==== Finalized bookings and room types : ====");
+            System.out.println("Date of reservation: " + reservation.getDateOfReservation());
+            List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
+            for (BookingEntity bookings : finalBookings) {
+                System.out.println("BookingID: " + bookings.getBookingId() + " Room Type: " + bookings.getRoomType().getRoomTypeName());
+            }
+            System.out.println("Total price: $" + transaction.getTotalCost());
+            System.out.println("=============================================");
+        } catch (NoReservationFoundException ex) {
+
+            System.out.println("Reservation Not Found !");
+
         }
-
-        //create unpaid transaction
-        TransactionEntity transaction = new TransactionEntity(totalPrice, null, reservation);
-        transaction = transactionControllerRemote.createNewTransaction(transaction);
-        reservationControllerRemote.addTransaction(reservation.getReservationId(), transaction);
-
-        System.out.println("Reservation " + reservation.getReservationId() + " successfully created");
-        System.out.println("==== Finalized bookings and room types : ====");
-        System.out.println("Date of reservation: " + reservation.getDateOfReservation());
-        List<BookingEntity> finalBookings = reservationControllerRemote.retrieveBookingListByReservationId(reservation.getReservationId());
-        for (BookingEntity bookings : finalBookings) {
-            System.out.println("BookingID: " + bookings.getBookingId() + " Room Type: " + bookings.getRoomType().getRoomTypeName());
-        }
-        System.out.println("Total price: $" + transaction.getTotalCost());
-        System.out.println("=============================================");
 
     }
 
@@ -219,8 +240,8 @@ public class MainApp {
                     System.out.println(ex.getMessage());
                 }
             }
-            
-            currentDay = addDays(currentDay,1);
+
+            currentDay = addDays(currentDay, 1);
         }
         return totalPrice;
     }
@@ -230,10 +251,10 @@ public class MainApp {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
         List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.NORMAL);
         for (RoomTypeEntity roomType : onlineRoomTypes) {
-            
-                if (!roomType.isIsDisabled()) {
-                    availRoomTypes.add(roomType);
-                
+
+            if (!roomType.isIsDisabled()) {
+                availRoomTypes.add(roomType);
+
             }
         }
         return availRoomTypes;

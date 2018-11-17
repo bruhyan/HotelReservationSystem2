@@ -3,20 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package holidayreservationsystem;
+package hotelreservationsystem;
 
 /**
  *
  * @author mdk12
  */
-public class HolidayClient {
+public class HotelReservationSystem {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        MainApp mainApp = new MainApp();
-        mainApp.run();
+        // TODO code application logic here
     }
     
 }

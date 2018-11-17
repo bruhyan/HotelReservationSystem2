@@ -10,13 +10,14 @@ import Entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.CustomerNotFoundException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
  * @author Bryan
  */
-
 public interface CustomerControllerLocal {
+
     public CustomerEntity createCustomerEntity(CustomerEntity cus);
 
     public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException;
@@ -29,8 +30,8 @@ public interface CustomerControllerLocal {
 
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 
-    public ReservationEntity retrieveCustomerLatestReservation(Long customerId);
-    
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId) throws NoReservationFoundException;
+
     public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId);
 
     public List<ReservationEntity> retrieveReservationsForCheckIn(Long customerId);

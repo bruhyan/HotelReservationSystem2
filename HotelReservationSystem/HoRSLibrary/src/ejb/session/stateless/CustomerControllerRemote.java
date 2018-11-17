@@ -10,12 +10,12 @@ import Entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.CustomerNotFoundException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
  * @author Bryan
  */
-
 public interface CustomerControllerRemote {
 
     public CustomerEntity createCustomerEntity(CustomerEntity cus);
@@ -30,7 +30,7 @@ public interface CustomerControllerRemote {
 
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 
-    public ReservationEntity retrieveCustomerLatestReservation(Long customerId);
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId) throws NoReservationFoundException;
 
     public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId);
 

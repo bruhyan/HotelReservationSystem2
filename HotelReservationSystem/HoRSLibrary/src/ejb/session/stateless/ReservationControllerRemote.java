@@ -10,6 +10,7 @@ import Entity.ReservationEntity;
 import Entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface ReservationControllerRemote {
 
     public List<BookingEntity> retrieveBookingListByReservationId(long reservationId);
 
-    public void addTransaction(Long reservationId, TransactionEntity transaction);
+    public void addTransaction(Long reservationId, TransactionEntity transaction) throws NoReservationFoundException;
 
     public TransactionEntity retrieveTransactionByReservationId(Long reservationId);
 

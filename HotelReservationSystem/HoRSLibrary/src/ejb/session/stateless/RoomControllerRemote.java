@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
+import Entity.RoomTypeEntity;
 import java.util.Date;
 import java.util.List;
 import util.enumeration.RoomStatus;
@@ -37,6 +38,6 @@ public interface RoomControllerRemote {
 
     public void deleteAllDisabledRooms();
 
-    public boolean checkAvailabilityOfRoom(Date checkInDate, Date checkOutDate);
+    public int getNumberOfBookableRoomType(RoomTypeEntity roomType, Date checkInDate, Date checkOutDate);
     
 }

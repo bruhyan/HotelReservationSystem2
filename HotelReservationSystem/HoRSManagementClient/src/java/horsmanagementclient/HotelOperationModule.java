@@ -468,6 +468,10 @@ public class HotelOperationModule {
             List<String> exceptions = exceptionList.get(0).getExceptions();
 
             System.out.println("Viewing exception report ID : " + exceptionList.get(0).getRoomAllocationExceptionId());
+            if(exceptions.isEmpty()){
+                System.out.println("There are no exceptions to report,");
+                System.out.println("All rooms were successfully allocated today!");
+            }
             for (String exception : exceptions) {
                 
                 System.out.println(exception);
@@ -511,7 +515,7 @@ public class HotelOperationModule {
             System.out.println("Select the room type you'd wish to view in more detail, update or delete :");
             for (RoomTypeEntity roomType : roomTypeList) {
 
-                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " .");
+                System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " . Is Disabled : " + roomType.isIsDisabled());
 
             }
             System.out.print(">");
@@ -532,6 +536,7 @@ public class HotelOperationModule {
         System.out.println("Room Type capacity: " + roomType.getCapacity());
         System.out.println("Room Type Size: " + roomType.getSize() + " metres square.");
         System.out.println("Room Type disabled: " + roomType.isIsDisabled());
+        System.out.println("Room Type Rank: " + roomType.getRanking());
         List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomTypeId);
         System.out.println("Room rates attached to room type : ");
 
@@ -592,7 +597,7 @@ public class HotelOperationModule {
             while (response < 1 || response > 2) {
                 System.out.println("Would you like to add another room rate? ");
                 System.out.println("1. Yes");
-                System.out.println("2. No, System will create the room type and return you to the operation manager page.");
+                System.out.println("2. No");
                 System.out.print(">");
                 response = sc.nextInt();
                 sc.nextLine();
@@ -614,7 +619,7 @@ public class HotelOperationModule {
                 response = sc.nextInt();
                 sc.nextLine();
                 if (response == 1) {
-                    int range = showCurrentRoomTypeRank();
+                    int range = showCurrentRoomTypeRank() -1;
 
                     System.out.println("Please indicate a rank for your new room type ranging from 1 to " + range);
                     int rank = sc.nextInt(); //rank is 1 + index

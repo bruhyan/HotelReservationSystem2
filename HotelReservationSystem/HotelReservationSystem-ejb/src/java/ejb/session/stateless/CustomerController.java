@@ -18,6 +18,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CustomerNotFoundException;
+import util.exception.NoReservationFoundException;
 
 /**
  *
@@ -30,31 +31,36 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
-    
+
     public CustomerEntity createCustomerEntity(CustomerEntity cus) {
         em.persist(cus);
         em.flush();
         return cus;
     }
-    
+
+    @Override
     public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException {
-        return em.find(CustomerEntity.class, customerId);  
+        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        if(customer == null){
+            throw new CustomerNotFoundException("No customer found with the given customer ID");
+        }
+        return customer;
     }
-    
+
     @Override
     public CustomerEntity retrieveCustomerEntityByContactNumber(String contactNum) throws CustomerNotFoundException {
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.contactNumber = :contactNum");
         query.setParameter("contactNum", contactNum);
-        
+
         try{
             return (CustomerEntity)query.getSingleResult();
         }catch(NoResultException ex){
             System.out.println("Error!");
             throw new CustomerNotFoundException("Customer not found!");
         }
-       
-//        
-//        
+
+//
+//
 //        try {
 //            query.setParameter("contactNum", contactNum);
 //            cus = (CustomerEntity)query.getSingleResult();
@@ -64,7 +70,7 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
 //        }
 //        return cus;
     }
-    
+
     public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
         //CustomerEntity cus = em.find(CustomerEntity.class, customerId);
         //List<ReservationEntity> reservations = cus.getReservations();
@@ -73,37 +79,44 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
-    
+
     public void nullCustomerReservation(Long customerId) {
         CustomerEntity cus = em.find(CustomerEntity.class, customerId);
         cus.getReservations().clear();
     }
-    
+
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :email");
         query.setParameter("email", email);
+
+        try{
         return (CustomerEntity)query.getSingleResult();
+        }catch(NoResultException ex){
+            throw new CustomerNotFoundException("No customer with the given email was found!");
+        }
     }
-    
-    //probably unused
+
     @Override
-    public ReservationEntity retrieveCustomerLatestReservation(Long customerId){
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId) throws NoReservationFoundException{
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer ORDER BY r.reservationId DESC");
         query.setParameter("customer", customer);
-        
+
+        try{
         return (ReservationEntity) query.getResultList().get(0);
-        
-        
+        }catch(ArrayIndexOutOfBoundsException ex){
+            throw new NoReservationFoundException("No new reservation was found for this customer!");
+        }
+
     }
-    
+
     public List<ReservationEntity> retrieveCustomerUnpaidReservation(Long customerId) {
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.transaction.isPaid = false");
         query.setParameter("customer", customer);
         return query.getResultList();
     }
-    
+
     public List<ReservationEntity> retrieveReservationsForCheckIn(Long customerId) {
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer AND r.showedUp = false");
@@ -111,5 +124,5 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         return query.getResultList();
     }
 
-    
+
 }

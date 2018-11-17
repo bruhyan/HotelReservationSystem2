@@ -21,17 +21,20 @@ public class TransactionController implements TransactionControllerRemote, Trans
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
     
+    @Override
     public TransactionEntity retrieveTransactionById(Long transactionId) {
        TransactionEntity transaction = em.find(TransactionEntity.class, transactionId);
        return transaction;
     }
     
+    @Override
     public TransactionEntity createNewTransaction(TransactionEntity transaction) {
         em.persist(transaction);
         em.flush();
         return transaction;
     }
     
+    @Override
     public TransactionEntity payTransaction(Long transactionId) {
         TransactionEntity transaction = em.find(TransactionEntity.class, transactionId);
         transaction.setDatePaid(new Date());

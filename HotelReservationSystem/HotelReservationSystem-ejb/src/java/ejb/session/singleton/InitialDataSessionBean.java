@@ -183,15 +183,15 @@ public class InitialDataSessionBean {
         //String roomName, String description, Integer size, String bed, String amenities, Integer capacity
         List<RoomTypeEntity> roomTypes = new ArrayList<>();
 
-        roomTypes.add(new RoomTypeEntity("Deluxe Room Rank 1", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 1));
+        roomTypes.add(new RoomTypeEntity("Deluxe Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 5));
 
-        roomTypes.add(new RoomTypeEntity("Premier Room Rank 2", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 2));
+        roomTypes.add(new RoomTypeEntity("Premier Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 4));
 
-        roomTypes.add(new RoomTypeEntity("Family Room Rank 3", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 3));
+        roomTypes.add(new RoomTypeEntity("Family Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 3));
 
-        roomTypes.add(new RoomTypeEntity("Junior Suite Rank 4", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 4));
+        roomTypes.add(new RoomTypeEntity("Junior Suite", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 2));
 
-        roomTypes.add(new RoomTypeEntity("Grand Suite Rank 5", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 5));
+        roomTypes.add(new RoomTypeEntity("Grand Suite", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 1));
 
 //        //published and normal
 //        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 1", "Should apply either", 2, "3 double size", "Free air", 5, 1));
