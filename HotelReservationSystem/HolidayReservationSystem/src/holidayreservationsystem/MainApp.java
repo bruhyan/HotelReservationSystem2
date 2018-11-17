@@ -5,7 +5,6 @@
  */
 package holidayreservationsystem;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,11 +14,11 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.util.Pair;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 
 /**
  *
@@ -36,7 +35,7 @@ public class MainApp {
     public void run() {
 
         Scanner sc = new Scanner(System.in);
-        
+
         while (true) {
             int input = 0;
 
@@ -53,11 +52,10 @@ public class MainApp {
             }
 
             if (partner != null) {
-               
 
                 while (input < 1 || input > 6) {
-                     input = sc.nextInt();
-                sc.nextLine();
+                    input = sc.nextInt();
+                    sc.nextLine();
                     if (input == 1) {
                         doPartnerSearchRoom(sc);
                     } else if (input == 2) {
@@ -73,11 +71,10 @@ public class MainApp {
                     }
                 }
             } else {
-               
 
                 while (input < 1 || input > 2) {
-                     input = sc.nextInt();
-                sc.nextLine();
+                    input = sc.nextInt();
+                    sc.nextLine();
                     if (input == 1) {
                         doPartnerLogin(sc);
                     } else if (input == 2) {
@@ -118,15 +115,27 @@ public class MainApp {
         System.out.print(">");
         String password = sc.nextLine();
 
-        System.out.println("Enter check in year: [YYYY]");
-        int year = sc.nextInt();
-        year -= 1900;
-        System.out.println("Enter check in month: [ 1(January)~12(December) ]");
-        int month = sc.nextInt();
-        month -= 1;
-        System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
-        int day = sc.nextInt();
-        Date checkInDate = new Date(year, month, day, 14, 0);
+        boolean valid = false;
+        Date checkInDate = null;
+        while (!valid) {
+            System.out.println("Enter check in year: [YYYY]");
+            int year = sc.nextInt();
+            year -= 1900;
+            System.out.println("Enter check in month: [ 1(January)~12(December) ]");
+            int month = sc.nextInt();
+            month -= 1;
+            System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
+            int day = sc.nextInt();
+            Date today = new Date();
+            checkInDate = new Date(year, month, day, 14, 0);
+            Date registerDate = new Date(year, month, day, 23, 59);
+            if (registerDate.before(today)) {
+                System.out.println("You've entered a date that's before your current date or before our check in time of 2pm. Please try a later date!");
+            } else {
+                valid = true;
+            }
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(checkInDate);
         System.out.println("Enter how many nights of stay"); //12pm checkout
@@ -139,48 +148,65 @@ public class MainApp {
         try {
             GregorianCalendar c = new GregorianCalendar();
             c.setTime(checkInDate);
-            XMLGregorianCalendar date1 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            XMLGregorianCalendar xmlCheckInDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
 //            XMLGregorianCalendar date1 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
             c.setTime(checkOutDate);
-            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-
+            XMLGregorianCalendar xmlCheckOutDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            List<RoomTypeEntity> allRoomTypes = retrieveRoomTypeList();
 //            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
-            
             //DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, 
             //c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
             //DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
             List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
+            List<Pair<RoomTypeEntity, Integer>> listOfRoomTypePairs = new ArrayList<>();
+            boolean retrieved = false;
             while (true) {
-                List<RoomTypeEntity> roomTypeList = partnerSearchRoom(email, password, date1, date2);
-                
+
+                if (retrieved == false) {
+                    for (RoomTypeEntity roomType : allRoomTypes) {
+                        if (roomType.isIsDisabled()) {
+                            continue;
+                        }
+                        Integer roomTypeCount = getNumberOfBookableRoomType(roomType, xmlCheckInDate, xmlCheckOutDate);
+                        Pair<RoomTypeEntity, Integer> roomTypePair = new Pair<>(roomType, roomTypeCount);
+                        listOfRoomTypePairs.add(roomTypePair);
+                    }
+                }
+                retrieved = true;
                 int index = 1;
                 System.out.println("==== Room Types with available rooms =====");
-                for (RoomTypeEntity roomType : roomTypeList) {
-                    System.out.println("#" + index + " RoomType: " + roomType.getRoomTypeName());
+                for (Pair<RoomTypeEntity, Integer> roomTypePair : listOfRoomTypePairs) {
+                    System.out.println("#" + index + " RoomType: " + roomTypePair.getKey().getRoomTypeName() + ". Available Room Count : " + roomTypePair.getValue());
                     index++;
                 }
                 System.out.println("==========================================");
                 System.out.println("Select desired room type by index");
                 int choice = sc.nextInt();
-                sc.nextLine();
-                desiredRoomTypes.add(roomTypeList.get(choice -= 1));
-                System.out.println("Enter 1 to continue adding more room types");
-                if (sc.nextInt() != 1) {
-                    break;
+                choice--;
+                if (listOfRoomTypePairs.get(choice).getValue() == 0) {
+                    System.out.println("Sorry! There are no available room for this room type during the given check in and out date!");
+                    System.out.println("Please choose another room type.");
+                } else {
+                    desiredRoomTypes.add(listOfRoomTypePairs.get(choice).getKey());
+                    Pair<RoomTypeEntity, Integer> newPair = new Pair<RoomTypeEntity, Integer>(listOfRoomTypePairs.get(choice).getKey(), listOfRoomTypePairs.get(choice).getValue() - 1);
+                    listOfRoomTypePairs.set(choice, newPair);
+                    System.out.println("Enter 1 to continue adding more room types");
+                    if (sc.nextInt() != 1) {
+                        break;
+                    }
                 }
             }
-                BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
-                System.out.println("Total price: $" + totalPrice);
-                //initiate reserve room
-                System.out.println("Do you want to reserve rooms?");
-                System.out.println("Enter 1 to reserve, Enter 2 to exit");
-                int reply = sc.nextInt();
-                sc.nextLine();
-                if (reply == 1) {
-                    ReservationEntity reservation = partnerReserveRoom(email, password, date1, date2, desiredRoomTypes, nights);
-                    System.out.println("A new reservation has been made at Merlion Hotel! Your reservation ID is : " + reservation.getReservationId());
-                }
-            
+            BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
+            System.out.println("Total price: $" + totalPrice);
+            //initiate reserve room
+            System.out.println("Do you want to reserve rooms?");
+            System.out.println("Enter 1 to reserve, Enter 2 to exit");
+            int reply = sc.nextInt();
+            sc.nextLine();
+            if (reply == 1) {
+                ReservationEntity reservation = partnerReserveRoom(email, password, xmlCheckInDate, xmlCheckOutDate, desiredRoomTypes, nights);
+                System.out.println("A new reservation has been made at Merlion Hotel! Your reservation ID is : " + reservation.getReservationId());
+            }
 
         } catch (PartnerNotFoundException_Exception ex) {
             System.out.println("Sorry, the credentials you have typed are either invalid or no such partner exist! \n");
@@ -263,8 +289,6 @@ public class MainApp {
         return port.partnerLogin(email, password);
     }
 
-
-
     private static java.util.List<holidayreservationsystem.RoomTypeEntity> partnerSearchRoom(java.lang.String email, java.lang.String password, javax.xml.datatype.XMLGregorianCalendar checkInDate, javax.xml.datatype.XMLGregorianCalendar checkOutDate) throws PartnerNotFoundException_Exception {
         holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
         holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
@@ -295,10 +319,16 @@ public class MainApp {
         return port.partnerReserveRoom(email, password, checkInDate, checkOutDate, desiredRoomTypes, nights);
     }
 
+    private static Integer getNumberOfBookableRoomType(holidayreservationsystem.RoomTypeEntity roomType, javax.xml.datatype.XMLGregorianCalendar checkInDate, javax.xml.datatype.XMLGregorianCalendar checkOutDate) {
+        holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
+        holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
+        return port.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);
+    }
 
-
-
-
-
+    private static java.util.List<holidayreservationsystem.RoomTypeEntity> retrieveRoomTypeList() {
+        holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
+        holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
+        return port.retrieveRoomTypeList();
+    }
 
 }

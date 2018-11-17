@@ -59,48 +59,55 @@ public class HoRSWebService {
     private PartnerControllerLocal partnerControllerLocal;
     @EJB
     private TransactionControllerLocal transactionControllerLocal;
-    
-    
-    
-    
 
-    
-    @WebMethod(operationName = "partnerLogin") 
-    public PartnerEntity partnerLogin(@WebParam(name ="email") String email, @WebParam(name = "password") String password) throws PartnerNotFoundException {
+    @WebMethod(operationName = "partnerLogin")
+    public PartnerEntity partnerLogin(@WebParam(name = "email") String email, @WebParam(name = "password") String password) throws PartnerNotFoundException {
         PartnerEntity partner = partnerControllerLocal.partnerLogin(email, password);
-        if(partner == null) {
+        if (partner == null) {
             throw new PartnerNotFoundException("Partner not found");
         }
         return partner;
     }
-    
+
     @WebMethod(operationName = "partnerSearchRoom")
-    public List<RoomTypeEntity> partnerSearchRoom(@WebParam(name ="email") String email, @WebParam(name ="password") String password,
-           @WebParam(name ="checkInDate") Date checkInDate,@WebParam(name ="checkOutDate") Date checkOutDate) throws PartnerNotFoundException{
+    public List<RoomTypeEntity> partnerSearchRoom(@WebParam(name = "email") String email, @WebParam(name = "password") String password,
+            @WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate) throws PartnerNotFoundException {
         PartnerEntity partner = partnerControllerLocal.partnerLogin(email, password);
-        if(partner == null) {
+        if (partner == null) {
             throw new PartnerNotFoundException("Partner not found");
         }
+
         List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
         return availRoomTypes;
     }
-    
-    public List<RoomTypeEntity> getAvailableRoomTypes(@WebParam(name ="checkInDate") Date checkInDate) {
+
+    @WebMethod(operationName = "getNumberOfBookableRoomType")
+    public Integer getNumberOfBookableRoomType(@WebParam(name = "roomType") RoomTypeEntity roomType, @WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate) {
+        return roomControllerLocal.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);
+    }
+
+    @WebMethod(operationName = "getAvailableRoomTypes")
+    public List<RoomTypeEntity> getAvailableRoomTypes(@WebParam(name = "checkInDate") Date checkInDate) {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
         List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerLocal.retrieveRoomTypesByRateType(RateType.NORMAL);
-        for(RoomTypeEntity roomType : onlineRoomTypes) {
-           
-                if(!roomType.isIsDisabled()){
+        for (RoomTypeEntity roomType : onlineRoomTypes) {
+
+            if (!roomType.isIsDisabled()) {
                 availRoomTypes.add(roomType);
-                }
-            
-        }   
+            }
+
+        }
         return availRoomTypes;
-        
+
     }
-    
+
+    @WebMethod(operationName = "retrieveRoomTypeList")
+    public List<RoomTypeEntity> retrieveRoomTypeList() {
+        return roomTypeControllerLocal.retrieveRoomTypeList();
+    }
+
     @WebMethod(operationName = "partnerReserveRoom")
-    public ReservationEntity partnerReserveRoom(@WebParam(name ="email")String email, @WebParam(name ="password")String password, @WebParam(name ="checkInDate")Date checkInDate, @WebParam(name ="checkOutDate")Date checkOutDate,@WebParam(name ="desiredRoomTypes") List<RoomTypeEntity> desiredRoomTypes, @WebParam(name ="nights")int nights) throws PartnerNotFoundException, NoReservationFoundException {
+    public ReservationEntity partnerReserveRoom(@WebParam(name = "email") String email, @WebParam(name = "password") String password, @WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate, @WebParam(name = "desiredRoomTypes") List<RoomTypeEntity> desiredRoomTypes, @WebParam(name = "nights") int nights) throws PartnerNotFoundException, NoReservationFoundException {
         try {
             PartnerEntity partner = partnerLogin(email, password);
             BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
@@ -109,7 +116,7 @@ public class HoRSWebService {
             reservation = reservationControllerLocal.createNewReservation(reservation);
 
             //create individual room bookings
-            for(RoomTypeEntity roomType : desiredRoomTypes) {
+            for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
                 booking = bookingControllerLocal.createBooking(booking);
                 reservationControllerLocal.addBookings(reservation.getReservationId(), booking);
@@ -121,27 +128,27 @@ public class HoRSWebService {
             reservationControllerLocal.addTransaction(reservation.getReservationId(), transaction);
 
             return reservation;
-        } catch(PartnerNotFoundException ex) {
+        } catch (PartnerNotFoundException ex) {
             throw new PartnerNotFoundException("Partner not found");
         }
     }
-    
+
     @WebMethod(operationName = "viewPartnerReservationDetails")
-    public ReservationEntity viewPartnerReservationDetails(@WebParam(name ="email") String email, @WebParam(name ="password") String password, @WebParam(name ="reservationId")Long reservationId) throws PartnerNotFoundException, NoReservationFoundException {
+    public ReservationEntity viewPartnerReservationDetails(@WebParam(name = "email") String email, @WebParam(name = "password") String password, @WebParam(name = "reservationId") Long reservationId) throws PartnerNotFoundException, NoReservationFoundException {
         try {
             PartnerEntity partner = partnerLogin(email, password);
             ReservationEntity reservation = reservationControllerLocal.retrieveReservationById(reservationId);
             return reservation;
         } catch (PartnerNotFoundException ex) {
             throw new PartnerNotFoundException("Partner not found");
-        } catch(NoResultException ex) {
+        } catch (NoResultException ex) {
             throw new NoReservationFoundException("no reservation found");
         }
-        
+
     }
-    
+
     @WebMethod(operationName = "viewAllPartnerReservations")
-    public List<ReservationEntity> viewAllPartnerReservations(@WebParam(name ="email")String email, @WebParam(name ="password")String password) throws PartnerNotFoundException, NoReservationFoundException {
+    public List<ReservationEntity> viewAllPartnerReservations(@WebParam(name = "email") String email, @WebParam(name = "password") String password) throws PartnerNotFoundException, NoReservationFoundException {
         try {
             PartnerEntity partner = partnerLogin(email, password);
             List<ReservationEntity> reservations = reservationControllerLocal.retrieveReservationByPartnerId(partner.getPartnerId());
@@ -151,11 +158,11 @@ public class HoRSWebService {
         } catch (NoResultException ex) {
             throw new NoReservationFoundException("No reservations found");
         }
-        
+
     }
-    
+
     @WebMethod(operationName = "calculateTotalPrice")
-    public BigDecimal calculateTotalPrice(@WebParam(name ="roomTypes")List<RoomTypeEntity> roomTypes,@WebParam(name ="nights") int nights) {
+    public BigDecimal calculateTotalPrice(@WebParam(name = "roomTypes") List<RoomTypeEntity> roomTypes, @WebParam(name = "nights") int nights) {
         BigDecimal totalAmount = new BigDecimal(0.00);
         for (int i = 0; i < nights; i++) {
             for (RoomTypeEntity roomType : roomTypes) {
@@ -164,7 +171,7 @@ public class HoRSWebService {
                     if (roomRate.getRateType() == RateType.PUBLISHED) {
                         //System.out.println("Rate per night: "+roomRate.getRatePerNight());
                         totalAmount = totalAmount.add(roomRate.getRatePerNight());
-                        
+
                     }
                 }
             }
@@ -173,6 +180,4 @@ public class HoRSWebService {
         return totalAmount;
     }
 
-
-    
 }

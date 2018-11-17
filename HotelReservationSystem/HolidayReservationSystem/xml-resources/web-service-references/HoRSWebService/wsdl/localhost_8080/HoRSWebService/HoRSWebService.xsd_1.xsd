@@ -12,6 +12,10 @@
 
 <xs:element name="getAvailableRoomTypesResponse" type="tns:getAvailableRoomTypesResponse"/>
 
+<xs:element name="getNumberOfBookableRoomType" type="tns:getNumberOfBookableRoomType"/>
+
+<xs:element name="getNumberOfBookableRoomTypeResponse" type="tns:getNumberOfBookableRoomTypeResponse"/>
+
 <xs:element name="partnerLogin" type="tns:partnerLogin"/>
 
 <xs:element name="partnerLoginResponse" type="tns:partnerLoginResponse"/>
@@ -23,6 +27,10 @@
 <xs:element name="partnerSearchRoom" type="tns:partnerSearchRoom"/>
 
 <xs:element name="partnerSearchRoomResponse" type="tns:partnerSearchRoomResponse"/>
+
+<xs:element name="retrieveRoomTypeList" type="tns:retrieveRoomTypeList"/>
+
+<xs:element name="retrieveRoomTypeListResponse" type="tns:retrieveRoomTypeListResponse"/>
 
 <xs:element name="viewAllPartnerReservations" type="tns:viewAllPartnerReservations"/>
 
@@ -55,6 +63,16 @@
 <xs:element name="roomTypeId" type="xs:long" minOccurs="0"/>
 <xs:element name="roomTypeName" type="xs:string" minOccurs="0"/>
 <xs:element name="size" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveRoomTypeList">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="retrieveRoomTypeListResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -150,6 +168,33 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getNumberOfBookableRoomType">
+<xs:sequence>
+<xs:element name="roomType" type="tns:roomTypeEntity" minOccurs="0"/>
+<xs:element name="checkInDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="checkOutDate" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getNumberOfBookableRoomTypeResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="calculateTotalPrice">
+<xs:sequence>
+<xs:element name="roomTypes" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="nights" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="calculateTotalPriceResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:decimal" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="partnerReserveRoom">
 <xs:sequence>
 <xs:element name="email" type="xs:string" minOccurs="0"/>
@@ -164,19 +209,6 @@
 <xs:complexType name="partnerReserveRoomResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:reservationEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="calculateTotalPrice">
-<xs:sequence>
-<xs:element name="roomTypes" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="nights" type="xs:int"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="calculateTotalPriceResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

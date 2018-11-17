@@ -109,15 +109,27 @@ public class MainApp {
     }
 
     public void doSearchHotelRoom(Scanner sc) {
-        System.out.println("Enter check in year: [YYYY]");
-        int year = sc.nextInt();
-        year -= 1900;
-        System.out.println("Enter check in month: [ 1(January)~12(December) ]");
-        int month = sc.nextInt();
-        month -= 1;
-        System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
-        int day = sc.nextInt();
-        Date checkInDate = new Date(year, month, day, 14, 0);
+        boolean valid = false;
+        Date checkInDate = null;
+        while (!valid) {
+            System.out.println("Enter check in year: [YYYY]");
+            int year = sc.nextInt();
+            year -= 1900;
+            System.out.println("Enter check in month: [ 1(January)~12(December) ]");
+            int month = sc.nextInt();
+            month -= 1;
+            System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
+            int day = sc.nextInt();
+            checkInDate = new Date(year, month, day, 14, 0);
+            Date registerDate = new Date(year, month, day, 23, 59);
+            Date today = new Date();
+            if (registerDate.before(today)) {
+                System.out.println("You've entered a date that's before the present. Please try a later date!");
+            } else {
+                valid = true;
+            }
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(checkInDate);
         System.out.println("Enter how many nights of stay"); //12pm checkout

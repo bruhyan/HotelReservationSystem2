@@ -4,11 +4,26 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/HoRSWebService/HoRSWebService?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="getAvailableRoomTypes">
-<part name="parameters" element="tns:getAvailableRoomTypes"/>
+<message name="partnerLogin">
+<part name="parameters" element="tns:partnerLogin"/>
 </message>
-<message name="getAvailableRoomTypesResponse">
-<part name="parameters" element="tns:getAvailableRoomTypesResponse"/>
+<message name="partnerLoginResponse">
+<part name="parameters" element="tns:partnerLoginResponse"/>
+</message>
+<message name="PartnerNotFoundException">
+<part name="fault" element="tns:PartnerNotFoundException"/>
+</message>
+<message name="getNumberOfBookableRoomType">
+<part name="parameters" element="tns:getNumberOfBookableRoomType"/>
+</message>
+<message name="getNumberOfBookableRoomTypeResponse">
+<part name="parameters" element="tns:getNumberOfBookableRoomTypeResponse"/>
+</message>
+<message name="retrieveRoomTypeList">
+<part name="parameters" element="tns:retrieveRoomTypeList"/>
+</message>
+<message name="retrieveRoomTypeListResponse">
+<part name="parameters" element="tns:retrieveRoomTypeListResponse"/>
 </message>
 <message name="partnerSearchRoom">
 <part name="parameters" element="tns:partnerSearchRoom"/>
@@ -16,23 +31,11 @@
 <message name="partnerSearchRoomResponse">
 <part name="parameters" element="tns:partnerSearchRoomResponse"/>
 </message>
-<message name="PartnerNotFoundException">
-<part name="fault" element="tns:PartnerNotFoundException"/>
+<message name="calculateTotalPrice">
+<part name="parameters" element="tns:calculateTotalPrice"/>
 </message>
-<message name="viewAllPartnerReservations">
-<part name="parameters" element="tns:viewAllPartnerReservations"/>
-</message>
-<message name="viewAllPartnerReservationsResponse">
-<part name="parameters" element="tns:viewAllPartnerReservationsResponse"/>
-</message>
-<message name="NoReservationFoundException">
-<part name="fault" element="tns:NoReservationFoundException"/>
-</message>
-<message name="viewPartnerReservationDetails">
-<part name="parameters" element="tns:viewPartnerReservationDetails"/>
-</message>
-<message name="viewPartnerReservationDetailsResponse">
-<part name="parameters" element="tns:viewPartnerReservationDetailsResponse"/>
+<message name="calculateTotalPriceResponse">
+<part name="parameters" element="tns:calculateTotalPriceResponse"/>
 </message>
 <message name="partnerReserveRoom">
 <part name="parameters" element="tns:partnerReserveRoom"/>
@@ -40,39 +43,49 @@
 <message name="partnerReserveRoomResponse">
 <part name="parameters" element="tns:partnerReserveRoomResponse"/>
 </message>
-<message name="calculateTotalPrice">
-<part name="parameters" element="tns:calculateTotalPrice"/>
+<message name="NoReservationFoundException">
+<part name="fault" element="tns:NoReservationFoundException"/>
 </message>
-<message name="calculateTotalPriceResponse">
-<part name="parameters" element="tns:calculateTotalPriceResponse"/>
+<message name="getAvailableRoomTypes">
+<part name="parameters" element="tns:getAvailableRoomTypes"/>
 </message>
-<message name="partnerLogin">
-<part name="parameters" element="tns:partnerLogin"/>
+<message name="getAvailableRoomTypesResponse">
+<part name="parameters" element="tns:getAvailableRoomTypesResponse"/>
 </message>
-<message name="partnerLoginResponse">
-<part name="parameters" element="tns:partnerLoginResponse"/>
+<message name="viewPartnerReservationDetails">
+<part name="parameters" element="tns:viewPartnerReservationDetails"/>
+</message>
+<message name="viewPartnerReservationDetailsResponse">
+<part name="parameters" element="tns:viewPartnerReservationDetailsResponse"/>
+</message>
+<message name="viewAllPartnerReservations">
+<part name="parameters" element="tns:viewAllPartnerReservations"/>
+</message>
+<message name="viewAllPartnerReservationsResponse">
+<part name="parameters" element="tns:viewAllPartnerReservationsResponse"/>
 </message>
 <portType name="HoRSWebService">
-<operation name="getAvailableRoomTypes">
-<input wsam:Action="http://ws.session.ejb/HoRSWebService/getAvailableRoomTypesRequest" message="tns:getAvailableRoomTypes"/>
-<output wsam:Action="http://ws.session.ejb/HoRSWebService/getAvailableRoomTypesResponse" message="tns:getAvailableRoomTypesResponse"/>
+<operation name="partnerLogin">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/partnerLoginRequest" message="tns:partnerLogin"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/partnerLoginResponse" message="tns:partnerLoginResponse"/>
+<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/partnerLogin/Fault/PartnerNotFoundException"/>
+</operation>
+<operation name="getNumberOfBookableRoomType">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/getNumberOfBookableRoomTypeRequest" message="tns:getNumberOfBookableRoomType"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/getNumberOfBookableRoomTypeResponse" message="tns:getNumberOfBookableRoomTypeResponse"/>
+</operation>
+<operation name="retrieveRoomTypeList">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/retrieveRoomTypeListRequest" message="tns:retrieveRoomTypeList"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/retrieveRoomTypeListResponse" message="tns:retrieveRoomTypeListResponse"/>
 </operation>
 <operation name="partnerSearchRoom">
 <input wsam:Action="http://ws.session.ejb/HoRSWebService/partnerSearchRoomRequest" message="tns:partnerSearchRoom"/>
 <output wsam:Action="http://ws.session.ejb/HoRSWebService/partnerSearchRoomResponse" message="tns:partnerSearchRoomResponse"/>
 <fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/partnerSearchRoom/Fault/PartnerNotFoundException"/>
 </operation>
-<operation name="viewAllPartnerReservations">
-<input wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservationsRequest" message="tns:viewAllPartnerReservations"/>
-<output wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservationsResponse" message="tns:viewAllPartnerReservationsResponse"/>
-<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservations/Fault/PartnerNotFoundException"/>
-<fault message="tns:NoReservationFoundException" name="NoReservationFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservations/Fault/NoReservationFoundException"/>
-</operation>
-<operation name="viewPartnerReservationDetails">
-<input wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetailsRequest" message="tns:viewPartnerReservationDetails"/>
-<output wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetailsResponse" message="tns:viewPartnerReservationDetailsResponse"/>
-<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetails/Fault/PartnerNotFoundException"/>
-<fault message="tns:NoReservationFoundException" name="NoReservationFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetails/Fault/NoReservationFoundException"/>
+<operation name="calculateTotalPrice">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/calculateTotalPriceRequest" message="tns:calculateTotalPrice"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/calculateTotalPriceResponse" message="tns:calculateTotalPriceResponse"/>
 </operation>
 <operation name="partnerReserveRoom">
 <input wsam:Action="http://ws.session.ejb/HoRSWebService/partnerReserveRoomRequest" message="tns:partnerReserveRoom"/>
@@ -80,19 +93,47 @@
 <fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/partnerReserveRoom/Fault/PartnerNotFoundException"/>
 <fault message="tns:NoReservationFoundException" name="NoReservationFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/partnerReserveRoom/Fault/NoReservationFoundException"/>
 </operation>
-<operation name="calculateTotalPrice">
-<input wsam:Action="http://ws.session.ejb/HoRSWebService/calculateTotalPriceRequest" message="tns:calculateTotalPrice"/>
-<output wsam:Action="http://ws.session.ejb/HoRSWebService/calculateTotalPriceResponse" message="tns:calculateTotalPriceResponse"/>
+<operation name="getAvailableRoomTypes">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/getAvailableRoomTypesRequest" message="tns:getAvailableRoomTypes"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/getAvailableRoomTypesResponse" message="tns:getAvailableRoomTypesResponse"/>
 </operation>
-<operation name="partnerLogin">
-<input wsam:Action="http://ws.session.ejb/HoRSWebService/partnerLoginRequest" message="tns:partnerLogin"/>
-<output wsam:Action="http://ws.session.ejb/HoRSWebService/partnerLoginResponse" message="tns:partnerLoginResponse"/>
-<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/partnerLogin/Fault/PartnerNotFoundException"/>
+<operation name="viewPartnerReservationDetails">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetailsRequest" message="tns:viewPartnerReservationDetails"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetailsResponse" message="tns:viewPartnerReservationDetailsResponse"/>
+<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetails/Fault/PartnerNotFoundException"/>
+<fault message="tns:NoReservationFoundException" name="NoReservationFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewPartnerReservationDetails/Fault/NoReservationFoundException"/>
+</operation>
+<operation name="viewAllPartnerReservations">
+<input wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservationsRequest" message="tns:viewAllPartnerReservations"/>
+<output wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservationsResponse" message="tns:viewAllPartnerReservationsResponse"/>
+<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservations/Fault/PartnerNotFoundException"/>
+<fault message="tns:NoReservationFoundException" name="NoReservationFoundException" wsam:Action="http://ws.session.ejb/HoRSWebService/viewAllPartnerReservations/Fault/NoReservationFoundException"/>
 </operation>
 </portType>
 <binding name="HoRSWebServicePortBinding" type="tns:HoRSWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="getAvailableRoomTypes">
+<operation name="partnerLogin">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="PartnerNotFoundException">
+<soap:fault name="PartnerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="getNumberOfBookableRoomType">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveRoomTypeList">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -113,7 +154,7 @@
 <soap:fault name="PartnerNotFoundException" use="literal"/>
 </fault>
 </operation>
-<operation name="viewAllPartnerReservations">
+<operation name="calculateTotalPrice">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -121,27 +162,6 @@
 <output>
 <soap:body use="literal"/>
 </output>
-<fault name="PartnerNotFoundException">
-<soap:fault name="PartnerNotFoundException" use="literal"/>
-</fault>
-<fault name="NoReservationFoundException">
-<soap:fault name="NoReservationFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="viewPartnerReservationDetails">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="PartnerNotFoundException">
-<soap:fault name="PartnerNotFoundException" use="literal"/>
-</fault>
-<fault name="NoReservationFoundException">
-<soap:fault name="NoReservationFoundException" use="literal"/>
-</fault>
 </operation>
 <operation name="partnerReserveRoom">
 <soap:operation soapAction=""/>
@@ -158,7 +178,7 @@
 <soap:fault name="NoReservationFoundException" use="literal"/>
 </fault>
 </operation>
-<operation name="calculateTotalPrice">
+<operation name="getAvailableRoomTypes">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -167,7 +187,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="partnerLogin">
+<operation name="viewPartnerReservationDetails">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -177,6 +197,24 @@
 </output>
 <fault name="PartnerNotFoundException">
 <soap:fault name="PartnerNotFoundException" use="literal"/>
+</fault>
+<fault name="NoReservationFoundException">
+<soap:fault name="NoReservationFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="viewAllPartnerReservations">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="PartnerNotFoundException">
+<soap:fault name="PartnerNotFoundException" use="literal"/>
+</fault>
+<fault name="NoReservationFoundException">
+<soap:fault name="NoReservationFoundException" use="literal"/>
 </fault>
 </operation>
 </binding>

@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import javafx.util.Pair;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
 import util.enumeration.RoomStatus;
@@ -98,15 +99,27 @@ public class FrontOfficeModule {
     }
 
     public void doWalkInSearchRoom(Scanner sc) {
-        System.out.println("Enter check in year: [YYYY]");
-        int year = sc.nextInt();
-        year -= 1900;
-        System.out.println("Enter check in month: [ 1(January)~12(December) ]");
-        int month = sc.nextInt();
-        month -= 1;
-        System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
-        int day = sc.nextInt();
-        Date checkInDate = new Date(year, month, day, 14, 0);
+
+        boolean valid = false;
+        Date checkInDate = null;
+        while (!valid) {
+            System.out.println("Enter check in year: [YYYY]");
+            int year = sc.nextInt();
+            year -= 1900;
+            System.out.println("Enter check in month: [ 1(January)~12(December) ]");
+            int month = sc.nextInt();
+            month -= 1;
+            System.out.println("Enter check in date [1 ~ 31]"); //2pm check in
+            int day = sc.nextInt();
+            Date today = new Date();
+            checkInDate = new Date(year, month, day, 14, 0);
+            Date registerDate = new Date(year, month, day, 23, 59);
+            if (registerDate.before(today)) {
+                System.out.println("You've entered a date that's before your current date or before our check in time of 2pm. Please try a later date!");
+            } else {
+                valid = true;
+            }
+        }
         Calendar cal = Calendar.getInstance();
         cal.setTime(checkInDate);
         System.out.println("Enter how many nights of stay"); //12pm checkout
@@ -114,23 +127,45 @@ public class FrontOfficeModule {
         cal.add(Calendar.DATE, nights);
         cal.set(Calendar.HOUR_OF_DAY, 12);
         Date checkOutDate = cal.getTime();
-
+        List<RoomTypeEntity> allRoomTypes = roomTypeControllerRemote.retrieveRoomTypeList();
         List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
+        List<Pair<RoomTypeEntity, Integer>> listOfRoomTypePairs = new ArrayList<>();
+        boolean retrieved = false;
         while (true) {
-            List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
+            //List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
+
+            if (retrieved == false) {
+                for (RoomTypeEntity roomType : allRoomTypes) {
+                    if (roomType.isIsDisabled()) {
+                        continue;
+                    }
+                    Integer roomTypeCount = roomControllerRemote.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);
+                    Pair<RoomTypeEntity, Integer> roomTypePair = new Pair<>(roomType, roomTypeCount);
+                    listOfRoomTypePairs.add(roomTypePair);
+                }
+            }
+            retrieved = true;
             int index = 1;
             System.out.println("==== Room Types with available rooms =====");
-            for (RoomTypeEntity roomType : availRoomTypes) {
-                System.out.println("#" + index + " RoomType: " + roomType.getRoomTypeName());
+            for (Pair<RoomTypeEntity, Integer> roomTypePair : listOfRoomTypePairs) {
+                System.out.println("#" + index + " RoomType: " + roomTypePair.getKey().getRoomTypeName() + ". Available Room Count : " + roomTypePair.getValue());
                 index++;
             }
             System.out.println("==========================================");
             System.out.println("Select desired room type by index");
             int choice = sc.nextInt();
-            desiredRoomTypes.add(availRoomTypes.get(choice -= 1));
-            System.out.println("Enter 1 to continue adding more room types");
-            if (sc.nextInt() != 1) {
-                break;
+            choice--;
+            if (listOfRoomTypePairs.get(choice).getValue() == 0) {
+                System.out.println("Sorry! There are no available room for this room type during the given check in and out date!");
+                System.out.println("Please choose another room type.");
+            } else {
+                desiredRoomTypes.add(listOfRoomTypePairs.get(choice).getKey());
+                Pair<RoomTypeEntity, Integer> newPair = new Pair<RoomTypeEntity, Integer>(listOfRoomTypePairs.get(choice).getKey(), listOfRoomTypePairs.get(choice).getValue() - 1);
+                listOfRoomTypePairs.set(choice, newPair);
+                System.out.println("Enter 1 to continue adding more room types");
+                if (sc.nextInt() != 1) {
+                    break;
+                }
             }
         }
         BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
@@ -140,7 +175,11 @@ public class FrontOfficeModule {
         System.out.println("Enter 1 to reserve, Enter 2 to exit");
         int reply = sc.nextInt();
         if (reply == 1) {
-            doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrice);
+            if (loggedInUser != null) {
+                doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrice);
+            } else {
+                System.out.println("You must be logged in to reserve rooms.");
+            }
         }
 
     }
@@ -256,22 +295,22 @@ public class FrontOfficeModule {
         try {
             cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
             boolean exit = false;
-            while(exit == false) {
+            while (exit == false) {
                 List<ReservationEntity> reservationsForCheckIn = customerControllerRemote.retrieveReservationsForCheckIn(cus.getCustomerId());
-                if(reservationsForCheckIn.size() == 0) {
-                    System.out.println("Customer :"+cus.getEmail()+" has no more reservations to check in");
+                if (reservationsForCheckIn.size() == 0) {
+                    System.out.println("Customer :" + cus.getEmail() + " has no more reservations to check in");
                     exit = true;
-                }else {
-                    System.out.println("===== List of unpaid reservations of customer: "+cus.getEmail()+" =====");
+                } else {
+                    System.out.println("===== List of unpaid reservations of customer: " + cus.getEmail() + " =====");
                     int index = 1;
-                    for(ReservationEntity reservation : reservationsForCheckIn) {
-                        System.out.println("#"+index+" Reservation ID: "+ reservation.getReservationId() + " Reservation Date: " + reservation.getDateOfReservation());
+                    for (ReservationEntity reservation : reservationsForCheckIn) {
+                        System.out.println("#" + index + " Reservation ID: " + reservation.getReservationId() + " Reservation Date: " + reservation.getDateOfReservation());
                     }
                     System.out.println("========================================================================");
                     System.out.println();
                     System.out.println("Select reservation to check out by index number #");
                     int reply = sc.nextInt();
-                    ReservationEntity selectedReservation = reservationsForCheckIn.get(reply-=1);
+                    ReservationEntity selectedReservation = reservationsForCheckIn.get(reply -= 1);
                     List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(selectedReservation.getReservationId());
                     TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(selectedReservation.getReservationId());
 
@@ -283,7 +322,7 @@ public class FrontOfficeModule {
                         index++;
                         System.out.println();
                     }
-                    System.out.println("Total price: $"+transaction.getTotalCost());
+                    System.out.println("Total price: $" + transaction.getTotalCost());
                     System.out.println("=========================================");
                     System.out.println("Enter 1 to confirm check in");
                     reply = sc.nextInt();
@@ -297,10 +336,10 @@ public class FrontOfficeModule {
                         System.out.println("Check in completed");
                         System.out.println("Enter 1 to continue, 2 to exit");
                         int input = sc.nextInt();
-                        if(input == 2) {
+                        if (input == 2) {
                             exit = true;
                         }
-                    }else {
+                    } else {
                         exit = true;
                     }
                 }
@@ -321,23 +360,23 @@ public class FrontOfficeModule {
             cus = customerControllerRemote.retrieveCustomerEntityByContactNumber(contactNum);
 
             boolean exit = false;
-            while(exit == false) {
+            while (exit == false) {
                 List<ReservationEntity> unpaidReservations = customerControllerRemote.retrieveCustomerUnpaidReservation(cus.getCustomerId());
-                if(unpaidReservations.size() == 0) {
-                    System.out.println("Customer: "+cus.getEmail()+" has no more reservations to check out.");
+                if (unpaidReservations.size() == 0) {
+                    System.out.println("Customer: " + cus.getEmail() + " has no more reservations to check out.");
                     exit = true;
-                }else {
+                } else {
                     int index = 1;
-                    System.out.println("===== List of unpaid reservations of customer: "+cus.getEmail()+" =====");
-                    for(ReservationEntity reservation : unpaidReservations) {
-                        System.out.println("#"+index+" Reservation ID: "+ reservation.getReservationId() + " Reservation Date: " + reservation.getDateOfReservation());
+                    System.out.println("===== List of unpaid reservations of customer: " + cus.getEmail() + " =====");
+                    for (ReservationEntity reservation : unpaidReservations) {
+                        System.out.println("#" + index + " Reservation ID: " + reservation.getReservationId() + " Reservation Date: " + reservation.getDateOfReservation());
                         index++;
                     }
                     System.out.println("========================================================================");
                     System.out.println();
                     System.out.println("Select reservation to check out by index number #");
                     int reply = sc.nextInt();
-                    ReservationEntity selectedReservation = unpaidReservations.get(reply-=1);
+                    ReservationEntity selectedReservation = unpaidReservations.get(reply -= 1);
                     List<BookingEntity> bookingList = reservationControllerRemote.retrieveBookingListByReservationId(selectedReservation.getReservationId());
                     TransactionEntity transaction = reservationControllerRemote.retrieveTransactionByReservationId(selectedReservation.getReservationId());
 
@@ -349,7 +388,7 @@ public class FrontOfficeModule {
                         index++;
                         System.out.println();
                     }
-                    System.out.println("Total price: $"+transaction.getTotalCost());
+                    System.out.println("Total price: $" + transaction.getTotalCost());
                     System.out.println("=========================================");
                     System.out.println("Enter 1 to confirm check out");
                     reply = sc.nextInt();
@@ -369,14 +408,14 @@ public class FrontOfficeModule {
                             System.out.println("Check out completed.");
                             System.out.println("Enter 1 to continue, Enter 2 to exit");
                             int input = sc.nextInt();
-                            if(input == 2) {
+                            if (input == 2) {
                                 exit = true;
                             }
                         } else {
                             System.out.println("why don't want pay? ):");
                             exit = true;
                         }
-                    }else {
+                    } else {
                         exit = true;
                     }
                 }

@@ -346,6 +346,7 @@ public class HotelOperationModule {
         System.out.println("Room Status: " + String.valueOf(room.getRoomStatus()));
         System.out.println("Room Type: " + room.getRoomType());
         System.out.println("Room Booking: " + room.getBooking());
+        System.out.println("Room is reserved : " + room.getIsReserved());
         System.out.println("Room disabled: " + room.getIsDisabled());
 
         System.out.println("==============================================================");

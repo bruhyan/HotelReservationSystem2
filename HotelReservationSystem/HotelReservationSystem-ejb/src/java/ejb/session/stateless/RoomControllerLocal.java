@@ -41,4 +41,6 @@ public interface RoomControllerLocal {
 
     public boolean checkAvailabilityOfRoomTypeWhenAllocating(Long roomTypeId);
     
+    public int getNumberOfBookableRoomType(RoomTypeEntity roomType, Date checkInDate, Date checkOutDate);
+    
 }
