@@ -8,6 +8,7 @@ package ejb.session.ws;
 import Entity.BookingEntity;
 import Entity.PartnerEntity;
 import Entity.ReservationEntity;
+import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import Entity.TransactionEntity;
@@ -114,12 +115,24 @@ public class HoRSWebService {
             ReservationEntity reservation;
             reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, partner, ReservationType.Partner);
             reservation = reservationControllerLocal.createNewReservation(reservation);
+            
+            //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
+            Date today = new Date();
+            //System.out.println("CheckInDate: " + checkInDate + " today date: " + today);
 
-            //create individual room bookings
+            if(checkInDate.after(today)) { //if future
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
                 booking = bookingControllerLocal.createBooking(booking);
                 reservationControllerLocal.addBookings(reservation.getReservationId(), booking);
+            }
+            }else { //if today
+                for (RoomTypeEntity roomType : desiredRoomTypes) {
+                 RoomEntity room = roomControllerLocal.walkInAllocateRoom(roomType.getRoomTypeId());
+                 BookingEntity booking = new BookingEntity(room, reservation);
+                 booking = bookingControllerLocal.createBooking(booking);
+                 reservationControllerLocal.addBookings(reservation.getReservationId(), booking); 
+                }
             }
 
             //create unpaid transaction

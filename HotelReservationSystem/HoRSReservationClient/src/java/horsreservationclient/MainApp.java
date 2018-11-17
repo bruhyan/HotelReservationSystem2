@@ -8,6 +8,7 @@ package horsreservationclient;
 import Entity.BookingEntity;
 import Entity.CustomerEntity;
 import Entity.ReservationEntity;
+import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import Entity.TransactionEntity;
@@ -186,26 +187,40 @@ public class MainApp {
         int reply = sc.nextInt();
         if (reply == 1) {
             if (loggedInUser != null) {
-                doWalkInReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrice);
+                doOnlineReserveRoom(checkInDate, checkOutDate, desiredRoomTypes, sc, totalPrice);
             } else {
                 System.out.println("You must be logged in to reserve rooms.");
             }
         }
     }
 
-    public void doWalkInReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrice) {
+    public void doOnlineReserveRoom(Date checkInDate, Date checkOutDate, List<RoomTypeEntity> desiredRoomTypes, Scanner sc, BigDecimal totalPrice) {
         try {
             sc.nextLine();
 
             //create new reservation
             ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
             reservation = reservationControllerRemote.createNewReservation(reservation);
+            
+            //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
+            Date today = new Date();
+            //System.out.println("CheckInDate: " + checkInDate + " today date: " + today);
+            
+            
 
-            //create individual room bookings
-            for (RoomTypeEntity roomType : desiredRoomTypes) {
-                BookingEntity booking = new BookingEntity(roomType, reservation);
-                booking = bookingControllerRemote.createBooking(booking);
-                reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+            if(checkInDate.after(today)) { //if future
+                for (RoomTypeEntity roomType : desiredRoomTypes) {
+                    BookingEntity booking = new BookingEntity(roomType, reservation);
+                    booking = bookingControllerRemote.createBooking(booking);
+                    reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
+                }
+            }else { //if today
+                for (RoomTypeEntity roomType : desiredRoomTypes) {
+                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
+                 BookingEntity booking = new BookingEntity(room, reservation);
+                 booking = bookingControllerRemote.createBooking(booking);
+                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking); 
+                }
             }
 
             //create unpaid transaction
