@@ -136,7 +136,7 @@ public class FrontOfficeModule {
 
             if (retrieved == false) {
                 for (RoomTypeEntity roomType : allRoomTypes) {
-                    if (roomType.isIsDisabled()) {
+                    if (roomType.isIsDisabled() || !roomTypeControllerRemote.checkIfHavePublished(roomType.getRoomTypeId())) {
                         continue;
                     }
                     Integer roomTypeCount = roomControllerRemote.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);

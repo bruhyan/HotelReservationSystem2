@@ -92,7 +92,7 @@ public class MainApp {
                     }
                 } else if (input == 2 && loggedInUser == null) {
                     doGuestRegistration(sc);
-                } else if (input == 2 && loggedInUser != null) {
+                } else if (input == 2 && loggedInUser != null || input == 3 && loggedInUser == null) {
                     doSearchHotelRoom(sc);
                 } else if (input == 3 && loggedInUser != null || input == 4 && loggedInUser == null) {
                     break;
@@ -140,12 +140,13 @@ public class MainApp {
         List<RoomTypeEntity> allRoomTypes = roomTypeControllerRemote.retrieveRoomTypeList();
         List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
         List<Pair<RoomTypeEntity, Integer>> listOfRoomTypePairs = new ArrayList<>();
+        
         boolean retrieved = false;
         while (true) {
 
             if (retrieved == false) {
                 for (RoomTypeEntity roomType : allRoomTypes) {
-                    if (roomType.isIsDisabled()) {
+                    if (roomType.isIsDisabled() || !roomTypeControllerRemote.checkIfHaveNormal(roomType.getRoomTypeId())) {
                         continue;
                     }
                     Integer roomTypeCount = roomControllerRemote.getNumberOfBookableRoomType(roomType, checkInDate, checkOutDate);

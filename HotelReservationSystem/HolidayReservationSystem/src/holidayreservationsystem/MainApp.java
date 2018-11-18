@@ -164,7 +164,7 @@ public class MainApp {
 
                 if (retrieved == false) {
                     for (RoomTypeEntity roomType : allRoomTypes) {
-                        if (roomType.isIsDisabled()) {
+                        if (roomType.isIsDisabled() || !checkIfHaveNormal(roomType.getRoomTypeId())) {
                             continue;
                         }
                         Integer roomTypeCount = getNumberOfBookableRoomType(roomType, xmlCheckInDate, xmlCheckOutDate);
@@ -329,6 +329,12 @@ public class MainApp {
         holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
         holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
         return port.retrieveRoomTypeList();
+    }
+
+    private static boolean checkIfHaveNormal(java.lang.Long arg0) {
+        holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
+        holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
+        return port.checkIfHaveNormal(arg0);
     }
 
 }

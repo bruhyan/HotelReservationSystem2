@@ -106,6 +106,11 @@ public class HoRSWebService {
     public List<RoomTypeEntity> retrieveRoomTypeList() {
         return roomTypeControllerLocal.retrieveRoomTypeList();
     }
+    
+    @WebMethod(operationName = "checkIfHaveNormal")
+    public boolean checkIfHaveNormal(Long roomTypeId){
+        return roomTypeControllerLocal.checkIfHaveNormal(roomTypeId);
+    }
 
     @WebMethod(operationName = "partnerReserveRoom")
     public ReservationEntity partnerReserveRoom(@WebParam(name = "email") String email, @WebParam(name = "password") String password, @WebParam(name = "checkInDate") Date checkInDate, @WebParam(name = "checkOutDate") Date checkOutDate, @WebParam(name = "desiredRoomTypes") List<RoomTypeEntity> desiredRoomTypes, @WebParam(name = "nights") int nights) throws PartnerNotFoundException, NoReservationFoundException {

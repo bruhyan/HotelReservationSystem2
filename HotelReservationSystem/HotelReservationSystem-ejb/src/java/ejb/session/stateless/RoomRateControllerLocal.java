@@ -32,4 +32,5 @@ public interface RoomRateControllerLocal {
     public RoomRatesEntity retriveRoomRateByRateType(RateType rateType);
     
     public void deleteAllDisabledRoomRates();
+
 }
