@@ -4,6 +4,10 @@
 
 <xs:element name="PartnerNotFoundException" type="tns:PartnerNotFoundException"/>
 
+<xs:element name="addDays" type="tns:addDays"/>
+
+<xs:element name="addDaysResponse" type="tns:addDaysResponse"/>
+
 <xs:element name="calculateTotalPrice" type="tns:calculateTotalPrice"/>
 
 <xs:element name="calculateTotalPriceResponse" type="tns:calculateTotalPriceResponse"/>
@@ -155,19 +159,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="partnerLogin">
-<xs:sequence>
-<xs:element name="email" type="xs:string" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerLoginResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getNumberOfBookableRoomType">
 <xs:sequence>
 <xs:element name="roomType" type="tns:roomTypeEntity" minOccurs="0"/>
@@ -182,10 +173,37 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="partnerLogin">
+<xs:sequence>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLoginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addDays">
+<xs:sequence>
+<xs:element name="arg0" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="arg1" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addDaysResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="calculateTotalPrice">
 <xs:sequence>
 <xs:element name="roomTypes" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="nights" type="xs:int"/>
+<xs:element name="currentDate" type="xs:dateTime" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
