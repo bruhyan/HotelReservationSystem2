@@ -1,4 +1,3 @@
-
 package horsmanagementclient;
 
 import Entity.BookingEntity;
@@ -23,10 +22,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
 import util.enumeration.RoomStatus;
+import util.exception.BookingNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoReservationFoundException;
 
@@ -299,8 +301,15 @@ public class FrontOfficeModule {
                     index = 1;
                     System.out.println("===== Reservation rooms information =====");
                     for (BookingEntity booking : bookingList) {
-                        System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
-                        System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                        try {
+                            System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
+
+                            System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                        } catch (BookingNotFoundException ex) {
+
+                            System.out.println("The booking was not found!");
+
+                        }
                         index++;
                         System.out.println();
                     }
@@ -310,7 +319,12 @@ public class FrontOfficeModule {
                     reply = sc.nextInt();
                     if (reply == 1) {
                         for (BookingEntity booking : bookingList) {
-                            RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                            RoomEntity room = null;
+                            try {
+                                room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                            } catch (BookingNotFoundException ex) {
+                                System.out.println("The booking was not found!");
+                            }
                             roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.OCCUPIED);
                             roomControllerRemote.changeIsReserved(room.getRoomId(), false);
                         }
@@ -365,8 +379,12 @@ public class FrontOfficeModule {
                     index = 1;
                     System.out.println("===== Reservation rooms information =====");
                     for (BookingEntity booking : bookingList) {
-                        System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
-                        System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                        try {
+                            System.out.print("#:" + index + " Room Type: " + bookingControllerRemote.retriveRoomTypeEntityByBookingId(booking.getBookingId()).getRoomTypeName());
+                            System.out.print(" Room Number: " + bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId()).getRoomNumber());
+                        } catch (BookingNotFoundException ex) {
+                            System.out.println("The booking was not found!");
+                        }
                         index++;
                         System.out.println();
                     }
@@ -376,7 +394,12 @@ public class FrontOfficeModule {
                     reply = sc.nextInt();
                     if (reply == 1) {
                         for (BookingEntity booking : bookingList) {
-                            RoomEntity room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                            RoomEntity room = null;
+                            try {
+                                room = bookingControllerRemote.retrieveRoomEntityByBookingId(booking.getBookingId());
+                            } catch (BookingNotFoundException ex) {
+                                System.out.println("The booking was not found!");
+                            }
                             roomControllerRemote.changeRoomStatus(room.getRoomId(), RoomStatus.AVAILABLE);
                         }
 
