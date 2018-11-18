@@ -20,8 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.util.Pair;
 import util.enumeration.RateType;
 import util.enumeration.ReservationType;
@@ -300,7 +298,12 @@ public class MainApp {
 
     public List<ReservationEntity> doViewAllMyReservations() {
         Long customerId = loggedInUser.getCustomerId();
-        List<ReservationEntity> reservations = customerControllerRemote.retrieveCustomerReservation(customerId);
+        List<ReservationEntity> reservations = null;
+        try {
+            reservations = customerControllerRemote.retrieveCustomerReservation(customerId);
+        } catch (NoReservationFoundException ex) {
+            System.out.println("There is no reservation found for this customer!");
+        }
         int index = 1;
         System.out.println("============= Reservation List =================");
         for (ReservationEntity reservation : reservations) {

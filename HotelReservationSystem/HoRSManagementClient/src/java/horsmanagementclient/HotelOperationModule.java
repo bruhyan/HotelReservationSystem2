@@ -154,6 +154,10 @@ public class HotelOperationModule {
         System.out.println("Enter Room Rate per night: \n");
         System.out.print(">");
         BigDecimal ratePerNight = sc.nextBigDecimal();
+        while(ratePerNight.compareTo(BigDecimal.valueOf(0)) < 0){
+            System.out.println("Your room rate cannot be lesser than zero! Please try again.");
+            ratePerNight = sc.nextBigDecimal();
+        }
         sc.nextLine();
         System.out.println("Enter validity start date (eg. 25-11-1995), leave empty if no validation period is needed: \n");
         System.out.print(">");

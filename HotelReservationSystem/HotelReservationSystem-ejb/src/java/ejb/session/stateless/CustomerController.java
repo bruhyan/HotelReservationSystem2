@@ -1,4 +1,3 @@
-
 package ejb.session.stateless;
 
 import Entity.CustomerEntity;
@@ -15,10 +14,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoReservationFoundException;
-
 
 @Stateless
 @Local(CustomerControllerLocal.class)
@@ -28,8 +27,13 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
+    @Override
     public CustomerEntity createCustomerEntity(CustomerEntity cus) {
-        em.persist(cus);
+        try {
+            em.persist(cus);
+        } catch (PersistenceException ex) {
+            System.out.println("The customer detail given appears to be non unique! Please try an email that has not be used.");
+        }
         em.flush();
         return cus;
     }
@@ -37,7 +41,7 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
     @Override
     public CustomerEntity retrieveCustomerEntityById(long customerId) throws CustomerNotFoundException {
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
-        if(customer == null){
+        if (customer == null) {
             throw new CustomerNotFoundException("No customer found with the given customer ID");
         }
         return customer;
@@ -48,18 +52,24 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.contactNumber = :contactNum");
         query.setParameter("contactNum", contactNum);
 
-        try{
-            return (CustomerEntity)query.getSingleResult();
-        }catch(NoResultException ex){
+        try {
+            return (CustomerEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
             System.out.println("Error!");
             throw new CustomerNotFoundException("Customer not found!");
         }
     }
 
-    public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
+    @Override
+    public List<ReservationEntity> retrieveCustomerReservation(Long customerId) throws NoReservationFoundException {
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer.customerId = :customerId");
         query.setParameter("customerId", customerId);
-        List<ReservationEntity> reservations =  query.getResultList();
+
+        List<ReservationEntity> reservations = query.getResultList();
+
+        if (reservations == null) {
+            throw new NoReservationFoundException("Customer has no reservations!");
+        }
         return reservations;
     }
 
@@ -72,22 +82,22 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :email");
         query.setParameter("email", email);
 
-        try{
-        return (CustomerEntity)query.getSingleResult();
-        }catch(NoResultException ex){
+        try {
+            return (CustomerEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
             throw new CustomerNotFoundException("No customer with the given email was found!");
         }
     }
 
     @Override
-    public ReservationEntity retrieveCustomerLatestReservation(Long customerId) throws NoReservationFoundException{
+    public ReservationEntity retrieveCustomerLatestReservation(Long customerId) throws NoReservationFoundException {
         CustomerEntity customer = em.find(CustomerEntity.class, customerId);
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer = :customer ORDER BY r.reservationId DESC");
         query.setParameter("customer", customer);
 
-        try{
-        return (ReservationEntity) query.getResultList().get(0);
-        }catch(ArrayIndexOutOfBoundsException ex){
+        try {
+            return (ReservationEntity) query.getResultList().get(0);
+        } catch (ArrayIndexOutOfBoundsException ex) {
             throw new NoReservationFoundException("No new reservation was found for this customer!");
         }
 
@@ -106,8 +116,8 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
         Date limitDate = new Date();
         String dateString = sdf2.format(limitDate);
-        String lowerLimitDateS = dateString+" 23:59:59";
-        String upperLimitDateS = dateString+" 14:00:00";
+        String lowerLimitDateS = dateString + " 23:59:59";
+        String upperLimitDateS = dateString + " 14:00:00";
         Date lowerLimitDateF;
         Date upperLimitDateF;
         try {
@@ -118,7 +128,7 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
             lowerLimitDateF = null;
             upperLimitDateF = null;
         }
-        
+
         //can check in later ON THE STIPULATED DAY BUT CANNOT CHECK IN LATER THAN STIPULATED DAY
         //need upper window and lower window --> current day 2pm to 11.59pm
         //cannot see reservations that have check in later than today
@@ -130,6 +140,5 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         query.setParameter("upperLimitDateF", upperLimitDateF);
         return query.getResultList();
     }
-
 
 }
