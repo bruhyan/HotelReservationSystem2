@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package horsreservationclient;
 
 import ejb.session.stateless.BookingControllerRemote;
@@ -13,10 +9,6 @@ import ejb.session.stateless.RoomTypeControllerRemote;
 import ejb.session.stateless.TransactionControllerRemote;
 import javax.ejb.EJB;
 
-/**
- *
- * @author mdk12
- */
 public class Main {
 
     @EJB
