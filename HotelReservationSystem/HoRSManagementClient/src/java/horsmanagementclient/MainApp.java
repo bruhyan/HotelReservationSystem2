@@ -107,6 +107,7 @@ public class MainApp {
         Scanner sc = new Scanner(System.in);
         int input = 0;
         while (true) {
+
             System.out.println("==== Welcome to the HoRS Management Client ====");
             if (loggedInUser == null) {
                 System.out.println("1: Employee Login");
@@ -128,7 +129,6 @@ public class MainApp {
             }
             input = 0;
             if (loggedInUser == null) {
-                input = 0;
                 while (input < 1 || input > 3) {
                     System.out.println(">");
                     input = sc.nextInt();
@@ -154,6 +154,9 @@ public class MainApp {
                         doStreamEmployee();
                     } else if (input == 2) {
                         doLogout(sc);
+                        input = 0;
+                        break;
+                        
                     } else if (input == 3) {
                         break;
                     } else if (input == 4) {
@@ -170,11 +173,11 @@ public class MainApp {
                 }
 
             }
+
             if (loggedInUser != null && input == 3 || loggedInUser == null & input == 2) {
 
                 break;
             }
-
         }
     }
 

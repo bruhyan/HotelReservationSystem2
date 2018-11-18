@@ -111,6 +111,8 @@ public class ReservationController implements ReservationControllerRemote, Reser
     @Override
     public ReservationEntity retrieveReservationById(Long reservationId) {
         ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
+        reserv.getBookingList().size();
+        reserv.getTransaction();
         return reserv;
     }
     

@@ -82,7 +82,8 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
         //reservations.size();
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer.customerId = :customerId");
         query.setParameter("customerId", customerId);
-        return query.getResultList();
+        List<ReservationEntity> reservations =  query.getResultList();
+        return reservations;
     }
 
     public void nullCustomerReservation(Long customerId) {

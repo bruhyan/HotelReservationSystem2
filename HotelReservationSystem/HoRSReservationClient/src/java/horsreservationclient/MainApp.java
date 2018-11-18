@@ -73,15 +73,14 @@ public class MainApp {
             }
             if (loggedInUser != null) {
                 System.out.println("1: Guest Logout");
-                System.out.println("2: Register as Guest");
-                System.out.println("3: Search Hotel Room");
-                System.out.println("4: Exit");
-                System.out.println("5: View My Reservation Details");
-                System.out.println("6: View All My Reservations");
+                System.out.println("2: Search Hotel Room");
+                System.out.println("3: Exit");
+                System.out.println("4: View My Reservation Details");
+                System.out.println("5: View All My Reservations");
             }
             System.out.println("===============================================");
             input = 0;
-            while (input < 1 || input > 6) {
+            while (input < 1 || input > 5) {
                 System.out.print(">");
                 input = sc.nextInt();
                 if (input == 1) {
@@ -91,19 +90,19 @@ public class MainApp {
                         //System.out.println("Current logged in user: "+loggedInUser.getEmail());
                         doLogout();
                     }
-                } else if (input == 2) {
+                } else if (input == 2 && loggedInUser == null) {
                     doGuestRegistration(sc);
-                } else if (input == 3) {
+                } else if (input == 2 && loggedInUser != null) {
                     doSearchHotelRoom(sc);
-                } else if (input == 4) {
+                } else if (input == 3 && loggedInUser != null || input == 4 && loggedInUser == null) {
                     break;
-                } else if (input == 5 && loggedInUser != null) {
+                } else if (input == 4 && loggedInUser != null) {
                     doViewMyReservationDetails(sc);
-                } else if (input == 6 && loggedInUser != null) {
+                } else if (input == 5 && loggedInUser != null) {
                     doViewAllMyReservations();
                 }
             }
-            if (input == 4) {
+            if (input == 3 && loggedInUser != null || input == 4 && loggedInUser == null) {
                 break;
             }
         }
@@ -201,25 +200,23 @@ public class MainApp {
             //create new reservation
             ReservationEntity reservation = new ReservationEntity(new Date(), checkInDate, checkOutDate, false, loggedInUser, ReservationType.Online);
             reservation = reservationControllerRemote.createNewReservation(reservation);
-            
+
             //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
             Date today = new Date();
             //System.out.println("CheckInDate: " + checkInDate + " today date: " + today);
-            
-            
 
-            if(checkInDate.after(today)) { //if future
+            if (checkInDate.after(today)) { //if future
                 for (RoomTypeEntity roomType : desiredRoomTypes) {
                     BookingEntity booking = new BookingEntity(roomType, reservation);
                     booking = bookingControllerRemote.createBooking(booking);
                     reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
                 }
-            }else { //if today
+            } else { //if today
                 for (RoomTypeEntity roomType : desiredRoomTypes) {
-                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
-                 BookingEntity booking = new BookingEntity(room, reservation);
-                 booking = bookingControllerRemote.createBooking(booking);
-                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking); 
+                    RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
+                    BookingEntity booking = new BookingEntity(room, reservation);
+                    booking = bookingControllerRemote.createBooking(booking);
+                    reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
                 }
             }
 
@@ -292,6 +289,7 @@ public class MainApp {
         System.out.println("Select which reservation to view");
         int choice = sc.nextInt();
         ReservationEntity selected = reservations.get(choice -= 1);
+        selected = reservationControllerRemote.retrieveReservationById(selected.getReservationId());
         System.out.println("==============================================================");
         System.out.println("Reservation ID: " + selected.getReservationId());
         System.out.println("Reservation type: " + selected.getReservationType());
@@ -301,7 +299,13 @@ public class MainApp {
         System.out.println("Check in date: " + selected.getCheckInDateTime());
         System.out.println("Check out date: " + selected.getCheckOutDateTime());
         System.out.println("==============================================================");
-
+        System.out.println("Room types booked with this reservation :");
+        List<BookingEntity> bookingList = selected.getBookingList();
+        for (BookingEntity booking : bookingList) {
+            System.out.println("Booking ID : " + booking.getBookingId() + ". Room Type : " + booking.getRoomType().getRoomTypeName());
+        }
+        System.out.println("The total price for your reservation is : $" + selected.getTransaction().getTotalCost());
+        System.out.println("==============================================================");
     }
 
     public List<ReservationEntity> doViewAllMyReservations() {
@@ -310,6 +314,7 @@ public class MainApp {
         int index = 1;
         System.out.println("============= Reservation List =================");
         for (ReservationEntity reservation : reservations) {
+
             System.out.println("#" + index + " Reservation ID: " + reservation.getReservationId());
             index++;
         }
