@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Entity;
 
 import java.io.Serializable;
@@ -16,12 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlTransient;
-import util.enumeration.AmenitiesType;
 
-/**
- *
- * @author mdk12
- */
+
 @Entity
 public class RoomTypeEntity implements Serializable {
 
@@ -42,7 +33,7 @@ public class RoomTypeEntity implements Serializable {
     @Column(length = 256)
     private String bed;
     @Column(length = 256)
-    private String amenities; //amenities using String for now, could think about enums or smt next time
+    private String amenities; 
     @Column(length = 2)
     private Integer capacity;
     @Column(nullable = false)

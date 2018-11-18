@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Entity;
 
 import java.io.Serializable;
@@ -20,10 +15,7 @@ import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.ReservationType;
 
-/**
- *
- * @author mdk12
- */
+
 @Entity
 public class ReservationEntity implements Serializable {
 
@@ -64,8 +56,6 @@ public class ReservationEntity implements Serializable {
         this.showedUp = showedUp;
         this.customer = customer;
         this.reservationType = reservationType;
-        //this.transaction = transaction;
-        //this.numOfGuests = numOfGuests;
     }
 
     //use this if partner reservation
@@ -91,7 +81,6 @@ public class ReservationEntity implements Serializable {
         this.dateOfReservation = dateOfReservation;
     }
 
-    //@XmlTransient
     public Date getCheckInDateTime() {
         return checkInDateTime;
     }
