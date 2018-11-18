@@ -154,7 +154,7 @@ public class MainApp {
             XMLGregorianCalendar xmlCheckOutDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
             List<RoomTypeEntity> allRoomTypes = retrieveRoomTypeList();
 //            XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
-            //DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, 
+            //DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,
             //c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
             //DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
             List<RoomTypeEntity> desiredRoomTypes = new ArrayList<>();
@@ -196,7 +196,7 @@ public class MainApp {
                     }
                 }
             }
-            BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights);
+            BigDecimal totalPrice = calculateTotalPrice(desiredRoomTypes, nights, xmlCheckInDate);
             System.out.println("Total price: $" + totalPrice);
             //initiate reserve room
             System.out.println("Do you want to reserve rooms?");
@@ -307,11 +307,7 @@ public class MainApp {
         return port.viewPartnerReservationDetails(email, password, reservationId);
     }
 
-    private static BigDecimal calculateTotalPrice(java.util.List<holidayreservationsystem.RoomTypeEntity> roomTypes, int nights) {
-        holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
-        holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
-        return port.calculateTotalPrice(roomTypes, nights);
-    }
+
 
     private static ReservationEntity partnerReserveRoom(java.lang.String email, java.lang.String password, javax.xml.datatype.XMLGregorianCalendar checkInDate, javax.xml.datatype.XMLGregorianCalendar checkOutDate, java.util.List<holidayreservationsystem.RoomTypeEntity> desiredRoomTypes, int nights) throws PartnerNotFoundException_Exception, NoReservationFoundException_Exception {
         holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
@@ -331,10 +327,23 @@ public class MainApp {
         return port.retrieveRoomTypeList();
     }
 
+    private static BigDecimal calculateTotalPrice(java.util.List<holidayreservationsystem.RoomTypeEntity> roomTypes, int nights, javax.xml.datatype.XMLGregorianCalendar currentDate) {
+        holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
+        holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
+        return port.calculateTotalPrice(roomTypes, nights, currentDate);
+    }
+
     private static boolean checkIfHaveNormal(java.lang.Long arg0) {
         holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
         holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
         return port.checkIfHaveNormal(arg0);
     }
+
+
+    
+
+
+
+
 
 }

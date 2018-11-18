@@ -244,7 +244,6 @@ public class MainApp {
         for (int i = 0; i < nights; i++) {
             for (RoomTypeEntity roomType : roomTypes) {
                 try {
-
                     RoomRatesEntity prevailingRate = roomTypeControllerRemote.findOnlineRateForRoomType(roomType.getRoomTypeId(), currentDay);
                     BigDecimal priceForTheNight = prevailingRate.getRatePerNight();
                     totalPrice = totalPrice.add(priceForTheNight);
