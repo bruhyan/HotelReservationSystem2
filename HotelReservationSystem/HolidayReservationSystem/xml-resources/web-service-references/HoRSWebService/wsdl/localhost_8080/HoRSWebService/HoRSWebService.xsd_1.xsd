@@ -176,18 +176,6 @@
 </xs:complexType>
 
 <xs:complexType name="partnerLogin">
-<xs:sequence>
-<xs:element name="email" type="xs:string" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerLoginResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getNumberOfBookableRoomType">
 <xs:sequence>
 <xs:element name="roomType" type="tns:roomTypeEntity" minOccurs="0"/>
@@ -202,6 +190,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="partnerLogin">
+<xs:sequence>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLoginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="addDays">
 <xs:sequence>
 <xs:element name="arg0" type="xs:dateTime" minOccurs="0"/>
@@ -212,6 +213,20 @@
 <xs:complexType name="addDaysResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="calculateTotalPrice">
+<xs:sequence>
+<xs:element name="roomTypes" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="nights" type="xs:int"/>
+<xs:element name="currentDate" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="calculateTotalPriceResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -229,20 +244,6 @@
 <xs:complexType name="partnerReserveRoomResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:reservationEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="calculateTotalPrice">
-<xs:sequence>
-<xs:element name="roomTypes" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="nights" type="xs:int"/>
-<xs:element name="currentDate" type="xs:dateTime" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="calculateTotalPriceResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

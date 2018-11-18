@@ -26,8 +26,6 @@ public class RoomEntity implements Serializable {
     private RoomTypeEntity roomType;
     @Column(nullable=false)
     private Boolean isDisabled;
-    @OneToOne
-    private BookingEntity booking;
     @Column(nullable=false)
     private RoomStatus roomStatus;
     @Column(nullable=false)
@@ -45,13 +43,7 @@ public class RoomEntity implements Serializable {
         this.isReserved = false;
     }
 
-    public BookingEntity getBooking() {
-        return booking;
-    }
-
-    public void setBooking(BookingEntity booking) {
-        this.booking = booking;
-    }
+    
 
     public RoomTypeEntity getRoomType() {
         return roomType;
