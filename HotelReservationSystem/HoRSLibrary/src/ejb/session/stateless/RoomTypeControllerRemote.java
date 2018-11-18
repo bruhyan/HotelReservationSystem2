@@ -43,4 +43,8 @@ public interface RoomTypeControllerRemote {
     public void deleteAllDisabledRoomType();
 
     public RoomRatesEntity findOnlineRateForRoomType(Long roomTypeId, Date currentDate) throws NoAvailableOnlineRoomRateException;
+
+    public boolean checkIfHavePublished(Long roomTypeId);
+
+    public boolean checkIfHaveNormal(Long roomTypeId);
 }

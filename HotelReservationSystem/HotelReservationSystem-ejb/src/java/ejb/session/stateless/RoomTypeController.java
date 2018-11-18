@@ -70,6 +70,32 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
     }
 
     @Override
+    public boolean checkIfHaveNormal(Long roomTypeId) {
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        List<RoomRatesEntity> roomRateList = roomType.getRoomRateList();
+        for (RoomRatesEntity roomRate : roomRateList) {
+            if (roomRate.getRateType() == RateType.NORMAL) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean checkIfHavePublished(Long roomTypeId) {
+        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+        List<RoomRatesEntity> roomRateList = roomType.getRoomRateList();
+        for (RoomRatesEntity roomRate : roomRateList) {
+            if (roomRate.getRateType() == RateType.PUBLISHED) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public void addRoomRateById(Long roomTypeId, Long roomRateId) {
         RoomRatesEntity roomRate = em.find(RoomRatesEntity.class, roomRateId);
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);

@@ -30,7 +30,7 @@ public interface RoomTypeControllerLocal {
     public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
     
     public RoomTypeEntity findUpgradeRoomType(Long roomTypeId);
-    
+
     public List<RoomTypeEntity> retrieveRoomTypeListByRates(RoomRatesEntity roomRates);
 
     public List<RoomTypeEntity> retrieveRoomTypesByRateType(RateType rateType);
@@ -42,6 +42,8 @@ public interface RoomTypeControllerLocal {
     public List<RoomTypeEntity> retrieveRoomTypeByRanking();
 
     public void updateRoomRank(int rank, Long roomTypeId);
-    
+
     public void deleteAllDisabledRoomType();
+
+    public boolean checkIfHaveNormal(Long roomTypeId);
 }
