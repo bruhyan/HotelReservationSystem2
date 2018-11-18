@@ -2,9 +2,7 @@
 package ejb.session.stateless;
 
 import Entity.TransactionEntity;
-import javax.ejb.Remote;
 
-@Remote
 public interface TransactionControllerRemote {
 
     public TransactionEntity retrieveTransactionById(Long transactionId);

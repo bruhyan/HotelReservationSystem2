@@ -1,8 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
@@ -22,10 +19,7 @@ import javax.persistence.Query;
 import util.enumeration.RateType;
 import util.exception.NoAvailableOnlineRoomRateException;
 
-/**
- *
- * @author mdk12
- */
+
 @Stateless
 @Local(RoomTypeControllerLocal.class)
 @Remote(RoomTypeControllerRemote.class)
@@ -33,10 +27,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
     @EJB
     private RoomControllerLocal roomControllerLocal;
-    @EJB
-    private RoomControllerRemote roomControllerRemote;
-    @EJB
-    private RoomRateControllerRemote roomRateControllerRemote;
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
@@ -53,7 +43,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         } else {
             List<RoomTypeEntity> roomTypeAdjust = getRoomTypeListToAdjustDesc(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjust) {
-                //System.out.println(roomTypeOld.getRanking() + " rank "+  roomTypeOld.getRoomTypeName());
                 roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
             }
             em.persist(roomType);
@@ -114,13 +103,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         List<RoomTypeEntity> roomTypeList = retrieveRoomTypeList();
         RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
         int currentRank = roomType.getRanking();
-//
-//        if (rank == lowestRank + 1) {
-//            em.persist(roomType);
-//            em.flush();
-//        } else {
         if (rank == 1) {
-
             List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjustAsc(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) { //descending
                 if (roomTypeOld.getRanking() == currentRank) {
@@ -144,7 +127,6 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         } else {
             List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjustDesc(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) {
-                //System.out.println(roomTypeOld.getRanking() + " rank "+  roomTypeOld.getRoomTypeName());
                 roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
             }
             roomType.setRanking(rank);

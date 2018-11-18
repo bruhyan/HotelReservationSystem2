@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
@@ -10,15 +6,9 @@ import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
 import util.enumeration.RateType;
 import util.exception.NoAvailableOnlineRoomRateException;
 
-/**
- *
- * @author mdk12
- */
-@Local
 public interface RoomTypeControllerLocal {
 
     public RoomTypeEntity createNewRoomType(RoomTypeEntity roomType);
@@ -38,9 +28,6 @@ public interface RoomTypeControllerLocal {
     public List<RoomEntity> retrieveRoomEntityByRoomType(RoomTypeEntity roomType);
 
     public List<RoomRatesEntity> retrieveRoomRateListById(Long roomTypeId);
-
-    //public RoomTypeEntity findPricierAvailableRoomTypeForWalkIn(Long roomTypeId);
-    
     
     public RoomTypeEntity findUpgradeRoomType(Long roomTypeId);
     
