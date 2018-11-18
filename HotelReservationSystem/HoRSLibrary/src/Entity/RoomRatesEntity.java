@@ -13,10 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import util.enumeration.RateType;
 
-/**
- *
- * @author mdk12
- */
+
 @Entity
 public class RoomRatesEntity implements Serializable {
 
