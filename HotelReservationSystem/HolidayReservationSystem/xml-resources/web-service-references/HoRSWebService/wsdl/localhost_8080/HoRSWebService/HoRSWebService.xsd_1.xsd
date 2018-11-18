@@ -48,6 +48,18 @@
 
 <xs:element name="viewPartnerReservationDetailsResponse" type="tns:viewPartnerReservationDetailsResponse"/>
 
+<xs:complexType name="checkIfHaveNormal">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkIfHaveNormalResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getAvailableRoomTypes">
 <xs:sequence>
 <xs:element name="checkInDate" type="xs:dateTime" minOccurs="0"/>
@@ -74,18 +86,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="checkIfHaveNormal">
-<xs:sequence>
-<xs:element name="arg0" type="xs:long" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="checkIfHaveNormalResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="retrieveRoomTypeList">
 <xs:sequence/>
 </xs:complexType>
@@ -93,27 +93,6 @@
 <xs:complexType name="retrieveRoomTypeListResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerSearchRoom">
-<xs:sequence>
-<xs:element name="email" type="xs:string" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-<xs:element name="checkInDate" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="checkOutDate" type="xs:dateTime" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerSearchRoomResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="PartnerNotFoundException">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -169,9 +148,30 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="PartnerNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="NoReservationFoundException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchRoom">
+<xs:sequence>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="checkInDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="checkOutDate" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchRoomResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:roomTypeEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

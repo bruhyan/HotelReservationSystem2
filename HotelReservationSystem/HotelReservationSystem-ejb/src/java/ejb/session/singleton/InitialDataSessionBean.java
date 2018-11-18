@@ -69,7 +69,7 @@ public class InitialDataSessionBean {
         SalesManager e3 = new SalesManager("Sales Manager", "99999999", "3", "1", "Merlion Hotel");
         GuestRelationOfficer e4 = new GuestRelationOfficer("Guest Officer", "62353535", "4", "1", "Merlion Hotel");
         Date currentDate = new Date();
-        PartnerEntity e5 = new PartnerEntity("5", "1", "Holiday.com admin", "12334556", currentDate);
+        PartnerEntity e5 = new PartnerEntity("5", "1", "Microsoft", "12334556", currentDate);
         
 
         em.persist(e1);
@@ -110,6 +110,95 @@ public class InitialDataSessionBean {
         roomRates.add(new RoomRatesEntity("Normal Test Rate 4 : $550", BigDecimal.valueOf(550.00), date1, date2, RateType.NORMAL));
         roomRates.add(new RoomRatesEntity("Published Test Rate 5 : $9500", BigDecimal.valueOf(9500.00), date1, date2, RateType.PUBLISHED));
         roomRates.add(new RoomRatesEntity("Normal Test Rate 5 : $5000", BigDecimal.valueOf(5000.00), date1, date2, RateType.NORMAL));
+
+        for (RoomRatesEntity roomRate : roomRates) {
+            em.persist(roomRate);
+            em.flush(); //for the right ordering
+        }
+
+    }
+
+    public void initialiseRoomType() {
+        //String roomName, String description, Integer size, String bed, String amenities, Integer capacity
+        List<RoomTypeEntity> roomTypes = new ArrayList<>();
+
+        roomTypes.add(new RoomTypeEntity("Deluxe Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 5));
+
+        roomTypes.add(new RoomTypeEntity("Premier Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 4));
+
+        roomTypes.add(new RoomTypeEntity("Family Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 3));
+
+        roomTypes.add(new RoomTypeEntity("Junior Suite", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 2));
+
+        roomTypes.add(new RoomTypeEntity("Grand Suite", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 1));
+
+
+        for (RoomTypeEntity roomType : roomTypes) {
+
+            em.persist(roomType);
+            em.flush();//for the right ordering
+//            roomRank.getRoomTypes().add(roomType);
+        }
+    }
+
+    public void setRoomTypesToRoomRates() {
+        int j = 1;
+        //Pair project show case
+        for (int i = 1; i <= 5; i++) {
+               
+            RoomTypeEntity roomType = em.find(RoomTypeEntity.class, Long.valueOf(i));
+            RoomRatesEntity roomRatePublished = em.find(RoomRatesEntity.class, Long.valueOf(j));
+            j++;
+            roomType.getRoomRateList().add(roomRatePublished);
+            roomRatePublished.getRoomTypeList().add(roomType);
+
+            RoomRatesEntity roomRateNormal = em.find(RoomRatesEntity.class, Long.valueOf(j));
+            j++;
+            roomType.getRoomRateList().add(roomRateNormal);
+            roomRateNormal.getRoomTypeList().add(roomType);
+
+        }
+
+    }
+
+    public void initialiseRooms() {
+        //Integer roomNumber, RoomTypeEntity roomType
+        //every room got one room type
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");
+
+        List<RoomTypeEntity> roomTypes = query.getResultList();
+
+        int floorNumber = 100;
+        int index = 1;
+        int roomName = 1;
+        for (RoomTypeEntity roomType : roomTypes) {
+            if (index == 25) {
+                break;
+            }
+
+            for (int i = 0; i < 5; i++) {
+                int roomName2 = floorNumber + roomName;
+                RoomEntity room = new RoomEntity(roomName2, roomType);
+                roomType.getRoomList().add(room);
+                em.persist(room);
+                em.flush();
+                if (index % 5 == 0) {
+                    floorNumber += 100;
+                    roomName = 0;
+                }
+                index++;
+                roomName++;
+            }
+
+        }
+
+    }
+
+}
+
+
+//Sentimental value
+
 //        roomRates.add(new RoomRatesEntity("Published Valid Test Rate 3", BigDecimal.valueOf(500.00), date1, date2, RateType.PUBLISHED));
 //        roomRates.add(new RoomRatesEntity("Published Valid Test Rate 4", BigDecimal.valueOf(5000.00), date1, date2, RateType.PUBLISHED));
 //        roomRates.add(new RoomRatesEntity("Published Valid Test Rate 4", BigDecimal.valueOf(5000.00), date1, date2, RateType.PUBLISHED));
@@ -154,95 +243,7 @@ public class InitialDataSessionBean {
 //        roomRates.add(new RoomRatesEntity("Promo Invalid Test Rate 5", BigDecimal.valueOf(150.00), date3, date4, RateType.PROMOTIONAL));
 //        roomRates.add(new RoomRatesEntity("Promo Invalid Test Rate 6", BigDecimal.valueOf(5000.00), date5, date6, RateType.PROMOTIONAL));
 //        //24
-        for (RoomRatesEntity roomRate : roomRates) {
-            em.persist(roomRate);
-            em.flush(); //for the right ordering
-        }
 
-    }
-
-    public void initialiseRoomType() {
-        //String roomName, String description, Integer size, String bed, String amenities, Integer capacity
-        List<RoomTypeEntity> roomTypes = new ArrayList<>();
-
-        roomTypes.add(new RoomTypeEntity("Deluxe Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 5));
-
-        roomTypes.add(new RoomTypeEntity("Premier Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 4));
-
-        roomTypes.add(new RoomTypeEntity("Family Room", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 3));
-
-        roomTypes.add(new RoomTypeEntity("Junior Suite", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 2));
-
-        roomTypes.add(new RoomTypeEntity("Grand Suite", "Amazing room yo", 2, "1 Queen size bed", "Free shampoo", 2, 1));
-
-//        //published and normal
-//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 1", "Should apply either", 2, "3 double size", "Free air", 5, 1));
-//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 2", "Should apply either", 2, "3 double size", "Free air", 5, 2));
-//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 3", "Should apply either", 2, "3 double size", "Free air", 5, 3));
-//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 4", "Should apply either", 2, "3 double size", "Free air", 5, 4));
-//        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $500 Rank 5", "Should apply either", 2, "3 double size", "Free air", 5, 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $5000 Rank 6", "Should apply either", 2, "3 double size", "Free air", 5));
-//
-//        //Normal And Promo
-//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 7", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 8", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 9", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 10", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $500 Rank 11", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $5000 Rank 12", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        //12
-//        //Normal And Peak
-//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 13", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 14", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 15", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 16", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $500 Rank 17", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $5000 Rank 18", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        //18
-//        //Promo And Peak
-//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 19", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 20", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 21", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 22", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $500 Rank 23", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $5000 Rank 24", "Should apply peak", 2, "3 double size", "Free air", 5));
-//        //24
-//        //Normal Promo And Peak
-//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 25", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 26", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 27", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 28", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $500 Rank 29", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $5000 Rank 30", "Should apply promo", 2, "3 double size", "Free air", 5));
-//        //30
-//        
-//        RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
-//            initaliseRoomRankingList();
-        for (RoomTypeEntity roomType : roomTypes) {
-
-            em.persist(roomType);
-            em.flush();//for the right ordering
-//            roomRank.getRoomTypes().add(roomType);
-        }
-    }
-
-    public void setRoomTypesToRoomRates() {
-        int j = 1;
-        //Pair project show case
-        for (int i = 1; i <= 5; i++) {
-               
-            RoomTypeEntity roomType = em.find(RoomTypeEntity.class, Long.valueOf(i));
-            RoomRatesEntity roomRatePublished = em.find(RoomRatesEntity.class, Long.valueOf(j));
-            j++;
-            roomType.getRoomRateList().add(roomRatePublished);
-            roomRatePublished.getRoomTypeList().add(roomType);
-
-            RoomRatesEntity roomRateNormal = em.find(RoomRatesEntity.class, Long.valueOf(j));
-            j++;
-            roomType.getRoomRateList().add(roomRateNormal);
-            roomRateNormal.getRoomTypeList().add(roomType);
-
-        }
 
 //        //Settle the first rule, Published And Normal, both valid and invalid
 //        for (int i = 1; i <= 6; i++) {
@@ -312,39 +313,47 @@ public class InitialDataSessionBean {
 //            roomRatePromo.getRoomTypeList().add(roomType);
 //
 //        }
-    }
 
-    public void initialiseRooms() {
-        //Integer roomNumber, RoomTypeEntity roomType
-        //every room got one room type
-        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");
-
-        List<RoomTypeEntity> roomTypes = query.getResultList();
-
-        int floorNumber = 100;
-        int index = 1;
-        int roomName = 1;
-        for (RoomTypeEntity roomType : roomTypes) {
-            if (index == 25) {
-                break;
-            }
-
-            for (int i = 0; i < 5; i++) {
-                int roomName2 = floorNumber + roomName;
-                RoomEntity room = new RoomEntity(roomName2, roomType);
-                roomType.getRoomList().add(room);
-                em.persist(room);
-                em.flush();
-                if (index % 5 == 0) {
-                    floorNumber += 100;
-                    roomName = 0;
-                }
-                index++;
-                roomName++;
-            }
-
-        }
-
-    }
-
-}
+//        //published and normal
+//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 1", "Should apply either", 2, "3 double size", "Free air", 5, 1));
+//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 2", "Should apply either", 2, "3 double size", "Free air", 5, 2));
+//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 3", "Should apply either", 2, "3 double size", "Free air", 5, 3));
+//        roomTypes.add(new RoomTypeEntity("Published And Normal Rank 4", "Should apply either", 2, "3 double size", "Free air", 5, 4));
+//        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $500 Rank 5", "Should apply either", 2, "3 double size", "Free air", 5, 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Published And Normal $5000 Rank 6", "Should apply either", 2, "3 double size", "Free air", 5));
+//
+//        //Normal And Promo
+//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 7", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 8", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 9", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal And Promo Rank 10", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $500 Rank 11", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Normal And Promo $5000 Rank 12", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        //12
+//        //Normal And Peak
+//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 13", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 14", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 15", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal and peak Rank 16", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $500 Rank 17", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Normal and peak $5000 Rank 18", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        //18
+//        //Promo And Peak
+//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 19", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 20", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 21", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Promo and peak Rank 22", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $500 Rank 23", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Promo and peak $5000 Rank 24", "Should apply peak", 2, "3 double size", "Free air", 5));
+//        //24
+//        //Normal Promo And Peak
+//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 25", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 26", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 27", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Normal, promo and peak Rank 28", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $500 Rank 29", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        roomTypes.add(new RoomTypeEntity("Invalid Normal, promo and peak $5000 Rank 30", "Should apply promo", 2, "3 double size", "Free air", 5));
+//        //30
+//        
+//        RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
+//            initaliseRoomRankingList();
