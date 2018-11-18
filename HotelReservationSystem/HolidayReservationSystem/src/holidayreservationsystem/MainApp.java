@@ -333,7 +333,14 @@ public class MainApp {
         return port.calculateTotalPrice(roomTypes, nights, currentDate);
     }
 
+    private static boolean checkIfHaveNormal(java.lang.Long arg0) {
+        holidayreservationsystem.HoRSWebService_Service service = new holidayreservationsystem.HoRSWebService_Service();
+        holidayreservationsystem.HoRSWebService port = service.getHoRSWebServicePort();
+        return port.checkIfHaveNormal(arg0);
+    }
 
+
+    
 
 
 
