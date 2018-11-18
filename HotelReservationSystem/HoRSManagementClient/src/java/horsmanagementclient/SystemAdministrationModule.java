@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package horsmanagementclient;
 
 import Entity.EmployeeEntity;
@@ -18,10 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 import javax.persistence.PersistenceException;
 
-/**
- *
- * @author Bryan
- */
+
 public class SystemAdministrationModule {
 
     private EmployeeEntity loggedInUser;
@@ -59,7 +52,6 @@ public class SystemAdministrationModule {
                 } else if (input == 5) {
                     break;
                 }
-
             }
             if (input == 5) {
                 break;
@@ -106,7 +98,6 @@ public class SystemAdministrationModule {
                 System.out.println("Sorry! There is some issue with your input. Please check if your email has not been used.");
             }
         }
-        //System.out.println("");
     }
 
     public int chooseEmployeeType(Scanner sc) {
@@ -117,7 +108,6 @@ public class SystemAdministrationModule {
         System.out.println("4: Guest Relation Officer");
         int reply = sc.nextInt();
         sc.nextLine();
-
         return reply;
 
     }

@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-//Testing git remote
 package horsmanagementclient;
 
 import Entity.BookingEntity;
@@ -29,10 +23,7 @@ import java.util.Scanner;
 import util.enumeration.RateType;
 import util.enumeration.RoomStatus;
 
-/**
- *
- * @author mdk12
- */
+
 public class HotelOperationModule {
 
     private EmployeeEntity loggedInUser;
@@ -64,7 +55,7 @@ public class HotelOperationModule {
             System.out.println("1: Create new room");
             System.out.println("2: View all rooms");
             System.out.println("3: Create New Room Type");
-            System.out.println("4: View All Room Types"); //here can view room type details first then  delete or update also
+            System.out.println("4: View All Room Types");
             System.out.println("5: Add a Room Rate to a Room Type");
             System.out.println("6: View Room Allocation Exception Report");
             System.out.println("7: Exit");
@@ -152,7 +143,6 @@ public class HotelOperationModule {
             }
         }
     }
-// public RoomRatesEntity(String name, BigDecimal ratePerNight, Date validityStart, Date validityEnd) {
 
     public void doCreateNewRoomRate(Scanner sc) {
         Date date2 = null;
@@ -212,7 +202,6 @@ public class HotelOperationModule {
             System.out.println(roomType.getRoomTypeId() + ". Room type name : " + roomType.getRoomTypeName() + " .");
         }
         System.out.print(">");
-        Long roomTypeId = sc.nextLong();
         sc.nextLine();
 
     }
@@ -556,7 +545,7 @@ public class HotelOperationModule {
             response = sc.nextInt();
             sc.nextLine();
             if (response == 1) {
-                doUpdateRoomType(roomType, sc); //probably just print all the artibutes, only thing same is the ID
+                doUpdateRoomType(roomType, sc);
             } else if (response == 2) {
                 doDeleteRoomType(roomTypeId);
             } else if (response == 3) {
@@ -740,17 +729,9 @@ public class HotelOperationModule {
         }
         System.out.println(hasPublished + " " + hasNormal);
         System.out.println("Choose room rate for this room type : ");
-//	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//	Date date = new Date();
         for (RoomRatesEntity roomRateEntity : roomRatesList) { //validity check, use it at booking
-//            if(date.compareTo(roomRateEntity.getValidityEnd()) > 0){ //validity ended
-//            
-//            }else if(date.compareTo(roomRateEntity.getValidityStart()) > 0){ //validity haven't start
-//            
-//            }else{
             System.out.println(roomRateEntity.getRoomRatesId() + ". Rate Type: " + roomRateEntity.getRateType() + ". Name: " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
 
-//            }
         }
         System.out.print(">");
 
@@ -789,17 +770,8 @@ public class HotelOperationModule {
         boolean hasNormal = false;
 
         System.out.println("Choose room rate for this room type : ");
-//	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//	Date date = new Date();
         for (RoomRatesEntity roomRateEntity : roomRatesList) { //validity check, use it at booking
-//            if(date.compareTo(roomRateEntity.getValidityEnd()) > 0){ //validity ended
-//            
-//            }else if(date.compareTo(roomRateEntity.getValidityStart()) > 0){ //validity haven't start
-//            
-//            }else{
             System.out.println(roomRateEntity.getRoomRatesId() + ". Rate Type: " + roomRateEntity.getRateType() + ". Name: " + roomRateEntity.getName() + ", Room Rate : $" + roomRateEntity.getRatePerNight() + " Per Night");
-
-//            }
         }
         System.out.print(">");
         return sc.nextLong();

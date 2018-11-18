@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package horsmanagementclient;
 
 import Entity.EmployeeEntity;
 import Entity.GuestRelationOfficer;
 import Entity.OperationManager;
-import Entity.RoomTypeEntity;
-import Entity.RoomTypeRanking;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import ejb.session.stateless.BookingControllerRemote;
@@ -27,10 +21,7 @@ import ejb.session.stateless.TransactionControllerRemote;
 import java.util.Scanner;
 import util.exception.EmployeeNotFoundException;
 
-/**
- *
- * @author Bryan
- */
+
 public class MainApp {
 
     private EmployeeControllerRemote employeeControllerRemote;
@@ -42,7 +33,6 @@ public class MainApp {
     private PartnerControllerRemote partnerControllerRemote;
     private CustomerControllerRemote customerControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
-
     private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
     private TransactionControllerRemote transactionControllerRemote;
     private RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote;
@@ -62,44 +52,12 @@ public class MainApp {
         this.partnerControllerRemote = partnerControllerRemote;
         this.customerControllerRemote = customerControllerRemote;
         this.reservationControllerRemote = reservationControllerRemote;
-
         this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
-
         this.roomAllocationExceptionControllerRemote = roomAllocationExceptionControllerRemote;
-
         this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
         this.transactionControllerRemote = transactionControllerRemote;
     }
-
-    public void test() {
-
-//        RoomTypeRanking roomTypeRank = roomTypeRankingControllerRemote.getRoomTypeRanking();
-//        int index = 1;
-//        for(RoomTypeEntity roomType : roomTypeRank.getRoomTypes()){
-//            
-//            System.out.println(index + " room Type : " + roomType.getRoomTypeName());
-//            index++;
-//        }
-//        
-        // System.out.println(roomControllerRemote.checkAvailabilityOfRoomByRoomTypeId(1l));
-//       List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.findPricierRoomType(2l);
-//       for(RoomRatesEntity roomRate : roomRateList){
-//           System.out.println(roomRate.getName());
-//       }
-//    System.out.println(roomTypeControllerRemote.findPricierAvailableRoomType(2l).getRoomName());
-//        BigDecimal rate = roomTypeControllerRemote.findPricierRoomType(1l);
-//        System.out.println(rate);
-//        List<RoomRatesEntity> roomRateList = roomRateControllerRemote.retrieveRoomRateListExcludeRoomType(1l);
-//        for(RoomRatesEntity roomRate : roomRateList){
-//           System.out.println(roomRate.getName());
-//       }
-//       System.out.println("It works");
-//        List<RoomEntity> roomList = roomControllerRemote.retrieveRoomListByTypeId(7l);
-//        for(RoomEntity room : roomList){
-//            System.out.println(room.getRoomNumber());
-//        }
-    }
-
+    
     public void runApp() {
 
         systemTimerSessionBeanRemote.init();
@@ -111,7 +69,6 @@ public class MainApp {
             System.out.println("==== Welcome to the HoRS Management Client ====");
             if (loggedInUser == null) {
                 System.out.println("1: Employee Login");
-
                 System.out.println("2: Exit");
             }
 
@@ -134,8 +91,6 @@ public class MainApp {
                     input = sc.nextInt();
                     if (input == 1) {
                         doLogin(sc);
-
-                        //System.out.println("Employee Already Logged In !");
                     } else if (input == 2) {
                         break;
                     } else if (input == 3) {
@@ -150,13 +105,11 @@ public class MainApp {
                     System.out.println(">");
                     input = sc.nextInt();
                     if (input == 1) {
-
                         doStreamEmployee();
                     } else if (input == 2) {
                         doLogout(sc);
                         input = 0;
                         break;
-                        
                     } else if (input == 3) {
                         break;
                     } else if (input == 4) {
@@ -175,7 +128,6 @@ public class MainApp {
             }
 
             if (loggedInUser != null && input == 3 || loggedInUser == null & input == 2) {
-
                 break;
             }
         }
@@ -210,13 +162,11 @@ public class MainApp {
 
     public void doStreamEmployee() {
         if (loggedInUser instanceof SystemAdministrator) {
-            //System.out.println("Hello System Admin");
             SystemAdministrationModule systemAdministratorModule = new SystemAdministrationModule(loggedInUser, employeeControllerRemote, partnerControllerRemote);
             systemAdministratorModule.runModule();
         } else if (loggedInUser instanceof GuestRelationOfficer) {
             FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomTypeControllerRemote, customerControllerRemote, reservationControllerRemote, bookingControllerRemote, roomRateControllerRemote, transactionControllerRemote);
             frontOfficeModule.runModule();
-
         } else if (loggedInUser instanceof OperationManager) {
             HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote, roomTypeRankingControllerRemote, roomAllocationExceptionControllerRemote);
             hotelOperationModule.runOperationManagerModuleModule();
