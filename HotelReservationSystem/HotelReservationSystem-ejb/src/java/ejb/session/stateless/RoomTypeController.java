@@ -73,7 +73,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
     public int getLowestRank() {
         Query query = em.createQuery("SELECT r.ranking FROM RoomTypeEntity r WHERE r.isDisabled = false ORDER BY r.ranking DESC");
-        return (int)query.getResultList().get(0);
+        return (int) query.getResultList().get(0);
     }
 
     @Override
@@ -179,6 +179,21 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         }
         //call room controller local to find list by Type
         List<RoomEntity> roomList = roomControllerLocal.retrieveRoomListByTypeId(id); //this is returning null. Maybe EJB cannot call other ejb this way?
+
+        //handle existing negative ranks.
+        //rank doesn't change, so can use it to keep track.
+        List<RoomTypeEntity> negativeRanks = retrieveNegativeRankedTypes();
+        if (negativeRanks.isEmpty()) {
+            
+        } else {
+            for (RoomTypeEntity roomTypeDeleted : negativeRanks) {
+                int deletedRank = -(roomTypeDeleted.getRanking());
+                if (deletedRank > rank) {
+                    deletedRank--;
+                    roomTypeDeleted.setRanking(-(deletedRank));
+                }
+            }
+        }
         if (!roomList.isEmpty()) {
             //set all to be disabled
             //set roomType to be disabled as well.
@@ -197,6 +212,11 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
             em.remove(roomType);
         }
 
+    }
+
+    public List<RoomTypeEntity> retrieveNegativeRankedTypes() {
+        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r WHERE r.isDisabled = true");
+        return query.getResultList();
     }
 
     @Override
