@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package horsmanagementclient;
 
 import Entity.BookingEntity;
@@ -34,10 +30,6 @@ import util.enumeration.RoomStatus;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoReservationFoundException;
 
-/**
- *
- * @author mdk12
- */
 public class FrontOfficeModule {
 
     private EmployeeEntity loggedInUser;
@@ -73,7 +65,6 @@ public class FrontOfficeModule {
         while (true) {
             System.out.println("==== Welcome to the Front Office Module ====");
             System.out.println("1: Walk-in Search Room");
-            //System.out.println("2: Walk-in Reserve Room");
             System.out.println("2: Check-in Guest");
             System.out.println("3: Check-out Guest");
             System.out.println("4: Exit");
@@ -90,7 +81,6 @@ public class FrontOfficeModule {
                 } else if (input == 4) {
                     break;
                 }
-
             }
             if (input == 4) {
                 break;
@@ -132,8 +122,6 @@ public class FrontOfficeModule {
         List<Pair<RoomTypeEntity, Integer>> listOfRoomTypePairs = new ArrayList<>();
         boolean retrieved = false;
         while (true) {
-            //List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes(checkInDate);
-
             if (retrieved == false) {
                 for (RoomTypeEntity roomType : allRoomTypes) {
                     if (roomType.isIsDisabled() || !roomTypeControllerRemote.checkIfHavePublished(roomType.getRoomTypeId())) {
@@ -187,10 +175,8 @@ public class FrontOfficeModule {
     public List<RoomTypeEntity> getAvailableRoomTypes(Date checkInDate) {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
 
-        //Retrieve all roomtypes that are published and available
         List<RoomTypeEntity> publishedRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.PUBLISHED);
 
-        // available + published filter , Need see if available now + available in future here.
         for (RoomTypeEntity roomType : publishedRoomTypes) {
 
             if (!roomType.isIsDisabled()) {
@@ -231,14 +217,12 @@ public class FrontOfficeModule {
         System.out.println("CheckInDate: " + checkInDate + " today date: " + today);
 
         if (checkInDate.after(today)) {//if future
-            //System.out.println("Future");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 BookingEntity booking = new BookingEntity(roomType, reservation);
                 booking = bookingControllerRemote.createBooking(booking);
                 reservationControllerRemote.addBookings(reservation.getReservationId(), booking);
             }
         } else {//if today
-            //System.out.println("Today");
             for (RoomTypeEntity roomType : desiredRoomTypes) {
                 RoomEntity room = roomControllerRemote.walkInAllocateRoom(roomType.getRoomTypeId());
                 BookingEntity booking = new BookingEntity(room, reservation);
@@ -276,14 +260,12 @@ public class FrontOfficeModule {
                 List<RoomRatesEntity> roomRateList = roomTypeControllerRemote.retrieveRoomRateListById(roomType.getRoomTypeId());
                 for (RoomRatesEntity roomRate : roomRateList) {
                     if (roomRate.getRateType() == RateType.PUBLISHED) {
-                        //System.out.println("Rate per night: "+roomRate.getRatePerNight());
                         totalAmount = totalAmount.add(roomRate.getRatePerNight());
 
                     }
                 }
             }
         }
-        //System.out.println("Total: "+totalAmount);
         return totalAmount;
     }
 

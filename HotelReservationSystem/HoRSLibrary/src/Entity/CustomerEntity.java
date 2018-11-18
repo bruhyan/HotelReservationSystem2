@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Entity;
 
 import java.io.Serializable;
@@ -15,10 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-/**
- *
- * @author mdk12
- */
+
 @Entity
 public class CustomerEntity implements Serializable {
 
@@ -48,7 +40,6 @@ public class CustomerEntity implements Serializable {
     //use this if customer is walk in
     public CustomerEntity(String email, String contactNumber, String firstName, String lastName) {
         this();
-        //this.reservation = reservation;
         this.email = email;
         this.contactNumber = contactNumber;
         this.firstName = firstName;

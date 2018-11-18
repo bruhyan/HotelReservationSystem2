@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Entity;
 
 import java.io.Serializable;
@@ -13,14 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-/**
- *
- * @author mdk12
- */
+
 @Entity
 public class TransactionEntity implements Serializable {
 
@@ -30,7 +22,7 @@ public class TransactionEntity implements Serializable {
     private Long transactionId;
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalCost;
-
+    @ManyToOne(optional = true)
     private EmployeeEntity employee;
     @OneToOne
     private ReservationEntity reservation;

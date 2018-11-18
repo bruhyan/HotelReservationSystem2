@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ejb.session.stateless;
 
 import Entity.BookingEntity;
@@ -24,14 +20,15 @@ import javax.ejb.TimerService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author mdk12
- */
+
 @Stateless
 @Local(SystemTimerSessionBeanLocal.class)
 @Remote(SystemTimerSessionBeanRemote.class)
 public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, SystemTimerSessionBeanLocal {
+    
+    
+    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
+    private EntityManager em;
 
     @Resource
     private SessionContext sessionContext;
@@ -41,11 +38,8 @@ public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, Sys
     private RoomControllerLocal roomControllerLocal;
     @EJB
     private RoomTypeControllerLocal roomTypeControllerLocal;
-    @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
-    private EntityManager em;
     @EJB
     private ReservationControllerLocal reservationControllerLocal;
-
     @EJB
     private RoomAllocationExceptionControllerLocal roomAllocationExceptionControllerLocal;
 

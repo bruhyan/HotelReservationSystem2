@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package horsreservationclient;
 
 import Entity.BookingEntity;
@@ -33,10 +29,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.NoAvailableOnlineRoomRateException;
 import util.exception.NoReservationFoundException;
 
-/**
- *
- * @author Bryan
- */
+
 public class MainApp {
 
     private CustomerEntity loggedInUser;
@@ -87,7 +80,6 @@ public class MainApp {
                     if (loggedInUser == null) {
                         doLogin(sc);
                     } else {
-                        //System.out.println("Current logged in user: "+loggedInUser.getEmail());
                         doLogout();
                     }
                 } else if (input == 2 && loggedInUser == null) {
@@ -155,7 +147,6 @@ public class MainApp {
                 }
             }
             retrieved = true;
-            //  List<RoomTypeEntity> availRoomTypes = getAvailableRoomTypes();
             int index = 1;
             System.out.println("==========================================");
             for (Pair<RoomTypeEntity, Integer> roomTypePair : listOfRoomTypePairs) {
@@ -204,7 +195,6 @@ public class MainApp {
 
             //allocate room on the spot if want to check in on the spot. if rserve for future date, use timer to allocate.
             Date today = new Date();
-            //System.out.println("CheckInDate: " + checkInDate + " today date: " + today);
 
             if (checkInDate.after(today)) { //if future
                 for (RoomTypeEntity roomType : desiredRoomTypes) {
@@ -271,7 +261,6 @@ public class MainApp {
         return totalPrice;
     }
 
-    //something wong: what if not available now but will be available before check in
     public List<RoomTypeEntity> getAvailableRoomTypes() {
         List<RoomTypeEntity> availRoomTypes = new ArrayList<>();
         List<RoomTypeEntity> onlineRoomTypes = roomTypeControllerRemote.retrieveRoomTypesByRateType(RateType.NORMAL);
@@ -366,7 +355,6 @@ public class MainApp {
 
     public void doLogout() {
         System.out.println(loggedInUser.getEmail() + " successfully logged out");
-
         loggedInUser = null;
     }
 }

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
@@ -37,7 +33,6 @@ public interface RoomControllerLocal {
     public void changeRoomStatus(Long roomEntityId, RoomStatus status);
     
     public void deleteAllDisabledRooms();
-
 
     public boolean checkAvailabilityOfRoomTypeWhenAllocating(Long roomTypeId);
     

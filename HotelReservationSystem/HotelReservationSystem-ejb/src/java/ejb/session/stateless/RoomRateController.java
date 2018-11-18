@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ejb.session.stateless;
 
 import Entity.RoomRatesEntity;
@@ -19,12 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.RateType;
 
-/**
- *
- * @author mdk12
- */
 @Stateless
-
 @Remote(RoomRateControllerRemote.class)
 @Local(RoomRateControllerLocal.class)
 
@@ -111,7 +102,6 @@ public class RoomRateController implements RoomRateControllerRemote, RoomRateCon
         return query.getResultList();
     }
 
-    //heavyUpdateRoomRate(roomRate.getRoomRatesId(), roomRateName, ratePerNight, date2, date3);
     @Override
     public RoomRatesEntity heavyUpdateRoomRate(Long roomRateId, String roomRateName, BigDecimal ratePerNight, Date dateStart, Date dateEnd) {
         RoomRatesEntity roomRates = retrieveRoomRatesById(roomRateId);

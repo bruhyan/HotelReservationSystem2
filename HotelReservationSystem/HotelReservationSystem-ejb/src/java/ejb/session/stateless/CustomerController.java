@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-//henlo
 package ejb.session.stateless;
 
 import Entity.CustomerEntity;
@@ -25,10 +19,7 @@ import javax.persistence.Query;
 import util.exception.CustomerNotFoundException;
 import util.exception.NoReservationFoundException;
 
-/**
- *
- * @author Bryan
- */
+
 @Stateless
 @Local(CustomerControllerLocal.class)
 @Remote(CustomerControllerRemote.class)
@@ -63,23 +54,9 @@ public class CustomerController implements CustomerControllerRemote, CustomerCon
             System.out.println("Error!");
             throw new CustomerNotFoundException("Customer not found!");
         }
-
-//
-//
-//        try {
-//            query.setParameter("contactNum", contactNum);
-//            cus = (CustomerEntity)query.getSingleResult();
-//        } catch(NoResultException ex) {
-//            System.out.println("Shit" + ex.getMessage());
-//            throw new CustomerNotFoundException("Customer not found");
-//        }
-//        return cus;
     }
 
     public List<ReservationEntity> retrieveCustomerReservation(Long customerId) {
-        //CustomerEntity cus = em.find(CustomerEntity.class, customerId);
-        //List<ReservationEntity> reservations = cus.getReservations();
-        //reservations.size();
         Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.customer.customerId = :customerId");
         query.setParameter("customerId", customerId);
         List<ReservationEntity> reservations =  query.getResultList();
