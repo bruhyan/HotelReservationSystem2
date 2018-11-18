@@ -33,13 +33,14 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         List<RoomTypeEntity> roomTypeList = retrieveRoomTypeList();
         int rank = roomType.getRanking();
         int lowestRank = getLowestRank();
-
+        System.out.println(rank + " " + lowestRank);
         if (rank == lowestRank + 1) {
             em.persist(roomType);
             em.flush();
         } else if (rank == 1) {
             List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjustAsc(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) { //descending
+                System.out.println(roomTypeOld.getRanking() + 1);
                 roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
             }
             em.persist(roomType);
@@ -72,7 +73,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 
     public int getLowestRank() {
         Query query = em.createQuery("SELECT r.ranking FROM RoomTypeEntity r WHERE r.isDisabled = false ORDER BY r.ranking DESC");
-        return query.getFirstResult();
+        return (int)query.getResultList().get(0);
     }
 
     @Override
