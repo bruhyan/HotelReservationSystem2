@@ -8,7 +8,6 @@ import Entity.PartnerEntity;
 import Entity.RoomEntity;
 import Entity.RoomRatesEntity;
 import Entity.RoomTypeEntity;
-import Entity.RoomTypeRanking;
 import Entity.SalesManager;
 import Entity.SystemAdministrator;
 import java.math.BigDecimal;
@@ -41,11 +40,8 @@ public class InitialDataSessionBean {
         RoomRatesEntity r1 = em.find(RoomRatesEntity.class, 1l);
         RoomTypeEntity r2 = em.find(RoomTypeEntity.class, 1l);
         RoomEntity r3 = em.find(RoomEntity.class, 1l);
-        RoomTypeRanking r4 = em.find(RoomTypeRanking.class, 1l);
 
-        if (r4 == null) {
-            initaliseRoomRankingList();
-        }
+        
         if (e == null) {
             initialiseEmployeeData();
         }
@@ -64,12 +60,7 @@ public class InitialDataSessionBean {
         }
     }
 
-    public void initaliseRoomRankingList() {
-        RoomTypeRanking roomRanking = new RoomTypeRanking();
-        em.persist(roomRanking);
-        em.flush();
-
-    }
+    
 
     public void initialiseEmployeeData() {
         //String name, String contactNumber, String email, String password, String address
@@ -233,23 +224,6 @@ public class InitialDataSessionBean {
             em.flush();//for the right ordering
 //            roomRank.getRoomTypes().add(roomType);
         }
-    }
-
-    public void setRoomRanks(List<RoomTypeEntity> roomTypes) {
-        RoomTypeRanking roomRank = em.find(RoomTypeRanking.class, 1l);
-        for (RoomTypeEntity roomType : roomTypes) {
-            roomRank.getRoomTypes().add(roomType);
-            em.persist(roomType);
-            em.flush();//for the right ordering
-        }
-    }
-
-    public void setupTestRanks() {
-        Query query = em.createQuery("SELECT r FROM RoomTypeEntity r");
-        List<RoomTypeEntity> roomTypes = query.getResultList();
-
-        setRoomRanks(roomTypes);
-
     }
 
     public void setRoomTypesToRoomRates() {

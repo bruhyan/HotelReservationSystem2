@@ -15,7 +15,6 @@ import ejb.session.stateless.RoomAllocationExceptionControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
-import ejb.session.stateless.RoomTypeRankingControllerRemote;
 import ejb.session.stateless.SystemTimerSessionBeanRemote;
 import ejb.session.stateless.TransactionControllerRemote;
 import java.util.Scanner;
@@ -33,7 +32,6 @@ public class MainApp {
     private PartnerControllerRemote partnerControllerRemote;
     private CustomerControllerRemote customerControllerRemote;
     private ReservationControllerRemote reservationControllerRemote;
-    private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
     private TransactionControllerRemote transactionControllerRemote;
     private RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote;
     private SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
@@ -41,7 +39,7 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote, CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, SystemTimerSessionBeanRemote systemTimerSessionBeanRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote, TransactionControllerRemote transactionControllerRemote, RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote) {
+    public MainApp(EmployeeControllerRemote employeeControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, BookingControllerRemote bookingControllerRemote, PartnerControllerRemote partnerControllerRemote, CustomerControllerRemote customerControllerRemote, ReservationControllerRemote reservationControllerRemote, SystemTimerSessionBeanRemote systemTimerSessionBeanRemote , TransactionControllerRemote transactionControllerRemote, RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote) {
 
         this();
         this.employeeControllerRemote = employeeControllerRemote;
@@ -54,7 +52,6 @@ public class MainApp {
         this.reservationControllerRemote = reservationControllerRemote;
         this.systemTimerSessionBeanRemote = systemTimerSessionBeanRemote;
         this.roomAllocationExceptionControllerRemote = roomAllocationExceptionControllerRemote;
-        this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
         this.transactionControllerRemote = transactionControllerRemote;
     }
     
@@ -168,10 +165,10 @@ public class MainApp {
             FrontOfficeModule frontOfficeModule = new FrontOfficeModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomTypeControllerRemote, customerControllerRemote, reservationControllerRemote, bookingControllerRemote, roomRateControllerRemote, transactionControllerRemote);
             frontOfficeModule.runModule();
         } else if (loggedInUser instanceof OperationManager) {
-            HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote, roomTypeRankingControllerRemote, roomAllocationExceptionControllerRemote);
+            HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote, roomAllocationExceptionControllerRemote);
             hotelOperationModule.runOperationManagerModuleModule();
         } else if (loggedInUser instanceof SalesManager) {
-            HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote, roomTypeRankingControllerRemote, roomAllocationExceptionControllerRemote);
+            HotelOperationModule hotelOperationModule = new HotelOperationModule(loggedInUser, employeeControllerRemote, roomControllerRemote, roomRateControllerRemote, roomTypeControllerRemote, bookingControllerRemote, roomAllocationExceptionControllerRemote);
             hotelOperationModule.runSalesManagerModule();
         } else {
             System.out.println("This employee type does not exist!");

@@ -22,9 +22,9 @@ import javax.persistence.PersistenceContext;
 
 
 @Stateless
-@Local(SystemTimerSessionBeanLocal.class)
+
 @Remote(SystemTimerSessionBeanRemote.class)
-public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote, SystemTimerSessionBeanLocal {
+public class SystemTimerSessionBean implements SystemTimerSessionBeanRemote{
     
     
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

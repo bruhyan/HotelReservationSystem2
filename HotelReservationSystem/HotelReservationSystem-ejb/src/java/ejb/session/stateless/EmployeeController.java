@@ -18,9 +18,8 @@ import util.exception.EmployeeNotFoundException;
 
 
 @Stateless
-@Local(EmployeeControllerLocal.class)
 @Remote(EmployeeControllerRemote.class)
-public class EmployeeController implements EmployeeControllerRemote, EmployeeControllerLocal {
+public class EmployeeController implements EmployeeControllerRemote {
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;

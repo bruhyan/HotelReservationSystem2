@@ -263,7 +263,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 //    }
 
     private boolean rateIsWithinRange(Date validityStart, Date validityEnd, Date currentDate) {
-        return (currentDate.before(validityEnd) || currentDate.after(validityStart));
+        return (currentDate.before(validityEnd) && currentDate.after(validityStart));
     }
 
     //This method will find the final room rate to apply when given a room type id, call when making transaction
@@ -285,26 +285,21 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
 // if null do smt else
             if (roomRate.getIsDisabled() == false) {
                 if (null != roomRate.getRateType()) {
+                    System.out.println(roomRate.getRateType());
                     switch (roomRate.getRateType()) {
                         case NORMAL:
-
-                            if (roomRate.getValidityStart() != null) {
-
-                                if (rateIsWithinRange(roomRate.getValidityStart(), roomRate.getValidityEnd(), currentDate)) {
-                                    normal = true;
-                                }
-                            } else {
                                 normal = true;
-                            }
-                            break;
+                            
+                                break;
                         case PROMOTIONAL:
-
+                            System.out.println("ValidStart "+roomRate.getValidityStart()+" ValidEnd: "+roomRate.getValidityEnd()+" CurrentDate: "+currentDate);
                             if (rateIsWithinRange(roomRate.getValidityStart(), roomRate.getValidityEnd(), currentDate)) {
                                 promo = true;
                             }
                             break;
 
                         case PEAK:
+                            System.out.println("ValidStart "+roomRate.getValidityStart()+" ValidEnd: "+roomRate.getValidityEnd()+" CurrentDate: "+currentDate);
 
                             if (rateIsWithinRange(roomRate.getValidityStart(), roomRate.getValidityEnd(), currentDate)) {
                                 peak = true;

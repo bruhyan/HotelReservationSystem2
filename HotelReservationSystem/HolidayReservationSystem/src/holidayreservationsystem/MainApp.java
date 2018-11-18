@@ -225,7 +225,7 @@ public class MainApp {
         System.out.println("Please enter your password: ");
         System.out.print(">");
         String password = sc.nextLine();
-
+        
         System.out.println("Please enter your Reservation ID :  \n");
         System.out.print(">");
 
@@ -234,17 +234,21 @@ public class MainApp {
         try {
 
             ReservationEntity reservation = viewPartnerReservationDetails(email, password, reservationId);
+            System.out.println("====================================================");
             System.out.println("Your Reservation details are as follows : \n");
             System.out.println("Reservation ID: " + reservationId);
             System.out.println("Date of Reservation: " + reservation.getDateOfReservation());
             System.out.println("Check in Date & Time : " + reservation.getCheckInDateTime());
             System.out.println("Check out Date & Time : " + reservation.getCheckOutDateTime());
             System.out.println("Reservation Type: " + reservation.getReservationType());
+            System.out.println("====================================================");
+            System.out.println();
+            
 
         } catch (PartnerNotFoundException_Exception ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         } catch (NoReservationFoundException_Exception ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
 
     }
@@ -257,16 +261,24 @@ public class MainApp {
         System.out.println("Please enter your password: ");
         System.out.print(">");
         String password = sc.nextLine();
-
+        System.out.println();
         try {
             List<ReservationEntity> reservations = viewAllPartnerReservations(email, password);
-            for (ReservationEntity reservation : reservations) {
-                System.out.println("Reservation ID: " + reservation.getReservationId());
+            if(reservations.size() == 0) {
+                System.out.println("You currently have no reservations");
+                System.out.println();
+            }else {
+                System.out.println("============== List of Reservations =================");
+                for (ReservationEntity reservation : reservations) {
+                    System.out.println("Reservation ID: " + reservation.getReservationId());
+                }
+                System.out.println("====================================================");
+                System.out.println();
             }
         } catch (NoReservationFoundException_Exception ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         } catch (PartnerNotFoundException_Exception ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
 
     }

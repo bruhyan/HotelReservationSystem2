@@ -150,7 +150,11 @@ public class HoRSWebService {
         try {
             PartnerEntity partner = partnerLogin(email, password);
             ReservationEntity reservation = reservationControllerLocal.retrieveReservationById(reservationId);
-            return reservation;
+            if(reservation.getPartner().getPartnerId() != partner.getPartnerId()) {
+                throw new NoReservationFoundException("no reservation found");
+            }else {
+                return reservation;
+            }
         } catch (PartnerNotFoundException ex) {
             throw new PartnerNotFoundException("Partner not found");
         } catch (NoResultException ex) {

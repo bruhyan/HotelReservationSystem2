@@ -11,7 +11,6 @@ import ejb.session.stateless.RoomAllocationExceptionControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
-import ejb.session.stateless.RoomTypeRankingControllerRemote;
 import ejb.session.stateless.SystemTimerSessionBeanRemote;
 import ejb.session.stateless.TransactionControllerRemote;
 
@@ -40,14 +39,12 @@ public class Main {
     @EJB
     public static SystemTimerSessionBeanRemote systemTimerSessionBeanRemote;
     @EJB
-    public static RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
-    @EJB
     public static RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote;
 
     
     public static void main(String[] args) {
 
-        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote, roomTypeRankingControllerRemote, transactionControllerRemote, roomAllocationExceptionControllerRemote);
+        MainApp mainApp = new MainApp(employeeControllerRemote, roomTypeControllerRemote, roomControllerRemote, roomRateControllerRemote, bookingControllerRemote, partnerControllerRemote, customerControllerRemote, reservationControllerRemote, systemTimerSessionBeanRemote, transactionControllerRemote, roomAllocationExceptionControllerRemote);
         mainApp.runApp();
 
 

@@ -79,7 +79,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
 
         List<ReservationEntity> todayReservation = new ArrayList<>();
         
-        Query query = em.createQuery("SELECT r FROM ReservationEntity r ORDER BY r.reservationId ASC");
+        Query query = em.createQuery("SELECT r FROM ReservationEntity r WHERE r.showedUp = false ORDER BY r.reservationId ASC");
 
         List<ReservationEntity> allReservations = query.getResultList();
 
@@ -106,6 +106,7 @@ public class ReservationController implements ReservationControllerRemote, Reser
         ReservationEntity reserv = em.find(ReservationEntity.class, reservationId);
         reserv.getBookingList().size();
         reserv.getTransaction();
+        reserv.getPartner();
         return reserv;
     }
     

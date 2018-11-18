@@ -12,7 +12,6 @@ import ejb.session.stateless.RoomAllocationExceptionControllerRemote;
 import ejb.session.stateless.RoomControllerRemote;
 import ejb.session.stateless.RoomRateControllerRemote;
 import ejb.session.stateless.RoomTypeControllerRemote;
-import ejb.session.stateless.RoomTypeRankingControllerRemote;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,17 +29,15 @@ public class HotelOperationModule {
     private RoomControllerRemote roomControllerRemote;
     private RoomTypeControllerRemote roomTypeControllerRemote;
     private BookingControllerRemote bookingControllerRemote;
-    private RoomTypeRankingControllerRemote roomTypeRankingControllerRemote;
     private RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote;
 
-    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote, RoomTypeRankingControllerRemote roomTypeRankingControllerRemote, RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote) {
+    public HotelOperationModule(EmployeeEntity loggedInUser, EmployeeControllerRemote employeeControllerRemote, RoomControllerRemote roomControllerRemote, RoomRateControllerRemote roomRateControllerRemote, RoomTypeControllerRemote roomTypeControllerRemote, BookingControllerRemote bookingControllerRemote, RoomAllocationExceptionControllerRemote roomAllocationExceptionControllerRemote) {
         this.loggedInUser = loggedInUser;
         this.employeeControllerRemote = employeeControllerRemote;
         this.roomRateControllerRemote = roomRateControllerRemote;
         this.roomControllerRemote = roomControllerRemote;
         this.roomTypeControllerRemote = roomTypeControllerRemote;
         this.bookingControllerRemote = bookingControllerRemote;
-        this.roomTypeRankingControllerRemote = roomTypeRankingControllerRemote;
         this.roomAllocationExceptionControllerRemote = roomAllocationExceptionControllerRemote;
     }
 
