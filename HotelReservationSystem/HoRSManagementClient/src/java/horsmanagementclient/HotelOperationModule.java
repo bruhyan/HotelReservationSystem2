@@ -1,4 +1,3 @@
-
 package horsmanagementclient;
 
 import Entity.BookingEntity;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Scanner;
 import util.enumeration.RateType;
 import util.enumeration.RoomStatus;
-
 
 public class HotelOperationModule {
 
@@ -154,7 +152,7 @@ public class HotelOperationModule {
         System.out.println("Enter Room Rate per night: \n");
         System.out.print(">");
         BigDecimal ratePerNight = sc.nextBigDecimal();
-        while(ratePerNight.compareTo(BigDecimal.valueOf(0)) < 0){
+        while (ratePerNight.compareTo(BigDecimal.valueOf(0)) < 0) {
             System.out.println("Your room rate cannot be lesser than zero! Please try again.");
             ratePerNight = sc.nextBigDecimal();
         }
@@ -375,18 +373,6 @@ public class HotelOperationModule {
         }
         RoomStatus newRoomStatus = RoomStatus.values()[roomStatus - 1];
 
-        int inputBooking = 0;
-        System.out.println("Would you like to assign a booking to this room? 1. Yes 2. No");
-        while (inputBooking < 1 || inputBooking > 2) {
-            inputBooking = sc.nextInt();
-            if (inputBooking > 2 || inputBooking < 1) {
-                System.out.println("Invalid input! Please try again.");
-            }
-        }
-        Long bookingId = null;
-        if (inputBooking == 1) {
-            bookingId = selectBookingId(sc);
-        }
         Long roomTypeId = selectRoomType(sc);
 
         boolean isDisabled = room.getIsDisabled();
@@ -406,37 +392,35 @@ public class HotelOperationModule {
             isDisabled = false;
         } else if (inputDisabled == 1) {
             isDisabled = true;
-        }
 
-        if (bookingId == null) {
             RoomEntity newRoom = roomControllerRemote.heavyUpdateRoom(room.getRoomId(), roomNumber, newRoomStatus, roomTypeId, isDisabled);
-        } else {
-            RoomEntity newRoom = roomControllerRemote.heavyUpdateRoom(room.getRoomId(), roomNumber, newRoomStatus, bookingId, roomTypeId, isDisabled);
-        }
 
-        System.out.println("Room has been updated!");
+            System.out.println("Room has been updated!");
+        }
     }
 
-    public Long selectBookingId(Scanner sc) {
-        List<BookingEntity> bookingList = bookingControllerRemote.retrieveBookingList();
-        if (bookingList.isEmpty()) {
-            System.out.println("You currently have no booking available! Please create a new one first.");
-            System.out.println("No booking will be assigned for now.");
-            return null;
-        }
-        System.out.println("Select the booking you'd wish to assign to your room:");
-        for (BookingEntity booking : bookingList) {
-
-            System.out.println("Booking Id : " + booking.getBookingId() + " .");
-
-        }
-
-        System.out.print(">");
-        Long bookingId = sc.nextLong();
-        sc.nextLine();
-        return bookingId;
-
-    }
+//    
+//
+//    public Long selectBookingId(Scanner sc) {
+//        List<BookingEntity> bookingList = bookingControllerRemote.retrieveBookingList();
+//        if (bookingList.isEmpty()) {
+//            System.out.println("You currently have no booking available! Please create a new one first.");
+//            System.out.println("No booking will be assigned for now.");
+//            return null;
+//        }
+//        System.out.println("Select the booking you'd wish to assign to your room:");
+//        for (BookingEntity booking : bookingList) {
+//
+//            System.out.println("Booking Id : " + booking.getBookingId() + " .");
+//
+//        }
+//
+//        System.out.print(">");
+//        Long bookingId = sc.nextLong();
+//        sc.nextLine();
+//        return bookingId;
+//
+//    }
 
     public void doDeleteRoom(Long roomId) {
         roomControllerRemote.deleteRoomById(roomId);
@@ -462,12 +446,12 @@ public class HotelOperationModule {
             List<String> exceptions = exceptionList.get(0).getExceptions();
 
             System.out.println("Viewing exception report ID : " + exceptionList.get(0).getRoomAllocationExceptionId());
-            if(exceptions.isEmpty()){
+            if (exceptions.isEmpty()) {
                 System.out.println("There are no exceptions to report,");
                 System.out.println("All rooms were successfully allocated today!");
             }
             for (String exception : exceptions) {
-                
+
                 System.out.println(exception);
             }
         } catch (ArrayIndexOutOfBoundsException ex) {
@@ -613,7 +597,7 @@ public class HotelOperationModule {
                 response = sc.nextInt();
                 sc.nextLine();
                 if (response == 1) {
-                    int range = showCurrentRoomTypeRank() -1;
+                    int range = showCurrentRoomTypeRank() - 1;
 
                     System.out.println("Please indicate a rank for your new room type ranging from 1 to " + range);
                     int rank = sc.nextInt(); //rank is 1 + index

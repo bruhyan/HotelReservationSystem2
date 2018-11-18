@@ -28,8 +28,6 @@ public interface RoomControllerRemote {
 
     public void changeIsReserved(Long roomId, boolean value);
 
-    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId, boolean isDisabled);
-
     public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId, boolean isDisabled);
 
     public void deleteAllDisabledRooms();

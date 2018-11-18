@@ -75,24 +75,24 @@ public class RoomController implements RoomControllerRemote, RoomControllerLocal
 
         return room;
     }
-
-    @Override
-    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId, boolean isDisabled) {
-        RoomEntity room = em.find(RoomEntity.class, id);
-        room.setRoomNumber(roomNumber);
-        room.setRoomStatus(newRoomStatus);
-        room.setIsDisabled(isDisabled);
-        BookingEntity booking = em.find(BookingEntity.class, bookingId);
-
-        room.setBooking(booking);
-        booking.setRoom(room);
-
-        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
-        room.setRoomType(roomType);
-
-        return room;
-    }
-    //get list of room by room type.
+//
+//    @Override
+//    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId, boolean isDisabled) {
+//        RoomEntity room = em.find(RoomEntity.class, id);
+//        room.setRoomNumber(roomNumber);
+//        room.setRoomStatus(newRoomStatus);
+//        room.setIsDisabled(isDisabled);
+//        BookingEntity booking = em.find(BookingEntity.class, bookingId);
+//
+//        room.setBooking(booking);
+//        booking.setRoom(room);
+//
+//        RoomTypeEntity roomType = em.find(RoomTypeEntity.class, roomTypeId);
+//        room.setRoomType(roomType);
+//
+//        return room;
+//    }
+//    //get list of room by room type.
 
     @Override
     public List<RoomEntity> retrieveRoomListByType(RoomTypeEntity roomType) {

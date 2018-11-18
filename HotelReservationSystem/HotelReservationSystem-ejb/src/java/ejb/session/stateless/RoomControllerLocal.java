@@ -22,8 +22,6 @@ public interface RoomControllerLocal {
 
     public RoomEntity retrieveRoomById(Long id);
 
-    public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long bookingId, long roomTypeId, boolean isDisabled);
-
     public RoomEntity heavyUpdateRoom(Long id, int roomNumber, RoomStatus newRoomStatus, long roomTypeId, boolean isDisabled);
 
     public void deleteRoomById(Long id);

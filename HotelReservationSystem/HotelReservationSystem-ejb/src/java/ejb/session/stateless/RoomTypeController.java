@@ -1,5 +1,3 @@
-
-
 package ejb.session.stateless;
 
 import Entity.RoomEntity;
@@ -18,7 +16,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.RateType;
 import util.exception.NoAvailableOnlineRoomRateException;
-
 
 @Stateless
 @Local(RoomTypeControllerLocal.class)
@@ -40,7 +37,16 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         if (rank == lowestRank + 1) {
             em.persist(roomType);
             em.flush();
+        } else if (rank == 1) {
+            List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjustAsc(rank);
+            for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) { //descending
+                roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
+            }
+            em.persist(roomType);
+            em.flush();
+
         } else {
+
             List<RoomTypeEntity> roomTypeAdjust = getRoomTypeListToAdjustDesc(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjust) {
                 roomTypeOld.setRanking(roomTypeOld.getRanking() + 1);
@@ -132,6 +138,7 @@ public class RoomTypeController implements RoomTypeControllerRemote, RoomTypeCon
         if (rank == 1) {
             List<RoomTypeEntity> roomTypeAdjustNew = getRoomTypeListToAdjustAsc(rank);
             for (RoomTypeEntity roomTypeOld : roomTypeAdjustNew) { //descending
+                System.out.println(roomTypeOld.getRanking() + " " + currentRank);
                 if (roomTypeOld.getRanking() == currentRank) {
                     break;
                 }
