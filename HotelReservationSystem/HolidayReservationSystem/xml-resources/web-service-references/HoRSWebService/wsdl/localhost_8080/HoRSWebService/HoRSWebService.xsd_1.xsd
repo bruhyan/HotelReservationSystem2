@@ -175,7 +175,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="partnerLogin">
 <xs:complexType name="getNumberOfBookableRoomType">
 <xs:sequence>
 <xs:element name="roomType" type="tns:roomTypeEntity" minOccurs="0"/>

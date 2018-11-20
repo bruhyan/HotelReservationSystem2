@@ -1,4 +1,7 @@
 
+// Group 16
+// Pereira Yip Ding Xian A0166907U
+// Bryan Koh Hai Wen A0172743A
 package horsmanagementclient;
 
 import ejb.session.stateless.BookingControllerRemote;
